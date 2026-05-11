@@ -6,10 +6,15 @@ Uses Edge TTS to convert script narration into natural-sounding audio.
 
 import argparse
 import asyncio
+import io
 import json
 import sys
 from datetime import datetime
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 import edge_tts
 import yaml
