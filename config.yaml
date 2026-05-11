@@ -1,0 +1,55 @@
+# ──────────────────────────────────────────────
+# McNeillium_AI — Pipeline Configuration
+# ──────────────────────────────────────────────
+
+channel:
+  name: "McNeillium_AI"
+  tagline: "AI & Emerging Tech — Explained"
+  intro_text: "McNeillium AI"
+  outro_text: "Like & Subscribe for more AI content"
+
+# Script Generation (Claude API)
+script:
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 4096
+  target_duration_minutes: 8  # Approximate video length
+  style: "conversational and educational, no jargon without explanation"
+  sections:
+    - hook           # Attention-grabbing opener (15-30 seconds)
+    - intro          # Topic introduction
+    - main_points    # 3-5 key points with examples
+    - demo           # Practical example or walkthrough
+    - summary        # Recap
+    - outro          # CTA + closing
+
+# Voice Generation (Edge TTS)
+voice:
+  engine: "edge-tts"
+  voice_id: "en-GB-RyanNeural"     # British male — change as preferred
+  rate: "+0%"                       # Speech rate adjustment
+  pitch: "+0Hz"                     # Pitch adjustment
+  volume: "+0%"                     # Volume adjustment
+
+# Video Assembly
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background_colour: "#0d1117"      # Dark GitHub-style background
+  text_colour: "#e6edf3"            # Light text
+  accent_colour: "#58a6ff"          # Blue accent (highlights, headings)
+  code_colour: "#7ee787"            # Green for code/terminal text
+  heading_colour: "#ff7b72"         # Orange-red for section headings
+  font_size: 36
+  heading_font_size: 52
+  code_font_size: 32
+  typing_speed: 0.03                # Seconds per character for typing effect
+  padding: 80                       # Screen edge padding in pixels
+  line_spacing: 1.6                 # Line height multiplier
+  cursor_blink: true                # Show blinking cursor during typing
+
+# Git Configuration
+git:
+  auto_push: true
+  branch: "main"
+  commit_prefix: "🎬 video:"
