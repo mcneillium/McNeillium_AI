@@ -9,6 +9,7 @@ Creates eye-catching 1280x720 YouTube thumbnails with:
 """
 
 import argparse
+import io
 import json
 import os
 import re
@@ -17,6 +18,10 @@ import textwrap
 import urllib.parse
 import urllib.request
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 import yaml
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
