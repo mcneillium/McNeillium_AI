@@ -9,3 +9,5 @@ output/scripts/
 .DS_Store
 venv/
 .venv/
+client_secrets.json
+.youtube_token.json
