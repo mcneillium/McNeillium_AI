@@ -14,6 +14,10 @@ from pathlib import Path
 import edge_tts
 import yaml
 
+MAX_RETRIES = 8
+RETRY_DELAY = 10
+SEGMENT_DELAY = 5
+
 # Resolve paths relative to project root
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = PROJECT_ROOT / "config.yaml"
@@ -66,18 +70,34 @@ async def generate_audio_segments(
         section_id = section.get("id", f"section_{i}")
         segment_file = output_dir / f"segment_{i:02d}_{section_id}.mp3"
 
+        if segment_file.exists() and segment_file.stat().st_size > 1000:
+            print(f"    ✅  Skipping (already exists): {section_id}")
+            segment_paths.append(segment_file)
+            continue
+
         print(f"    🎙  Generating audio for: {section_id}")
 
-        communicate = edge_tts.Communicate(
-            text=narration,
-            voice=voice_id,
-            rate=rate,
-            pitch=pitch,
-            volume=volume,
-        )
+        for attempt in range(MAX_RETRIES):
+            try:
+                communicate = edge_tts.Communicate(
+                    text=narration,
+                    voice=voice_id,
+                    rate=rate,
+                    pitch=pitch,
+                    volume=volume,
+                )
+                await communicate.save(str(segment_file))
+                break
+            except (ConnectionResetError, OSError, Exception) as e:
+                if attempt < MAX_RETRIES - 1:
+                    wait = RETRY_DELAY * (attempt + 1)
+                    print(f"    ⚠  Connection error, retrying in {wait}s... ({e.__class__.__name__})")
+                    await asyncio.sleep(wait)
+                else:
+                    raise
 
-        await communicate.save(str(segment_file))
         segment_paths.append(segment_file)
+        await asyncio.sleep(SEGMENT_DELAY)
 
     return segment_paths
 
@@ -114,14 +134,25 @@ async def generate_full_audio(script_data: dict, config: dict) -> Path:
 
     # Generate full combined audio
     print(f"    🎙  Generating full narration audio...")
-    communicate = edge_tts.Communicate(
-        text=full_narration,
-        voice=voice_id,
-        rate=rate,
-        pitch=pitch,
-        volume=volume,
-    )
-    await communicate.save(str(output_file))
+    await asyncio.sleep(SEGMENT_DELAY)
+    for attempt in range(MAX_RETRIES):
+        try:
+            communicate = edge_tts.Communicate(
+                text=full_narration,
+                voice=voice_id,
+                rate=rate,
+                pitch=pitch,
+                volume=volume,
+            )
+            await communicate.save(str(output_file))
+            break
+        except (ConnectionResetError, OSError, Exception) as e:
+            if attempt < MAX_RETRIES - 1:
+                wait = RETRY_DELAY * (attempt + 1)
+                print(f"    ⚠  Connection error, retrying in {wait}s... ({e.__class__.__name__})")
+                await asyncio.sleep(wait)
+            else:
+                raise
 
     # Copy as latest
     import shutil

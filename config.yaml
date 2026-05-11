@@ -10,7 +10,7 @@ channel:
 
 # Script Generation (Claude API)
 script:
-  model: "claude-sonnet-4-20250514"
+  model: "claude-sonnet-4-5-20241022"
   max_tokens: 4096
   target_duration_minutes: 8  # Approximate video length
   style: "conversational and educational, no jargon without explanation"

@@ -93,10 +93,10 @@ Avoid markdown formatting in the narration — just plain spoken English.
 """
 
     print(f"  Generating script for: {topic}")
-    print(f"  Model: {script_config.get('model', 'claude-sonnet-4-20250514')}")
+    print(f"  Model: {script_config.get('model', 'claude-sonnet-4-5-20241022')}")
 
     response = client.messages.create(
-        model=script_config.get("model", "claude-sonnet-4-20250514"),
+        model=script_config.get("model", "claude-sonnet-4-5-20241022"),
         max_tokens=script_config.get("max_tokens", 4096),
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}],
@@ -126,7 +126,7 @@ Avoid markdown formatting in the narration — just plain spoken English.
     script_data["metadata"] = {
         "topic": topic,
         "generated_at": datetime.now().isoformat(),
-        "model": script_config.get("model", "claude-sonnet-4-20250514"),
+        "model": script_config.get("model", "claude-sonnet-4-5-20241022"),
         "channel": config["channel"]["name"],
     }
 
