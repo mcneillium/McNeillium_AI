@@ -1,0 +1,85 @@
+{
+  "title": "What Are AI Agents and Why They Matter in 2026",
+  "description": "A comprehensive breakdown of AI agents: what they are, how they work under the hood, the key patterns driving the agentic revolution, and why 2026 is the year they go mainstream. Perfect for developers, tech enthusiasts, and anyone curious about where AI is actually heading.",
+  "tags": [
+    "AI agents",
+    "agentic AI",
+    "ReAct loop",
+    "tool use",
+    "multi-agent systems",
+    "AI 2026",
+    "LLM agents",
+    "autonomous AI",
+    "AI orchestration",
+    "Claude",
+    "GPT",
+    "coding agents",
+    "AI research",
+    "McNeillium_AI"
+  ],
+  "sections": [
+    {
+      "id": "hook",
+      "heading": "The Age of AI Agents Is Here",
+      "narration": "Imagine giving your computer a goal, not a step-by-step instruction, just a goal, and watching it figure out the rest on its own. It searches the web, writes code, reads documents, calls APIs, corrects its own mistakes, and delivers a finished result. That is not science fiction anymore. That is what AI agents do right now, today, in 2026. And if you are not paying attention to this shift, you are already behind. In this video I am going to break down exactly what AI agents are, how they work, and why this year specifically is the tipping point.",
+      "screen_text": "AI AGENTS: The Biggest Shift in Tech Since the Smartphone",
+      "visual_notes": "Fast montage of an AI agent performing tasks: browsing the web, writing code, generating reports, sending emails. Dramatic music. Channel branding lower-third."
+    },
+    {
+      "id": "intro",
+      "heading": "Welcome to McNeillium AI",
+      "narration": "What is going on everyone, welcome back to McNeillium AI. If you are new here, this channel is all about breaking down AI concepts, tools, and workflows so you can actually use this stuff in your daily life and career. Today we are tackling one of the most important topics in AI right now: agents. You have probably heard the term thrown around a lot. Every company is slapping the word agent on their product. But what does it actually mean? Let us cut through the hype and get to the real substance.",
+      "screen_text": "What Are AI Agents? | A No-Hype Breakdown",
+      "visual_notes": "Channel intro animation. Face cam with branded background. Subscribe button animation. Title card transition."
+    },
+    {
+      "id": "main_point_1",
+      "heading": "What AI Agents Actually Are and the ReAct Loop",
+      "narration": "At the most basic level, an AI agent is a system that uses a large language model as its brain to autonomously accomplish tasks. But here is the key distinction: a chatbot responds to your messages. An agent takes action. It does not just tell you what to do, it goes and does it. The architecture that makes this work is called the ReAct loop, which stands for Reasoning plus Acting. Here is how it works. Step one: the agent receives a goal from you. Step two: it reasons about what to do next. It thinks through the problem, considers what tools it has available, and formulates a plan. Step three: it acts. It picks a tool, calls an API, writes some code, runs a search, whatever the task requires. Step four: it observes the result of that action. Did it work? Did it get an error? Is the information useful? Step five: it loops back to step two. It reasons again based on the new information and decides the next action. This loop continues until the task is complete or the agent determines it cannot proceed. Think of it like a junior employee. You give them a task, they try something, check the result, adjust, try again, and eventually deliver the finished work. That is the ReAct loop in a nutshell.",
+      "screen_text": "The ReAct Loop:\n1. Receive Goal\n2. Reason (Think)\n3. Act (Use Tools)\n4. Observe (Check Results)\n5. Loop Until Done",
+      "visual_notes": "Animated diagram of the ReAct loop cycling through Reason, Act, Observe. Highlight each step as narration covers it. Side-by-side comparison: chatbot (single response) vs agent (multi-step loop)."
+    },
+    {
+      "id": "main_point_2",
+      "heading": "Core Components and Real-World Examples",
+      "narration": "Now let us break down the four core components that every AI agent needs. First, the Brain. This is the large language model itself, Claude, GPT, Gemini, whatever model is at the centre. It handles reasoning, language understanding, and decision-making. Second, Tools. These are the capabilities the agent can use to interact with the world. A web browser, a code interpreter, file system access, API calls, database queries. Without tools, the agent is just a chatbot. Tools are what make it an agent. Third, Memory. Agents need to remember what they have done, what worked, what failed, and what the user asked for. Short-term memory is the conversation context. Long-term memory might be a vector database or a persistent knowledge store that carries across sessions. Fourth, Orchestration. This is the control logic that manages the ReAct loop, handles errors, decides when to stop, and coordinates everything. Think of it as the project manager keeping all the pieces together. Now let me give you some real-world examples that are live right now. Coding agents like Claude Code and GitHub Copilot agent mode can take a feature request, read your codebase, write the implementation, run the tests, fix failures, and open a pull request. Research agents can take a complex question, search dozens of sources, cross-reference information, and produce a structured report with citations. Customer support agents handle tier-one tickets autonomously, pulling up account information, following troubleshooting flows, and escalating to humans only when necessary. Web browsing agents can navigate websites, fill out forms, extract data, and complete multi-step online workflows that would take a human twenty minutes.",
+      "screen_text": "4 Core Components:\n• Brain (LLM)\n• Tools (APIs, browser, code)\n• Memory (context + persistence)\n• Orchestration (control logic)\n\nReal-World Examples:\n→ Coding agents\n→ Research agents\n→ Support agents\n→ Web browsing agents",
+      "visual_notes": "Four-quadrant graphic showing Brain, Tools, Memory, Orchestration with icons. Transition to screen recordings or mockups of each real-world example: IDE with coding agent, research report being generated, support chat interface, browser automation."
+    },
+    {
+      "id": "main_point_3",
+      "heading": "Key Agentic Patterns and Why 2026 Is the Tipping Point",
+      "narration": "There are five key agentic patterns you need to know about because these are the building blocks that developers are combining to build increasingly powerful systems. Pattern one: Tool Use. This is the most fundamental pattern. The agent can call external tools, functions, APIs, anything you expose to it. This is what separates an agent from a plain language model. Pattern two: Planning. Before diving into action, sophisticated agents decompose complex tasks into sub-tasks, create execution plans, and prioritise steps. This leads to much better outcomes on hard problems. Pattern three: Reflection. This is where agents evaluate their own output. Did my code actually work? Is this answer accurate? Does this match what the user asked for? Self-critique dramatically improves reliability. Pattern four: Multi-Agent systems. Instead of one agent doing everything, you have specialised agents collaborating. A researcher agent hands off to a writer agent, which hands off to an editor agent. Each one is optimised for its role. Pattern five: Human-in-the-Loop. Smart agent designs know when to pause and ask for human input. Not everything should be fully autonomous. The best systems give humans control at critical decision points. Now here is why 2026 specifically is the tipping point. Three things have converged this year. First, model capability. The models released in late 2025 and early 2026 are dramatically better at tool use, long-context reasoning, and following complex instructions. The error rates have dropped to the point where agents are genuinely reliable. Second, infrastructure maturity. We now have standardised frameworks, the Model Context Protocol for tool integration, robust orchestration libraries, and production-grade deployment options. The plumbing is finally ready. Third, cost economics. Token prices have fallen by roughly ninety percent over the past eighteen months. Running an agent that makes fifty LLM calls to complete a task used to cost dollars. Now it costs pennies. That changes the entire calculus of what is worth automating.",
+      "screen_text": "5 Agentic Patterns:\n1. Tool Use\n2. Planning\n3. Reflection\n4. Multi-Agent Collaboration\n5. Human-in-the-Loop\n\nWhy 2026?\n✓ Model capability leap\n✓ Infrastructure maturity (MCP)\n✓ 90% cost reduction",
+      "visual_notes": "Numbered list with icons for each pattern. For multi-agent, show a diagram of agents passing work between each other. For the 2026 tipping point section, show a timeline graphic with the three convergence factors. Cost graph showing token price decline."
+    },
+    {
+      "id": "demo",
+      "heading": "Quick Demo: An AI Agent in Action",
+      "narration": "Let me show you a quick demo so this is not just theory. I am going to give an AI agent a single goal: research the top three agentic AI frameworks in 2026, compare their features, and produce a summary table. Watch what happens. The agent starts by reasoning about the task. It decides it needs to search the web. It runs multiple searches, pulls information from documentation sites, blog posts, and GitHub repositories. It cross-references what it finds, identifies inconsistencies, goes back to verify. Then it organises everything into a clean comparison table with framework names, supported features, pricing, and community size. The whole thing took about ninety seconds. A human doing this same research would spend thirty to forty-five minutes. That is the power of agents. Not replacing humans, but compressing hours of tedious work into seconds.",
+      "screen_text": "DEMO: Agent Research Task\nGoal → Search → Analyse → Compare → Deliver",
+      "visual_notes": "Screen recording of an actual agent session. Show the terminal or interface with the agent reasoning, calling tools, and producing output. Speed up the middle portion. Highlight the final comparison table output. Timer graphic showing elapsed time."
+    },
+    {
+      "id": "summary",
+      "heading": "Pulling It All Together",
+      "narration": "Let us recap what we covered. AI agents are systems that use large language models to autonomously accomplish tasks through the ReAct loop of reasoning, acting, and observing. They are built on four core components: a brain, tools, memory, and orchestration. We are seeing them deployed right now in coding, research, customer support, and web automation. The five key patterns driving the space are tool use, planning, reflection, multi-agent collaboration, and human-in-the-loop design. And 2026 is the tipping point because model capability, infrastructure, and cost economics have all converged at the same time. This is not incremental progress. This is a step change in what software can do. If you work in tech, or honestly if you work in any knowledge profession, understanding AI agents is no longer optional. It is the new baseline.",
+      "screen_text": "Key Takeaways:\n• Agents = LLM + Tools + Memory + Orchestration\n• ReAct Loop: Reason → Act → Observe → Repeat\n• 5 Patterns: Tool Use, Planning, Reflection, Multi-Agent, HITL\n• 2026: The year agents go mainstream",
+      "visual_notes": "Summary slide with all key points. Animated checkmarks appearing next to each takeaway. Clean, branded layout."
+    },
+    {
+      "id": "outro",
+      "heading": "What's Next + CTA",
+      "narration": "If you found this helpful, smash that like button because it genuinely helps the channel grow. Subscribe if you want more no-hype breakdowns of AI concepts, tools, and workflows. I am going to be doing a deep dive into building your own AI agent from scratch in an upcoming video, so make sure you have notifications turned on so you do not miss that. Drop a comment below and tell me: what task would you want an AI agent to handle for you? I read every single comment and I will be picking the best ideas for future videos. Until next time, stay curious, keep building, and I will see you in the next one.",
+      "screen_text": "LIKE | SUBSCRIBE | COMMENT\nNext Video: Build Your Own AI Agent from Scratch",
+      "visual_notes": "Face cam with subscribe animation overlay. Comment prompt graphic. End screen with suggested video cards. Channel logo. Outro music."
+    }
+  ],
+  "estimated_duration_seconds": 510,
+  "metadata": {
+    "topic": "What are AI Agents and why they matter in 2026",
+    "generated_at": "2026-05-11T12:00:00",
+    "model": "hand-written",
+    "channel": "McNeillium_AI"
+  }
+}

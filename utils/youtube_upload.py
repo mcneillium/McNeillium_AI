@@ -8,10 +8,15 @@ After that, a refresh token is saved and reused automatically.
 """
 
 import argparse
+import io
 import json
 import os
 import sys
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 from dotenv import load_dotenv
 
@@ -140,7 +145,7 @@ def upload_video(
 
 def upload_from_script(script_path: str, video_path: str, privacy: str = DEFAULT_PRIVACY) -> str:
     """Upload using metadata from a script JSON file."""
-    with open(script_path) as f:
+    with open(script_path, encoding="utf-8") as f:
         script_data = json.load(f)
 
     title = script_data.get("title", "McNeillium_AI Video")

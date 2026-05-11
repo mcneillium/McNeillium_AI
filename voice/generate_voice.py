@@ -32,7 +32,7 @@ def load_config() -> dict:
 
 def load_script(script_path: str) -> dict:
     """Load a script JSON file."""
-    with open(script_path) as f:
+    with open(script_path, encoding="utf-8") as f:
         return json.load(f)
 
 

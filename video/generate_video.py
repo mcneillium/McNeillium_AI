@@ -34,7 +34,7 @@ def load_config() -> dict:
 
 
 def load_script(script_path: str) -> dict:
-    with open(script_path) as f:
+    with open(script_path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -46,19 +46,20 @@ def get_audio_duration(audio_path: str) -> float:
 
 def get_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     """Get a monospace font. Falls back to default if custom not found."""
-    font_paths = [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf",
-        "/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf",
-    ]
     if bold:
-        bold_paths = [
+        font_paths = [
+            "C:/Windows/Fonts/consolab.ttf",
+            "C:/Windows/Fonts/courbd.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf",
-            "/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf",
         ]
-        font_paths = bold_paths + font_paths
+    else:
+        font_paths = [
+            "C:/Windows/Fonts/consola.ttf",
+            "C:/Windows/Fonts/cour.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf",
+        ]
 
     for fp in font_paths:
         if os.path.exists(fp):

@@ -1,0 +1,70 @@
+{
+  "title": "Google's Remy: The AI Agent That Actually Does Things For You",
+  "description": "Google is building Remy, a Gemini-powered AI agent that goes far beyond chatbots. It can make purchases, book travel, manage your emails, and run errands — all on its own, 24/7. Here's everything we know and why it matters.",
+  "tags": ["Google Remy", "AI agent", "Gemini", "Google IO 2026", "personal AI", "agentic AI", "Google assistant", "AI automation", "McNeillium AI"],
+  "sections": [
+    {
+      "id": "hook",
+      "heading": "Google Just Changed Everything",
+      "narration": "What if Google didn't just answer your questions, but actually did things for you? Not just setting a timer or reading the weather. I mean booking your flights, buying things on your behalf, drafting emails to your colleagues, and doing it all without you even asking. That's not a concept video. That's a real product Google is building right now. It's called Remy, and it might be the most important thing Google has done since Search.",
+      "screen_text": "What if Google didn't just answer questions...\nbut actually DID things for you?\n\n- Book flights\n- Make purchases\n- Draft emails\n- All without you asking\n\nMeet Remy.",
+      "visual_notes": "Dark terminal with text typing in dramatically. Google logo fades in, then transforms into the word Remy with a subtle glow."
+    },
+    {
+      "id": "intro",
+      "heading": "What We Know So Far",
+      "narration": "Welcome to McNeillium AI. So here's the situation. In early May 2026, reports broke that Google has been internally testing a new AI agent codenamed Remy. It was first discovered through strings of code hidden inside the latest Google app, and then confirmed by internal documents obtained by Business Insider. Remy is described as a twenty-four-seven personal agent for work, school, and daily life, powered by Gemini. And it's not just another chatbot upgrade. This is Google turning Gemini from a thing you talk to into a thing that works for you. Google hasn't officially confirmed it yet, but all signs point to a public reveal at Google I O later this month. Let's break down what Remy actually is, what it can do, and why this changes the game.",
+      "screen_text": "Remy — Key Facts:\n\n> Discovered: May 2026 (code strings + leaks)\n> Powered by: Gemini\n> Status: Internal dogfooding\n> Described as: \"24/7 personal agent\"\n> Expected reveal: Google I/O 2026\n\nThis is NOT just a chatbot upgrade.",
+      "visual_notes": "Timeline showing discovery dates. Google app icon with magnifying glass revealing hidden code strings. News headline clippings animating in."
+    },
+    {
+      "id": "main_point_1",
+      "heading": "What Makes Remy Different",
+      "narration": "So what makes Remy different from Google Assistant or even the current Gemini app? One word: proactivity. Every AI assistant you've used until now is reactive. You ask it something, it responds. You give it a command, it executes. Remy flips that model. It's designed to act autonomously by drawing on your personal context from Gmail, Google Photos, Calendar, and other connected services. It monitors things that matter to you and takes action in the background. Think about that for a second. Instead of you saying hey, remind me to buy flowers for mum's birthday, Remy would already know the birthday is coming up from your calendar, know your mum likes tulips from your past shopping history, find a good deal, and either buy them or ask for your approval before completing the purchase. That's the difference between an assistant and an agent. An assistant waits. An agent acts.",
+      "screen_text": "Reactive vs Proactive AI:\n\nOld model: You ask -> It responds\nRemy model: It monitors -> It acts\n\nRemy uses personal context:\n- Gmail, Calendar, Photos\n- Shopping history\n- Connected services\n\n\"An assistant waits. An agent acts.\"",
+      "visual_notes": "Split screen comparison. Left shows old assistant model with user always initiating. Right shows Remy with autonomous action loops. Arrow diagram showing context flowing from Google services into Remy."
+    },
+    {
+      "id": "main_point_2",
+      "heading": "What Remy Can Actually Do",
+      "narration": "Let's talk specifics. Based on the leaked code and internal documents, here's what Remy can do. First, communication. Remy can draft and send emails through Gmail, compose messages, and even communicate with other people on your behalf. Second, purchases. This is the big one. Remy can make purchases for you. The code strings explicitly mention buying capabilities, which means Google is building in payment integration. Third, document management. It connects to Google Docs, Drive, and Keep, so it can create documents, organise files, and manage your notes. Fourth, scheduling. Full Calendar integration means it can book meetings, manage your agenda, and coordinate with other people's availability. And fifth, third-party apps. This is where it gets really interesting. Remy reportedly connects to GitHub, WhatsApp, Spotify, and more. It's not locked inside Google's walled garden. It can reach out across your entire digital life. That app integration list is what separates this from a toy demo. Google is positioning Remy as the central nervous system of your digital existence.",
+      "screen_text": "Remy's Capabilities:\n\n1. Communication  - Gmail, messaging\n2. Purchases      - Buy things for you\n3. Documents      - Docs, Drive, Keep\n4. Scheduling     - Calendar management\n5. Third-party    - GitHub, WhatsApp, Spotify\n\nConnected across your entire digital life.",
+      "visual_notes": "Five capability cards appearing one by one, each with an app icon grid showing connected services. Final frame shows all cards connected with lines to a central Remy hub."
+    },
+    {
+      "id": "main_point_3",
+      "heading": "The Bigger Picture: The AI Agent Race",
+      "narration": "Remy doesn't exist in a vacuum. Google is entering a full-blown arms race. Meta is building its own personal AI agent called Hatch. OpenAI has been pushing agentic capabilities in ChatGPT with their Operator tool. Apple is reportedly working on a more agentic version of Siri. And Anthropic, who makes Claude, has been shipping agent frameworks and tools for developers. But Google has one massive advantage that none of the others can match. Data. Google already has your email, your calendar, your photos, your documents, your search history, your location data, your shopping history. Remy doesn't need to learn who you are from scratch. It already knows. That's both incredibly powerful and, honestly, a bit unsettling. The company that knows more about you than any other company on earth is now building an agent that can act on that knowledge autonomously. The privacy implications are enormous, and we'll get to that.",
+      "screen_text": "The AI Agent Arms Race:\n\n> Google  - Remy (Gemini-powered)\n> Meta   - Hatch\n> OpenAI - Operator / ChatGPT agents\n> Apple  - Agentic Siri\n> Anthropic - Claude agent tools\n\nGoogle's advantage: YOUR DATA\nGmail + Calendar + Photos + Search + Maps\n\nPowerful... and unsettling.",
+      "visual_notes": "Company logos arranged in a competitive lineup. Google logo grows larger to show data advantage. Icons for each Google service orbit around the Remy logo."
+    },
+    {
+      "id": "demo",
+      "heading": "Privacy and Trust: The Hard Questions",
+      "narration": "Now let's talk about the elephant in the room. An AI agent that can read your emails, access your photos, and make purchases on your behalf requires an extraordinary level of trust. And let's be honest, Google's track record on privacy isn't exactly spotless. There are some critical questions here. First, consent and control. Can you set boundaries on what Remy can and can't do? Can you say yes to email drafting but no to purchases? The reports suggest Google is building granular permission controls, but we'll need to see how that works in practice. Second, data usage. Is Remy using your personal data to improve its models? Is your email content being fed into training data? Google will need to be crystal clear on this. Third, security. If Remy can make purchases and send messages, what happens if someone gains access to your account? The blast radius of a compromised account just got a lot bigger. And fourth, autonomy limits. How much should an AI agent be allowed to do without checking in? If Remy books a flight for you that costs two thousand pounds, did you actually consent to that? These aren't hypothetical concerns. These are the questions Google has to answer before Remy goes public. And how they answer them will determine whether people actually trust this thing.",
+      "screen_text": "The Hard Questions:\n\n1. Consent     - Granular permission controls?\n2. Data Usage  - Personal data in training?\n3. Security    - Account compromise = bigger blast radius\n4. Autonomy    - How much action without approval?\n\n\"These aren't hypothetical.\nGoogle must answer before launch.\"",
+      "visual_notes": "Warning-style layout with amber accents. Each question appears as a card with a question mark icon. Shield icon for security, lock icon for privacy."
+    },
+    {
+      "id": "summary",
+      "heading": "Why This Matters",
+      "narration": "So here's the bottom line. Google's Remy represents a fundamental shift in how we interact with technology. We're moving from an era where you use tools to an era where tools use themselves on your behalf. If Google gets this right, Remy becomes the most useful product they've ever built. If they get it wrong, it becomes the biggest privacy scandal since Cambridge Analytica. Either way, this is the future of AI. Not chatbots, not image generators. Agents that live inside your digital life and take action. Remy might be the first mainstream version of that future, and it's coming very soon.",
+      "screen_text": "The Bottom Line:\n\nFrom: You use tools\nTo: Tools act on your behalf\n\nGet it right = Most useful Google product ever\nGet it wrong = Biggest privacy scandal in years\n\nThe future of AI is AGENTS.\nRemy is coming soon.",
+      "visual_notes": "Two-path diagram showing success vs failure outcomes. Timeline arrow pointing to 'Coming Soon' with Google I/O 2026 marker."
+    },
+    {
+      "id": "outro",
+      "heading": "Thanks for Watching",
+      "narration": "That's everything we know about Google's Remy so far. I'll be covering the Google I O announcement live when it happens, so make sure you're subscribed to McNeillium AI so you don't miss it. Hit the like button if this was useful, and let me know in the comments, would you trust an AI agent to make purchases on your behalf? I'll see you in the next one.",
+      "screen_text": "Subscribe for Google I/O 2026 coverage!\n\nLike & Subscribe\nComment: Would YOU trust AI to buy things for you?\n\nMcNeillium AI",
+      "visual_notes": "Channel branding with subscribe button animation. Comment prompt with typing cursor effect. Google I/O 2026 teaser graphic."
+    }
+  ],
+  "estimated_duration_seconds": 520,
+  "metadata": {
+    "topic": "Google's Remy AI Agent",
+    "generated_at": "2026-05-11T19:30:00",
+    "model": "hand-written",
+    "channel": "McNeillium_AI"
+  }
+}
