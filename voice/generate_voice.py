@@ -14,9 +14,9 @@ from pathlib import Path
 import edge_tts
 import yaml
 
-MAX_RETRIES = 8
-RETRY_DELAY = 10
-SEGMENT_DELAY = 5
+MAX_RETRIES = 15
+RETRY_DELAY = 15
+SEGMENT_DELAY = 8
 
 # Resolve paths relative to project root
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
