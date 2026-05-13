@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """
-McNeillium_AI — Video Generator v4 (Stock Footage)
-====================================================
-Uses REAL stock video clips from Pixabay as section backgrounds.
-No more static slides — every section has motion.
+McNeillium_AI — Video Generator v5 (Professional Quality)
+============================================================
+Real stock footage with Ken Burns motion, lower-third captions,
+varied section layouts, cinematic colour grade, and paced text.
 
-Pipeline:
-  1. For each script section, fetch a relevant HD stock video from Pexels
-  2. Trim/loop the clip to match section duration
-  3. Darken + blur the footage for text readability
-  4. Overlay branded text, headings, and bullets using Pillow
-  5. Composite everything with FFmpeg
-  6. Mix in background music at low volume
-  7. Add fade transitions between sections
+Pipeline per section:
+  1. Fetch relevant HD stock video from Pixabay
+  2. Apply Ken Burns zoom/pan + teal-orange colour grade via FFmpeg
+  3. Generate layout-specific text overlay (Full Screen / Lower Third /
+     Side Panel / Full Text) with paced line-by-line animation
+  4. Composite overlay onto graded footage
+  5. Concatenate all sections + mix narration + background music
 """
 
 import argparse
@@ -144,6 +143,37 @@ ACCENTS = [
 
 
 # ═══════════════════════════════════════════════════════════════
+# LAYOUT + KEN BURNS CONFIG
+# ═══════════════════════════════════════════════════════════════
+
+LAYOUT_MAP = {
+    "hook": "A",
+    "intro": "A",
+    "main_point_1": "B",
+    "main_point_2": "B",
+    "main_point_3": "C",
+    "demo": "D",
+    "summary": "C",
+    "outro": "A",
+}
+
+KB_SCALE = 1.25
+
+LAYOUT_BG = {
+    "A": {"blur": "0:0", "darken": 0.0},
+    "B": {"blur": "1:1", "darken": 0.0},
+    "C": {"blur": "1:1", "darken": 0.0},
+    "D": {"blur": "3:3", "darken": 0.12},
+}
+
+COLOUR_GRADE = (
+    "eq=brightness=-0.06:contrast=1.1:saturation=0.85,"
+    "curves=m='0/0 0.3/0.25 0.7/0.75 1/1'"
+    ":r='0/0 0.5/0.52 1/1':b='0/0 0.5/0.48 1/1'"
+)
+
+
+# ═══════════════════════════════════════════════════════════════
 # PIXABAY VIDEO API
 # ═══════════════════════════════════════════════════════════════
 
@@ -263,40 +293,43 @@ def fetch_stock_photo(query):
 
 
 def section_search_query(section):
-    """Generate a search query for stock footage based on section content."""
+    """Generate cinematic search queries for stock footage."""
     sid = section.get("id", "")
     heading = section.get("heading", "")
     narration = section.get("narration", "")[:300].lower()
 
-    # Map section types to cinematic footage queries
-    video_queries = {
-        "hook": "futuristic technology abstract lights",
-        "intro": "artificial intelligence neural network visualization",
-        "outro": "technology social media community hands",
-        "summary": "innovation future city technology",
-        "demo": "computer programming code screen typing",
+    cinematic_queries = {
+        "hook": "city night aerial drone lights",
+        "intro": "server room blue lights close up",
+        "outro": "sunset city skyline timelapse",
+        "summary": "aerial city lights night drone",
+        "demo": "hands typing keyboard dark room",
     }
 
-    if sid in video_queries:
-        return video_queries[sid]
+    if sid in cinematic_queries:
+        return cinematic_queries[sid]
 
-    # Extract keywords from heading/narration for relevant footage
     tech_keywords = {
-        "agent": "robot artificial intelligence autonomous",
-        "privacy": "security surveillance data protection",
-        "google": "technology data center server room",
-        "openai": "artificial intelligence neural network",
-        "chatgpt": "chatbot conversation artificial intelligence",
-        "code": "programming computer code screen",
-        "data": "data visualization analytics dashboard",
-        "brain": "neural network brain science",
-        "robot": "robot automation industry",
-        "cloud": "cloud computing server data center",
-        "phone": "smartphone mobile technology",
-        "search": "internet search technology browsing",
-        "money": "business finance technology digital",
-        "ad": "digital advertising marketing online",
-        "learn": "education technology classroom digital",
+        "agent": "robot arm factory automation close up",
+        "privacy": "surveillance camera security dark",
+        "google": "server room data center blue lights",
+        "openai": "neural network visualization abstract blue",
+        "chatgpt": "person using laptop dark room",
+        "code": "hands typing keyboard dark room code",
+        "data": "data visualization hologram blue light",
+        "brain": "brain scan neural connections close up",
+        "robot": "robot arm industry automation",
+        "cloud": "cloud data center server room blue",
+        "phone": "smartphone screen glow dark room",
+        "search": "internet browsing screen close up",
+        "money": "stock market digital finance display",
+        "ad": "digital billboard advertising neon city",
+        "learn": "student laptop education digital",
+        "future": "futuristic city aerial night",
+        "danger": "warning alert red light dark",
+        "compete": "chess strategy game close up",
+        "launch": "rocket launch technology space",
+        "network": "fiber optic cables blue light",
     }
 
     combined = f"{heading} {narration}".lower()
@@ -304,39 +337,60 @@ def section_search_query(section):
         if keyword in combined:
             return footage_query
 
-    # Default: use heading + technology
-    return f"{heading} technology" if heading else "technology innovation future"
+    return f"{heading} technology cinematic" if heading else "technology innovation aerial"
 
 
 # ═══════════════════════════════════════════════════════════════
 # VIDEO CLIP PROCESSING (via FFmpeg)
 # ═══════════════════════════════════════════════════════════════
 
+def _kb_crop(effect_idx, duration, w=1920, h=1080):
+    """Return FFmpeg crop expression for a Ken Burns pan/zoom effect."""
+    sw = int(w * KB_SCALE) + int(w * KB_SCALE) % 2
+    sh = int(h * KB_SCALE) + int(h * KB_SCALE) % 2
+    dx, dy = sw - w, sh - h
+    d = max(0.1, duration)
+    effects = [
+        f"crop={w}:{h}:{dx}/2*(1-t/{d}):{dy}/2*(1-t/{d})",
+        f"crop={w}:{h}:{dx}/2*t/{d}:{dy}/2*t/{d}",
+        f"crop={w}:{h}:{dx}*t/{d}:{dy}/2",
+        f"crop={w}:{h}:{dx}*(1-t/{d}):{dy}/2",
+        f"crop={w}:{h}:{dx}*t/{d}:{dy}*t/{d}",
+    ]
+    return effects[effect_idx % len(effects)]
+
+
 def prepare_clip_segment(clip_path, duration, output_path, w=1920, h=1080,
-                         darken=0.3, blur_strength="8:8"):
-    """
-    Use FFmpeg to:
-    - Loop/trim the clip to exact duration
-    - Scale + crop to target resolution
-    - Apply blur + darken for text readability
-    - Output as raw frames or an intermediate clip
-    """
+                         darken=0.0, blur_strength="0:0", kb_effect=0):
+    sw = int(w * KB_SCALE) + int(w * KB_SCALE) % 2
+    sh = int(h * KB_SCALE) + int(h * KB_SCALE) % 2
+
+    parts = [
+        f"scale={sw}:{sh}:force_original_aspect_ratio=increase",
+        f"crop={sw}:{sh}",
+        _kb_crop(kb_effect, duration, w, h),
+    ]
+    if blur_strength and blur_strength != "0:0":
+        parts.append(f"boxblur={blur_strength}")
+    brightness = -0.06 - darken
+    parts.append(f"eq=brightness={brightness:.2f}:contrast=1.1:saturation=0.85")
+    parts.append(
+        "curves=m='0/0 0.3/0.25 0.7/0.75 1/1'"
+        ":r='0/0 0.5/0.52 1/1':b='0/0 0.5/0.48 1/1'"
+    )
+    vf = ",".join(parts)
+
     cmd = [
         FFMPEG, "-y",
-        "-stream_loop", "-1",  # Loop if shorter than duration
+        "-stream_loop", "-1",
         "-i", clip_path,
         "-t", str(duration),
-        "-vf", (
-            f"scale={w}:{h}:force_original_aspect_ratio=increase,"
-            f"crop={w}:{h},"
-            f"boxblur={blur_strength},"
-            f"eq=brightness=-{1 - darken:.2f}:saturation=0.7"
-        ),
+        "-vf", vf,
         "-c:v", "libx264",
         "-preset", "ultrafast",
         "-crf", "23",
         "-pix_fmt", "yuv420p",
-        "-an",  # No audio from stock clips
+        "-an",
         "-r", "30",
         str(output_path),
     ]
@@ -348,10 +402,9 @@ def prepare_clip_segment(clip_path, duration, output_path, w=1920, h=1080,
     return True
 
 
-def create_static_clip(image, duration, output_path, w=1920, h=1080):
-    """Create a video clip from a static image (photo or gradient fallback)."""
+def create_static_clip(image, duration, output_path, w=1920, h=1080, kb_effect=0):
+    """Create a video clip from a static image with Ken Burns + colour grade."""
     if image is None:
-        # Generate gradient
         arr = np.zeros((h, w, 3), dtype=np.uint8)
         for ch_idx in range(3):
             start = [10, 14, 30][ch_idx]
@@ -359,24 +412,31 @@ def create_static_clip(image, duration, output_path, w=1920, h=1080):
             arr[:, :, ch_idx] = np.linspace(start, end, h, dtype=np.uint8)[:, np.newaxis]
         image = Image.fromarray(arr)
 
-    # Resize/crop
-    ratio = max(w / image.width, h / image.height)
+    sw = int(w * KB_SCALE) + int(w * KB_SCALE) % 2
+    sh = int(h * KB_SCALE) + int(h * KB_SCALE) % 2
+    ratio = max(sw / image.width, sh / image.height)
     nw, nh = int(image.width * ratio), int(image.height * ratio)
     image = image.resize((nw, nh), Image.LANCZOS)
-    left, top = (nw - w) // 2, (nh - h) // 2
-    image = image.crop((left, top, left + w, top + h))
-    image = image.filter(ImageFilter.GaussianBlur(radius=6))
-    image = ImageEnhance.Brightness(image).enhance(0.3)
+    left, top = (nw - sw) // 2, (nh - sh) // 2
+    image = image.crop((left, top, left + sw, top + sh))
 
-    # Save as temp image and convert to clip
     temp_img = output_path.parent / f"{output_path.stem}_bg.png"
     image.save(str(temp_img), "PNG")
+
+    kb = _kb_crop(kb_effect, duration, w, h)
+    vf = (
+        f"{kb},"
+        f"eq=brightness=-0.06:contrast=1.1:saturation=0.85,"
+        f"curves=m='0/0 0.3/0.25 0.7/0.75 1/1'"
+        f":r='0/0 0.5/0.52 1/1':b='0/0 0.5/0.48 1/1'"
+    )
 
     cmd = [
         FFMPEG, "-y",
         "-loop", "1",
         "-i", str(temp_img),
         "-t", str(duration),
+        "-vf", vf,
         "-c:v", "libx264",
         "-preset", "ultrafast",
         "-crf", "23",
@@ -390,141 +450,233 @@ def create_static_clip(image, duration, output_path, w=1920, h=1080):
 
 
 # ═══════════════════════════════════════════════════════════════
-# TEXT OVERLAY GENERATION
+# TEXT OVERLAY GENERATION (4 layouts)
 # ═══════════════════════════════════════════════════════════════
+
+def _line_alpha(fp, appear_time, duration):
+    """Fade-in alpha for an accumulating line."""
+    if fp < appear_time:
+        return 0, 0
+    fade = max(0.01, 0.5 / max(0.1, duration))
+    p = min(1.0, (fp - appear_time) / fade)
+    return int(255 * p), int(12 * (1 - p))
+
+
+def _draw_layout_a(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
+    """Layout A — Full Screen: single-line lower-third caption."""
+    n = len(lines)
+    if n == 0:
+        return
+
+    bar_h, bar_y = 76, h - 106
+
+    if fp < cs:
+        cur = -1
+    elif fp >= ce:
+        cur = n - 1
+    else:
+        cur = min(int((fp - cs) / (ce - cs) * n), n - 1)
+    if cur < 0:
+        return
+
+    ld = (ce - cs) / max(1, n)
+    ls = cs + cur * ld
+    local = min(1.0, (fp - ls) / ld) if ld > 0 else 1.0
+
+    if local < 0.12:
+        t = local / 0.12
+        x_off, alpha = int(140 * (1 - t)), int(255 * t)
+    elif local > 0.88 and cur < n - 1:
+        t = (local - 0.88) / 0.12
+        x_off, alpha = 0, int(255 * (1 - t))
+    else:
+        x_off, alpha = 0, 255
+
+    ba = min(190, alpha)
+    for gy in range(20):
+        draw.rectangle([0, bar_y - 20 + gy, w, bar_y - 19 + gy],
+                       fill=(0, 0, 0, int(ba * gy / 20)))
+    draw.rectangle([0, bar_y, w, bar_y + bar_h], fill=(0, 0, 0, ba))
+    draw.rectangle([pad - 10, bar_y, pad - 4, bar_y + bar_h],
+                   fill=(*accent, alpha))
+    bf = font_body(30)
+    draw.text((pad + x_off + 1, bar_y + bar_h // 2 + 1), lines[cur],
+              font=bf, fill=(0, 0, 0, alpha // 2), anchor="lm")
+    draw.text((pad + x_off, bar_y + bar_h // 2), lines[cur],
+              font=bf, fill=(240, 245, 250, alpha), anchor="lm")
+
+
+def _draw_layout_b(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
+    """Layout B — Lower Third: gradient bar at bottom with accumulating text."""
+    panel_h = 280
+    panel_y = h - panel_h
+    n = len(lines)
+
+    for gy in range(50):
+        draw.rectangle([0, panel_y - 50 + gy, w, panel_y - 49 + gy],
+                       fill=(8, 12, 20, int(210 * gy / 50)))
+    draw.rectangle([0, panel_y, w, h], fill=(8, 12, 20, 210))
+
+    head_y = panel_y + 16
+    if heading and fp > 0.04:
+        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
+        hf = font_heading(34)
+        draw.rectangle([pad - 8, head_y, pad - 2, head_y + 30],
+                       fill=(*accent, ha))
+        draw.text((pad + 8 + 1, head_y + 1), heading,
+                  font=hf, fill=(0, 0, 0, ha // 2))
+        draw.text((pad + 8, head_y), heading,
+                  font=hf, fill=(230, 237, 243, ha))
+        head_y += 44
+        draw.rectangle([pad, head_y, w - pad, head_y + 1],
+                       fill=(*accent, min(150, ha)))
+        head_y += 14
+
+    bf = font_body(25)
+    line_h = 40
+    max_vis = min(4, (h - head_y - 16) // line_h)
+
+    for i in range(min(n, max_vis)):
+        if n == 0:
+            break
+        appear = cs + i * ((ce - cs) / max(1, n))
+        la, slide = _line_alpha(fp, appear, duration)
+        if la == 0:
+            break
+        y = head_y + i * line_h
+        draw.ellipse([pad + 2, y + 13 + slide - 3, pad + 10, y + 13 + slide + 5],
+                     fill=(*accent, la))
+        draw.text((pad + 22 + 1, y + slide + 1), lines[i],
+                  font=bf, fill=(0, 0, 0, la // 2))
+        draw.text((pad + 22, y + slide), lines[i],
+                  font=bf, fill=(220, 228, 236, la))
+
+
+def _draw_layout_c(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
+    """Layout C — Side Panel: dark panel on right 38%."""
+    panel_x = int(w * 0.62)
+    pp = 28
+    n = len(lines)
+
+    draw.rectangle([panel_x, 44, w, h], fill=(8, 12, 20, 215))
+    draw.rectangle([panel_x, 44, panel_x + 3, h], fill=(*accent, 180))
+
+    head_y = 68
+    tx = panel_x + pp
+    tw = w - panel_x - pp * 2
+
+    if heading and fp > 0.04:
+        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
+        hf = font_heading(30)
+        draw.text((tx + 1, head_y + 1), heading,
+                  font=hf, fill=(0, 0, 0, ha // 2))
+        draw.text((tx, head_y), heading,
+                  font=hf, fill=(230, 237, 243, ha))
+        head_y += 40
+        draw.rectangle([tx, head_y, tx + min(180, tw), head_y + 1],
+                       fill=(*accent, min(150, ha)))
+        head_y += 16
+
+    bf = font_body(22)
+    line_h = 34
+    mc = max(18, int(tw / 12))
+    pl = []
+    for l in lines:
+        pl.extend(textwrap.wrap(l, width=mc))
+    n_pl = len(pl)
+
+    for i, line in enumerate(pl):
+        y = head_y + i * line_h
+        if y + line_h > h - 24:
+            break
+        appear = cs + i * ((ce - cs) / max(1, n_pl))
+        la, slide = _line_alpha(fp, appear, duration)
+        if la == 0:
+            break
+        draw.ellipse([tx + 2, y + 11 + slide - 3, tx + 10, y + 11 + slide + 5],
+                     fill=(*accent, la))
+        draw.text((tx + 18 + 1, y + slide + 1), line,
+                  font=bf, fill=(0, 0, 0, la // 2))
+        draw.text((tx + 18, y + slide), line,
+                  font=bf, fill=(220, 228, 236, la))
+
+
+def _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
+    """Layout D — Full Text: near-full dark panel for code/demo."""
+    m = 55
+    n = len(lines)
+
+    draw.rounded_rectangle([m, 50, w - m, h - 28], radius=12,
+                           fill=(8, 12, 20, 215))
+
+    head_y = 50 + 22
+    if heading and fp > 0.04:
+        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
+        hf = font_heading(34)
+        draw.rectangle([m + pad - 8, head_y, m + pad - 2, head_y + 30],
+                       fill=(*accent, ha))
+        draw.text((m + pad + 8 + 1, head_y + 1), heading,
+                  font=hf, fill=(0, 0, 0, ha // 2))
+        draw.text((m + pad + 8, head_y), heading,
+                  font=hf, fill=(230, 237, 243, ha))
+        head_y += 48
+        draw.rectangle([m + pad, head_y, w - m - pad, head_y + 1],
+                       fill=(*accent, min(150, ha)))
+        head_y += 16
+
+    bf = font_body(23)
+    line_h = 38
+
+    for i, line in enumerate(lines):
+        y = head_y + i * line_h
+        if y + line_h > h - 55:
+            break
+        appear = cs + i * ((ce - cs) / max(1, n))
+        la, slide = _line_alpha(fp, appear, duration)
+        if la == 0:
+            break
+        nx = m + pad
+        draw.text((nx, y + slide), str(i + 1).rjust(2),
+                  font=font_small(15), fill=(80, 90, 110, la))
+        draw.text((nx + 32 + 1, y + slide + 1), line,
+                  font=bf, fill=(0, 0, 0, la // 2))
+        draw.text((nx + 32, y + slide), line,
+                  font=bf, fill=(220, 228, 236, la))
+
 
 def create_text_overlay_frames(
     heading, lines, duration, w, h, fps, section_num, total_sections,
-    channel_name, accent, layout="bullets"
+    channel_name, accent, layout="B"
 ):
-    """
-    Generate transparent PNG overlay frames with text that animates.
-    Text fades/slides in progressively.
-    """
     frames_dir = TEMP_DIR / f"overlay_{section_num}"
     frames_dir.mkdir(parents=True, exist_ok=True)
-
     total_frames = int(duration * fps)
     pad = 80
+    CS, CE = 0.12, 0.88
 
     for f_idx in range(total_frames):
         fp = f_idx / max(1, total_frames - 1)
-
-        # RGBA for transparency
         img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
 
-        # ── Top bar (semi-transparent) ──
-        draw.rectangle([0, 0, w, 50], fill=(0, 0, 0, 180))
-
-        # Channel name
-        draw.text((pad, 17), channel_name, font=font_small(18),
-                  fill=(88, 166, 255, 255), anchor="lm")
-
-        # Section counter
-        counter = f"{section_num}/{total_sections}"
-        draw.text((w - pad, 17), counter, font=font_small(16),
-                  fill=(140, 150, 165, 230), anchor="rm")
-
-        # Progress bar
-        draw.rectangle([0, 50, w, 53], fill=(30, 30, 30, 200))
+        draw.rectangle([0, 0, w, 38], fill=(0, 0, 0, 130))
+        draw.text((pad, 19), channel_name, font=font_small(14),
+                  fill=(88, 166, 255, 190), anchor="lm")
+        draw.text((w - pad, 19), f"{section_num}/{total_sections}",
+                  font=font_small(13), fill=(140, 150, 165, 170), anchor="rm")
+        draw.rectangle([0, 38, w, 40], fill=(30, 30, 30, 140))
         prog = (section_num - 1 + fp) / total_sections
-        draw.rectangle([0, 50, int(w * prog), 53], fill=(*accent, 255))
+        draw.rectangle([0, 38, int(w * prog), 40], fill=(*accent, 210))
 
-        # ── Content panel ──
-        panel_top = 70
-        panel_bottom = h - 50
-        panel_left = pad - 25
-        panel_right = w - pad + 25
+        if layout == "A":
+            _draw_layout_a(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
+        elif layout == "C":
+            _draw_layout_c(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
+        elif layout == "D":
+            _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
+        else:
+            _draw_layout_b(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
 
-        draw.rounded_rectangle(
-            [panel_left, panel_top, panel_right, panel_bottom],
-            radius=16, fill=(8, 12, 18, 190)
-        )
-
-        # ── Heading (slides in from left) ──
-        head_y = panel_top + 28
-        if heading:
-            # Slide-in: starts offset, settles at 0
-            slide_offset = max(0, int(60 * (1 - min(1.0, fp * 4))))
-            head_alpha = min(255, int(255 * min(1.0, fp * 4)))
-            hf = font_heading(44)
-
-            # Accent bar
-            draw.rectangle([pad - slide_offset, head_y, pad + 5 - slide_offset,
-                           head_y + 38], fill=(*accent, head_alpha))
-            # Heading text shadow
-            draw.text((pad + 20 - slide_offset + 2, head_y + 2), heading,
-                      font=hf, fill=(0, 0, 0, head_alpha // 2))
-            draw.text((pad + 20 - slide_offset, head_y), heading,
-                      font=hf, fill=(230, 237, 243, head_alpha))
-
-            head_y += 60
-
-        # Divider
-        div_alpha = min(180, int(180 * min(1.0, fp * 3)))
-        draw.rectangle([pad, head_y, w - pad, head_y + 1],
-                       fill=(*accent, div_alpha))
-        head_y += 18
-
-        # ── Content lines (fade in one by one) ──
-        bf = font_body(28)
-        line_h = 48
-        n_lines = len(lines)
-
-        for i, line in enumerate(lines):
-            y = head_y + i * line_h
-            if y + line_h > panel_bottom - 35:
-                break
-
-            # Each line fades in with a stagger
-            line_start = 0.08 + (i * 0.06)  # Stagger start time
-            if fp < line_start:
-                continue
-
-            line_progress = min(1.0, (fp - line_start) / 0.15)
-            line_alpha = int(255 * line_progress)
-            slide_up = int(15 * (1 - line_progress))
-
-            if layout == "numbered":
-                # Number badge
-                draw.rounded_rectangle(
-                    [pad, y + slide_up, pad + 32, y + 32 + slide_up],
-                    radius=5, fill=(*accent, line_alpha)
-                )
-                draw.text((pad + 16, y + 16 + slide_up), str(i + 1),
-                          font=font_small(16), fill=(0, 0, 0, line_alpha), anchor="mm")
-                text_x = pad + 44
-            elif layout == "code":
-                # Line number
-                draw.text((pad + 8, y + slide_up), str(i + 1).rjust(2),
-                          font=font_small(16), fill=(80, 90, 100, line_alpha))
-                text_x = pad + 40
-            else:
-                # Bullet dot
-                dot_y = y + 14 + slide_up
-                draw.ellipse([pad + 4, dot_y - 4, pad + 14, dot_y + 4],
-                             fill=(*accent, line_alpha))
-                text_x = pad + 26
-
-            # Text shadow + text
-            draw.text((text_x + 1, y + slide_up + 1), line,
-                      font=bf, fill=(0, 0, 0, line_alpha // 2))
-            draw.text((text_x, y + slide_up), line,
-                      font=bf, fill=(220, 228, 236, line_alpha))
-
-        # ── Blinking cursor ──
-        visible_count = sum(1 for i in range(n_lines)
-                           if fp >= 0.08 + i * 0.06
-                           and head_y + i * line_h + line_h <= panel_bottom - 35)
-        if visible_count > 0 and int(fp * 60) % 2 == 0:
-            last_visible = min(visible_count - 1, n_lines - 1)
-            last_y = head_y + last_visible * line_h
-            cursor_x = pad + 26 + bf.getlength(lines[last_visible]) + 8
-            draw.rectangle([cursor_x, last_y, cursor_x + 12, last_y + 30],
-                           fill=(*accent, 200))
-
-        # Save overlay frame
         frame_path = frames_dir / f"overlay_{f_idx:06d}.png"
         img.save(str(frame_path), "PNG")
 
@@ -778,7 +930,8 @@ def generate_video(script_path, audio_path, config):
         heading = sec.get("heading", "")
         screen_text = sec.get("screen_text", sec.get("narration", ""))
         accent = ACCENTS[i % len(ACCENTS)]
-        layout = "numbered" if i % 3 == 0 else ("code" if sid == "demo" else "bullets")
+        layout = LAYOUT_MAP.get(sid, "B")
+        bg_p = LAYOUT_BG.get(layout, {"blur": "1:1", "darken": 0.0})
 
         # Chapter marker
         mins = int(current_time) // 60
@@ -789,22 +942,25 @@ def generate_video(script_path, audio_path, config):
         max_chars = max(45, int((W - 200) / 16))
         wrapped = textwrap.wrap(screen_text, width=max_chars)
 
-        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) — ", end="")
+        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) [{layout}] — ", end="")
 
-        # Prepare background clip
+        # Prepare background clip with Ken Burns + colour grade
         bg_clip_path = TEMP_DIR / f"bg_{i:02d}.mp4"
         clip_type, clip_data = clip_paths[i]
 
         if clip_type == "video":
             print("video bg ", end="")
-            ok = prepare_clip_segment(clip_data, dur, bg_clip_path, W, H,
-                                       darken=0.35, blur_strength="6:6")
+            ok = prepare_clip_segment(
+                clip_data, dur, bg_clip_path, W, H,
+                darken=bg_p["darken"], blur_strength=bg_p["blur"],
+                kb_effect=i,
+            )
             if not ok:
                 print("→ fallback ", end="")
-                create_static_clip(None, dur, bg_clip_path, W, H)
+                create_static_clip(None, dur, bg_clip_path, W, H, kb_effect=i)
         else:
             print("photo bg ", end="")
-            create_static_clip(clip_data, dur, bg_clip_path, W, H)
+            create_static_clip(clip_data, dur, bg_clip_path, W, H, kb_effect=i)
 
         # Generate text overlay frames
         overlay_pattern, n_frames = create_text_overlay_frames(
@@ -940,7 +1096,7 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
-    print("\n🎬 McNeillium_AI — Stock Footage Video Generator v4")
+    print("\n🎬 McNeillium_AI — Professional Video Generator v5")
     print("=" * 55)
 
     output = generate_video(args.script, args.audio, config)
