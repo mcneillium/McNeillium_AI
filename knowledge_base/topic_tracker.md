@@ -7,6 +7,7 @@
 | 2026-05-11 | Google's Remy: The AI Agent That Does Things For You | https://youtu.be/NIefW6f_tgQ | - |
 | 2026-05-11 | ChatGPT Now Has Ads — And It Changes Everything | https://youtu.be/K_vEoHXrZh8 | - |
 | 2026-05-13 | The AI That Found Thousands of Zero-Day Bugs | https://youtu.be/ASUfpUp6Wbk | - |
+| 2026-05-13 | Anthropic Just Taught AI to Dream | https://youtu.be/JBpvpXqsFn4 | - |
 
 ## Planned Topics (Priority Order)
 1. How RAG works and why every AI app uses it

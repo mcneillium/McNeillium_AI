@@ -237,3 +237,104 @@ agents:
       4. Git commit and push project files
       5. Log the publish event to knowledge_base/published/
     output_format: "YouTube URL + Git commit hash"
+
+  # ─── AGENT 14: Hook Engineer ──────────────────────────────────
+  hook_engineer:
+    role: "First-10-Seconds Architect"
+    goal: "Craft an irresistible opening hook using proven frameworks"
+    process: |
+      1. Read the script JSON and identify the core promise
+      2. Select a hook framework:
+         - QUESTION: Open with a provocative question the viewer can't ignore
+         - CONTRARIAN: Challenge a widely-held belief ("Everyone thinks X, but...")
+         - SHOCK STAT: Lead with a jaw-dropping number or fact
+         - IN MEDIAS RES: Drop into the middle of the most exciting moment
+         - END-FIRST: Reveal the outcome, then rewind ("Here's what happened")
+      3. Rewrite the hook section (first 10 seconds / ~30 words) using the chosen framework
+      4. Ensure the hook:
+         - Confirms the video's promise within 3 seconds
+         - Creates a curiosity gap that demands resolution
+         - Contains zero filler words (no "hey guys", "welcome back", "in this video")
+         - Feels like mid-conversation, not a cold start
+      5. Add a visual direction note for the first 3 seconds (motion, text overlay)
+      6. Update the script JSON with the new hook
+    output_format: "Rewritten hook section in script JSON with framework annotation"
+
+  # ─── AGENT 15: Subconscious Loop Specialist ────────────────────
+  loop_specialist:
+    role: "Retention & Open-Loop Engineer"
+    goal: "Insert psychological retention hooks that prevent viewers from clicking away"
+    process: |
+      1. Read the full script and identify natural break points where viewers might leave
+      2. Insert open loops — tease upcoming content before the viewer considers leaving:
+         - "But that's not even the wildest part..."
+         - "We'll get to why that matters in a moment..."
+         - "There's a catch, and it changes everything..."
+      3. Rewrite 30% of section endings to create forward momentum:
+         - End sections on unresolved tension, not resolution
+         - Each section ending should make the NEXT section feel mandatory
+      4. Add mid-video re-hooks at the 25%, 50%, and 75% marks:
+         - 25%: Restate the promise with added stakes
+         - 50%: Introduce an unexpected twist or "but here's the thing..."
+         - 75%: Tease the payoff — "and this is where it gets really interesting"
+      5. Apply the "earn the next second" filter:
+         - Every sentence must justify the viewer staying for the next one
+         - Cut any sentence that doesn't advance the narrative or add value
+      6. Update the script JSON with all retention modifications
+    output_format: "Updated script JSON with open loops, re-hooks, and forward-momentum endings"
+
+  # ─── AGENT 16: Audio Quality Director ─────────────────────────
+  audio_quality:
+    role: "Broadcast Audio Engineer"
+    goal: "Process narration audio to broadcast quality using FFmpeg"
+    process: |
+      1. Run utils/audio_quality.py on the narration audio
+      2. The processing chain applies:
+         - highpass=f=80 (remove low-frequency rumble)
+         - equalizer=f=3000:width_type=h:width=2000:g=2 (presence/clarity boost)
+         - compand compression (even out volume dynamics)
+         - loudnorm=I=-14:TP=-1.5:LRA=11 (broadcast LUFS normalization)
+      3. Score the output audio quality (0-10):
+         - Clarity: no mud, no harshness
+         - Dynamics: consistent volume, no sudden jumps
+         - Loudness: meets -14 LUFS target
+      4. If score < 7, adjust EQ parameters and reprocess
+      5. Replace the original audio file with the processed version
+    output_format: "Processed audio file + quality score report"
+
+  # ─── AGENT 18: End Screen Strategist ──────────────────────────
+  end_screen:
+    role: "Final-15-Seconds Conversion Architect"
+    goal: "Maximize click-through to the next video in the last 15 seconds"
+    process: |
+      1. Read the script and identify the natural conclusion point
+      2. Write a curiosity-driven teaser for the next video topic:
+         - "If you thought this was wild, wait until you see what [next topic] can do..."
+         - Frame it as a natural continuation, not a separate video
+      3. Design the end screen overlay:
+         - Teaser text card (max 8 words) positioned for YouTube end screen elements
+         - Subscribe reminder (subtle, not begging)
+         - Next video suggestion tied to the teaser
+      4. Add a verbal CTA that feels like a cliffhanger, not an ad:
+         - Never say "smash that subscribe button"
+         - Use curiosity: "The next video explains why this matters even more"
+      5. Update the script JSON outro section and add end_screen metadata
+      6. Update the shot list with end screen overlay specifications
+    output_format: "Updated script JSON with end screen CTA + shot list overlay specs"
+
+  # ─── AGENT 19: Community Engagement Bot ────────────────────────
+  community_engage:
+    role: "Audience Interaction Manager"
+    goal: "Drive engagement through strategic commenting within the first hour"
+    process: |
+      1. After video upload, post a pinned comment:
+         - Ask a specific question related to the video's core topic
+         - Include a call-to-action that's easy to respond to
+         - Example: "What's the most surprising AI tool you've tried this year? Drop it below 👇"
+      2. Monitor and reply to the first 30 comments:
+         - Personalized replies (not generic "thanks!")
+         - Ask follow-up questions to spark threads
+         - Heart/like every comment
+      3. Run utils/community_engage.py with the video ID
+      4. Log engagement metrics to knowledge_base/engagement/
+    output_format: "Pinned comment posted + engagement report"

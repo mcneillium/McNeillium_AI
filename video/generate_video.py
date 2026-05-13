@@ -819,8 +819,9 @@ def generate_intro_clip(title, channel_name, tagline, duration, w, h, fps, outpu
     shutil.rmtree(frames_dir)
 
 
-def generate_outro_clip(channel_name, duration, w, h, fps, output_path):
-    """Generate branded outro clip."""
+def generate_outro_clip(channel_name, duration, w, h, fps, output_path,
+                        teaser_text=None):
+    """Generate branded outro clip with optional end screen teaser."""
     total_frames = int(duration * fps)
     frames_dir = TEMP_DIR / "outro_frames"
     frames_dir.mkdir(parents=True, exist_ok=True)
@@ -873,6 +874,57 @@ def generate_outro_clip(channel_name, duration, w, h, fps, output_path):
            str(output_path)]
     subprocess.run(cmd, capture_output=True, text=True)
     shutil.rmtree(frames_dir)
+
+
+def generate_end_screen_ass(total_duration_s, teaser_text, output_path,
+                            width=1920, height=1080):
+    """Generate ASS overlay for last 15 seconds: teaser card + subscribe nudge."""
+    end_screen_dur = min(15.0, total_duration_s - 5.0)
+    if end_screen_dur < 3.0:
+        return None
+
+    start_ms = (total_duration_s - end_screen_dur) * 1000
+    end_ms = total_duration_s * 1000
+
+    margin_r = int(width * 0.05)
+    margin_top = int(height * 0.12)
+
+    teaser_display = teaser_text[:50] if teaser_text else "Next video coming soon..."
+
+    def _ts(ms):
+        total_cs = int(ms / 10)
+        cs = total_cs % 100
+        total_s = total_cs // 100
+        s = total_s % 60
+        m = (total_s // 60) % 60
+        h_val = total_s // 3600
+        return f"{h_val}:{m:02d}:{s:02d}.{cs:02d}"
+
+    ass = f"""[Script Info]
+Title: McNeillium_AI End Screen
+ScriptType: v4.00+
+PlayResX: {width}
+PlayResY: {height}
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Teaser,Arial Black,34,&H0000FFFF,&H000000FF,&H00000000,&HC8000000,-1,0,0,0,100,100,0,0,3,3,4,3,20,{margin_r},{margin_top},1
+Style: TeaserLabel,Arial,22,&H00FFFFFF,&H000000FF,&H00000000,&HC8000000,0,0,0,0,100,100,0,0,3,2,3,3,20,{margin_r},{margin_top + 45},1
+Style: SubNudge,Arial,24,&H4DFFFFFF,&H000000FF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,2,2,2,20,20,30,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 1,{_ts(start_ms + 500)},{_ts(end_ms - 2000)},TeaserLabel,,0,0,0,,{{\\fad(600,400)}}UP NEXT
+Dialogue: 1,{_ts(start_ms + 800)},{_ts(end_ms - 2000)},Teaser,,0,0,0,,{{\\fad(700,400)}}{teaser_display}
+Dialogue: 1,{_ts(start_ms + 1500)},{_ts(end_ms - 1000)},SubNudge,,0,0,0,,{{\\fad(500,500)}}Subscribe for more AI content
+"""
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", encoding="utf-8-sig") as f:
+        f.write(ass)
+    return str(out)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1205,18 +1257,43 @@ def generate_video(script_path, audio_path, config):
         str(CAPTIONS_DIR), section_indices, section_offsets_ms
     )
 
+    # Build VF filter chain: captions + end screen overlay
+    vf_filters = []
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
     if caption_words:
         print(f"\n    📝 STEP 6: Burning {len(caption_words)} word captions...")
         ass_path = TEMP_DIR / "captions.ass"
-        TEMP_DIR.mkdir(parents=True, exist_ok=True)
         generate_ass(caption_words, str(ass_path), W, H)
-
-        captioned_file = output_file.parent / f"{output_file.stem}_captioned.mp4"
         ass_escaped = str(ass_path).replace("\\", "/").replace(":", "\\:")
+        vf_filters.append(f"ass='{ass_escaped}'")
+    else:
+        print(f"\n    ⚠️  No word timestamps available — skipping captions")
+
+    # End screen teaser overlay (last 15 seconds)
+    end_screen_meta = script.get("metadata", {}).get("end_screen", {})
+    teaser_text = end_screen_meta.get("teaser_text", "")
+    if not teaser_text:
+        outro_section = next((s for s in sections if s.get("id") == "outro"), None)
+        if outro_section:
+            teaser_text = outro_section.get("end_screen_teaser", "")
+
+    video_dur = get_audio_duration(str(output_file))
+    if teaser_text and video_dur > 20:
+        print(f"    🎬 End screen teaser: \"{teaser_text[:40]}...\"")
+        endscreen_ass = TEMP_DIR / "endscreen.ass"
+        es_path = generate_end_screen_ass(video_dur, teaser_text, str(endscreen_ass), W, H)
+        if es_path:
+            es_escaped = str(endscreen_ass).replace("\\", "/").replace(":", "\\:")
+            vf_filters.append(f"ass='{es_escaped}'")
+
+    if vf_filters:
+        vf_chain = ",".join(vf_filters)
+        captioned_file = output_file.parent / f"{output_file.stem}_captioned.mp4"
         cap_cmd = [
             FFMPEG, "-y",
             "-i", str(output_file),
-            "-vf", f"ass='{ass_escaped}'",
+            "-vf", vf_chain,
             "-c:v", "libx264",
             "-preset", "fast",
             "-crf", "22",
@@ -1228,13 +1305,11 @@ def generate_video(script_path, audio_path, config):
         if cap_result.returncode == 0:
             output_file.unlink()
             captioned_file.rename(output_file)
-            print(f"    ✅ Captions burned in successfully")
+            print(f"    ✅ Captions + end screen burned in successfully")
         else:
-            print(f"    ⚠️  Caption burn failed (video still usable without captions)")
+            print(f"    ⚠️  Overlay burn failed (video still usable)")
             print(f"        {cap_result.stderr[-300:]}")
             captioned_file.unlink(missing_ok=True)
-    else:
-        print(f"\n    ⚠️  No word timestamps available — skipping captions")
 
     shutil.copy2(output_file, latest)
 

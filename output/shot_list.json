@@ -1,143 +1,77 @@
 {
+  "video_title": "Anthropic Just Taught AI to Dream",
   "sections": [
     {
       "section_id": "hook",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "cybersecurity hacking dark screen code terminal",
-          "duration": 5.0,
-          "motion": "ken_burns_in",
-          "layout": "A",
-          "overlay_data": {}
-        }
+        {"type": "footage", "query": "sleeping brain neural activity close up", "motion": "slow_zoom_in", "duration": 4},
+        {"type": "footage", "query": "artificial intelligence server room blue lights", "motion": "pan_right", "duration": 4},
+        {"type": "text_overlay", "text": "AI THAT DREAMS", "style": "glitch", "duration": 4}
       ]
     },
     {
       "section_id": "intro",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "server room data center blue lights close up",
-          "duration": 30.0,
-          "motion": "pan_left",
-          "layout": "A",
-          "overlay_data": {}
-        },
-        {
-          "shot_type": "stat_card",
-          "query": null,
-          "duration": 5.0,
-          "motion": "static",
-          "layout": "D",
-          "overlay_data": {
-            "stat": "1,000+",
-            "label": "Critical Severity Vulnerabilities",
-            "source": "Anthropic, April 2026"
-          }
-        }
+        {"type": "footage", "query": "anthropic AI company technology office", "motion": "ken_burns_out", "duration": 10},
+        {"type": "footage", "query": "brain neurons firing synapses", "motion": "slow_zoom_in", "duration": 10},
+        {"type": "footage", "query": "person sleeping peaceful technology", "motion": "pan_left", "duration": 10},
+        {"type": "footage", "query": "AI chatbot interface computer screen", "motion": "ken_burns_in", "duration": 15}
       ]
     },
     {
       "section_id": "main_point_1",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "network cables fiber optic blue light close up",
-          "duration": 40.0,
-          "motion": "ken_burns_out",
-          "layout": "B",
-          "overlay_data": {}
-        },
-        {
-          "shot_type": "stat_card",
-          "query": null,
-          "duration": 5.0,
-          "motion": "static",
-          "layout": "D",
-          "overlay_data": {
-            "stat": "27 Years",
-            "label": "Bug Hidden in OpenBSD",
-            "source": "SACK implementation, 1998"
-          }
-        }
+        {"type": "footage", "query": "confused office worker computer frustrated", "motion": "slow_zoom_in", "duration": 15},
+        {"type": "stat_card", "stat": "100%", "label": "Memory lost between sessions", "duration": 8},
+        {"type": "footage", "query": "legal documents contract review desk", "motion": "pan_right", "duration": 15},
+        {"type": "footage", "query": "server database storage technology", "motion": "ken_burns_out", "duration": 15},
+        {"type": "footage", "query": "broken chain link failure concept", "motion": "slow_zoom_in", "duration": 17}
       ]
     },
     {
       "section_id": "main_point_2",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "shield security protection technology abstract",
-          "duration": 35.0,
-          "motion": "pan_right",
-          "layout": "B",
-          "overlay_data": {}
-        },
-        {
-          "shot_type": "stat_card",
-          "query": null,
-          "duration": 5.0,
-          "motion": "static",
-          "layout": "D",
-          "overlay_data": {
-            "stat": "$100M",
-            "label": "Mythos Credits for Partners",
-            "source": "Anthropic Glasswing Commitment"
-          }
-        }
+        {"type": "footage", "query": "brain scan MRI neuroscience research", "motion": "ken_burns_in", "duration": 15},
+        {"type": "footage", "query": "person sleeping REM dream visualization", "motion": "slow_zoom_in", "duration": 15},
+        {"type": "footage", "query": "data processing algorithm visualization abstract", "motion": "pan_left", "duration": 15},
+        {"type": "stat_card", "stat": "3", "label": "Pattern categories scanned", "duration": 8},
+        {"type": "footage", "query": "team collaboration meeting approval", "motion": "ken_burns_out", "duration": 15},
+        {"type": "footage", "query": "security checkpoint verification process", "motion": "pan_right", "duration": 22}
       ]
     },
     {
       "section_id": "main_point_3",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "government building washington political",
-          "duration": 45.0,
-          "motion": "diagonal",
-          "layout": "C",
-          "overlay_data": {}
-        }
+        {"type": "stat_card", "stat": "6x", "label": "Harvey task completion improvement", "duration": 10},
+        {"type": "footage", "query": "law firm office technology modern", "motion": "slow_zoom_in", "duration": 15},
+        {"type": "stat_card", "stat": "50%", "label": "Wisedocs review time reduction", "duration": 10},
+        {"type": "footage", "query": "multiple screens data analysis dashboard", "motion": "pan_left", "duration": 15},
+        {"type": "footage", "query": "Netflix office technology streaming", "motion": "ken_burns_in", "duration": 15},
+        {"type": "footage", "query": "robot team cooperation artificial intelligence", "motion": "ken_burns_out", "duration": 25}
       ]
     },
     {
       "section_id": "demo",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "person using laptop software update dark room",
-          "duration": 50.0,
-          "motion": "ken_burns_in",
-          "layout": "D",
-          "overlay_data": {}
-        }
+        {"type": "footage", "query": "calendar week days timeline planning", "motion": "pan_right", "duration": 15},
+        {"type": "footage", "query": "legal contract document review closeup", "motion": "slow_zoom_in", "duration": 15},
+        {"type": "footage", "query": "lightbulb moment discovery eureka", "motion": "ken_burns_in", "duration": 10},
+        {"type": "footage", "query": "customer service agent headset computer", "motion": "pan_left", "duration": 10},
+        {"type": "footage", "query": "coding programming software development", "motion": "ken_burns_out", "duration": 20}
       ]
     },
     {
       "section_id": "summary",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "aerial city lights night drone technology",
-          "duration": 35.0,
-          "motion": "pan_left",
-          "layout": "C",
-          "overlay_data": {}
-        }
+        {"type": "footage", "query": "memory brain concept abstract glowing", "motion": "slow_zoom_in", "duration": 15},
+        {"type": "footage", "query": "team collaboration AI technology future", "motion": "pan_right", "duration": 15},
+        {"type": "footage", "query": "futuristic timeline technology evolution", "motion": "ken_burns_in", "duration": 25}
       ]
     },
     {
       "section_id": "outro",
       "shots": [
-        {
-          "shot_type": "footage",
-          "query": "sunset city skyline timelapse golden hour",
-          "duration": 10.0,
-          "motion": "ken_burns_out",
-          "layout": "A",
-          "overlay_data": {}
-        }
+        {"type": "footage", "query": "subscribe bell notification technology", "motion": "ken_burns_out", "duration": 20}
       ]
     }
   ]

@@ -1,0 +1,97 @@
+{
+  "title": "Anthropic Just Taught AI to Dream",
+  "description": "Anthropic just introduced 'dreaming' for Claude Managed Agents — a system that lets AI agents review their own mistakes, reorganize their memory, and improve while idle. Harvey saw 6x better task completion. Here's how it works.\n\n0:00 - The AI That Dreams\n0:12 - What Anthropic Announced\n0:57 - The Problem With AI Agents Today\n2:07 - How Dreaming Actually Works\n3:37 - Real Results (Harvey 6x, Wisedocs 50%)\n5:07 - What This Looks Like In Practice\n6:17 - Why This Changes Everything\n7:12 - What's Next\n\nRelated: What Are AI Agents? https://youtu.be/...\n\n#AI #Anthropic #Claude #AIAgents #MachineLearning #Dreaming #ArtificialIntelligence",
+  "tags": [
+    "anthropic dreaming",
+    "claude managed agents",
+    "AI agents",
+    "self-improving AI",
+    "anthropic claude",
+    "AI memory",
+    "AI agents 2026",
+    "claude dreaming feature",
+    "AI that learns from mistakes",
+    "harvey AI legal",
+    "AI agent memory",
+    "anthropic news",
+    "claude agents",
+    "AI breakthrough 2026",
+    "machine learning",
+    "artificial intelligence",
+    "multi-agent AI",
+    "AI outcomes",
+    "self-learning AI"
+  ],
+  "seo": {
+    "title": "Anthropic Just Taught AI to Dream",
+    "thumbnail_text": "AI CAN DREAM"
+  },
+  "metadata": {
+    "target_duration": "7-8 minutes",
+    "hook_framework": "QUESTION",
+    "content_pillar": "breaking_news",
+    "end_screen": {
+      "teaser_text": "AI agents that improve themselves overnight",
+      "next_topic_hint": "multi-agent orchestration deep dive"
+    }
+  },
+  "sections": [
+    {
+      "id": "hook",
+      "title": "Hook",
+      "narration": "What if your AI assistant could learn from its mistakes while you sleep? Not by retraining, not by updating its code, but by literally dreaming. Anthropic just made that real, and the results are staggering.",
+      "visual_notes": "Dark dramatic opening, text overlay: 'AI THAT DREAMS', glitch transition to Anthropic logo",
+      "duration_target": 12
+    },
+    {
+      "id": "intro",
+      "title": "Introduction",
+      "narration": "Last week Anthropic dropped one of the most fascinating AI announcements of the year. They gave their Claude agents a new ability called dreaming. And no, this isn't marketing fluff. This is a genuine technical breakthrough that lets AI agents replay their past work, spot their own mistakes, and reorganize their memory to do better next time. Think of it like how your brain consolidates memories while you sleep, except this happens inside an AI. Today we're breaking down exactly how dreaming works, what real companies are already seeing, and why this might be the missing piece that makes AI agents actually reliable. But first, there's a catch that changes the whole picture.",
+      "visual_notes": "Anthropic logo, Claude interface screenshots, brain neural network animation",
+      "duration_target": 45
+    },
+    {
+      "id": "main_point_1",
+      "title": "The Problem Dreaming Solves",
+      "narration": "Here's the dirty secret about AI agents right now. Every single session starts completely fresh. Your agent finishes a complex legal review, learns exactly which file formats cause problems, figures out the perfect workflow, and then the session ends. Next time? It's forgotten everything. Imagine hiring a brilliant employee who gets amnesia at the end of every workday. That's what AI agents have been dealing with. Harvey, one of the biggest legal AI startups, ran into exactly this problem. Their agents kept forgetting file type quirks and tool-specific workarounds between sessions. The same mistakes, happening over and over. Companies have tried to fix this with longer context windows, with external databases, with elaborate prompt engineering. But none of it solved the fundamental issue. The agent never actually learned from experience. And that's precisely the problem dreaming was built to solve.",
+      "visual_notes": "STAT CARD: 'Session amnesia — agents forget 100% between runs', office worker analogy animation, Harvey logo",
+      "duration_target": 70
+    },
+    {
+      "id": "main_point_2",
+      "title": "How Dreaming Actually Works",
+      "narration": "So how does dreaming work? Anthropic drew inspiration from neuroscience, specifically a process called hippocampal memory consolidation. When you sleep, your brain replays the day's experiences, strengthening important memories and letting unimportant ones fade. Dreaming does the same thing for AI agents, but here's what makes it clever. It runs as a scheduled background process between sessions, completely asynchronous. The agent isn't actively working. It's reviewing. The system looks through past sessions and the agent's persistent memory store, scanning for three specific patterns. First, recurring mistakes. If the agent keeps failing at the same task, dreaming flags it. Second, converging workflows. When the agent discovers that different jobs keep requiring similar steps, it consolidates those into reusable patterns. Third, team preferences. When multiple agents work together, dreaming identifies the collaboration patterns that actually work. Then it updates the memory store, condensing what's stale and promoting what's load-bearing. And here's the part that enterprises love. Developers can require human review before any changes take effect. The AI suggests improvements. Humans approve them. Hold that thought, because the results are where this gets wild.",
+      "visual_notes": "Brain sleep cycle diagram, 3-step process animation (mistakes/workflows/preferences), memory consolidation visual, human review checkpoint graphic",
+      "duration_target": 90
+    },
+    {
+      "id": "main_point_3",
+      "title": "Real Results and Companion Features",
+      "narration": "Harvey, the legal AI company, saw task completion rates jump roughly six times after implementing dreaming. Six times. Their agents went from constantly relearning the same quirks to building on past experience like an actual team member would. Wisedocs, a document review platform, cut their review time in half using a companion feature called outcomes. Outcomes is essentially a self-grading system. Developers write plain language rubrics describing what a successful output looks like. A separate grader, running in its own context window, scores the agent's work and tells it exactly what to fix. Internal benchmarks showed up to a ten point improvement in task success rates, with an eight point four percent quality boost on document outputs. But it doesn't stop there. Anthropic also launched multi-agent delegation on the same day. A lead agent can now break complex jobs into chunks and hand them to specialist sub-agents, each with different models, different prompts, different tools. Netflix is already using this for build log analysis. A writing platform called Every runs Haiku models as leads with Opus sub-agents handling the heavy lifting. Put dreaming, outcomes, and delegation together, and you get something that starts to look less like a chatbot and more like a self-improving team.",
+      "visual_notes": "STAT CARD: 'Harvey: 6x task completion', STAT CARD: 'Wisedocs: 50% faster reviews', multi-agent diagram showing lead + subagents, Netflix and Every logos",
+      "duration_target": 90
+    },
+    {
+      "id": "demo",
+      "title": "What This Means In Practice",
+      "narration": "Let me paint you a picture of what this actually looks like in practice. Say you're a law firm using Claude Managed Agents. Monday morning, your agent reviews a contract and misses a non-standard indemnity clause. Tuesday, it makes the same mistake on a different contract. Wednesday night, dreaming kicks in. The system replays both sessions, notices the pattern, and updates its memory. Now it knows to watch for unusual indemnity language. Thursday morning, same type of contract. This time the agent catches it immediately. No one had to retrain the model. No one had to rewrite a prompt. The agent figured it out by reflecting on its own work. That is genuinely new. And the implications go way beyond legal work. Imagine customer service agents that get better at handling edge cases over time, coding agents that remember which approaches failed in your specific codebase, research agents that build up domain expertise across hundreds of sessions. This is where it gets really interesting.",
+      "visual_notes": "Day-by-day timeline animation (Mon-Thu), contract document with highlighted clause, expanding use case icons (legal, customer service, coding, research)",
+      "duration_target": 70
+    },
+    {
+      "id": "summary",
+      "title": "Why This Changes Everything",
+      "narration": "Three things to take away from this. One, dreaming solves the agent amnesia problem without retraining the model. It works purely through memory curation, which means it's fast, cheap, and reversible. Two, the combination of dreaming, outcomes, and multi-agent delegation creates a platform for self-improving AI teams, not just individual agents. Three, and this is the big one, Anthropic co-founder Jack Clark recently said there's a sixty percent chance AI will autonomously train its successors by twenty twenty-eight. Dreaming is the first concrete step in that direction. We're not there yet. But for the first time, AI agents can look back at their own work and genuinely improve. That's not a small thing.",
+      "visual_notes": "3 takeaway cards (numbered), Jack Clark quote overlay, timeline graphic toward 2028, closing thought visual",
+      "duration_target": 55
+    },
+    {
+      "id": "outro",
+      "title": "Outro",
+      "narration": "If you watched our video on AI agents last week, this is the next chapter of that story. The link is in the description. Subscribe and hit the bell because we cover breakthroughs like this every single week. Drop a comment and tell me, would you trust an AI that improves itself while you're not watching? I'll see you in the next one.",
+      "visual_notes": "Previous video card link, subscribe animation, comment prompt overlay",
+      "duration_target": 20,
+      "end_screen_teaser": "AI agents that improve themselves — what could go wrong?"
+    }
+  ]
+}
