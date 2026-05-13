@@ -18,11 +18,18 @@ GRACEFUL DEGRADATION:
 """
 
 import argparse
+import io
 import json
 import re
 import sys
 from difflib import SequenceMatcher
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8",
+                                  errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8",
+                                  errors="replace")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 AUDIO_DIR = PROJECT_ROOT / "output" / "audio"
@@ -32,6 +39,13 @@ VERIFIED_OUT = AUDIO_DIR / "latest_words_verified.json"
 REPORT_DIR = PROJECT_ROOT / "knowledge_base" / "reviews"
 
 DRIFT_THRESHOLD_MS = 200
+# Drifts larger than this are almost certainly alignment errors, not real TTS
+# drift. We refuse to "correct" them with Whisper because doing so would put
+# captions in the wrong place.
+DRIFT_MAX_TRUSTED_MS = 1500
+# If fewer than this fraction of TTS words could be aligned, alignment is
+# unreliable and we pass TTS timestamps through unchanged.
+MIN_ALIGNMENT_RATIO = 0.30
 
 
 def _whisper_available():
@@ -166,33 +180,54 @@ def run(audio_path, script_path, captions_dir, out_path,
 
         if wh_words:
             pairs = _align_words(tts_words, wh_words)
-            print(f"    🔗 Aligned {len(pairs)} of "
-                  f"{min(len(tts_words), len(wh_words))} candidate words")
-            for tts_i, wh_i in pairs:
-                tts_t = tts_words[tts_i]["offset_ms"]
-                wh_t = wh_words[wh_i]["offset_ms"]
-                drift = abs(tts_t - wh_t)
-                if drift > drift_ms:
-                    drift_count += 1
-                    verified_words[tts_i]["offset_ms"] = wh_t
-                    verified_words[tts_i]["duration_ms"] = (
-                        wh_words[wh_i]["duration_ms"]
-                    )
-                    verified_words[tts_i]["verified_by"] = "whisper"
-                    replaced_count += 1
-                    if drift_count <= 8:
-                        report_lines.append(
-                            f"- drift {drift:.0f}ms on "
-                            f"`{tts_words[tts_i]['text']}` "
-                            f"(tts {tts_t:.0f} → wh {wh_t:.0f})"
-                        )
-                else:
-                    verified_words[tts_i]["verified_by"] = "tts"
+            alignment_ratio = len(pairs) / max(1, len(tts_words))
+            print(f"    🔗 Aligned {len(pairs)} of {len(tts_words)} TTS words "
+                  f"({alignment_ratio:.0%})")
 
-            score = max(
-                0,
-                10 - int(10 * drift_count / max(1, len(pairs))),
-            )
+            if alignment_ratio < MIN_ALIGNMENT_RATIO:
+                print(f"    ⏭  Alignment ratio below "
+                      f"{MIN_ALIGNMENT_RATIO:.0%} threshold — passing TTS "
+                      f"timestamps through unchanged (Whisper word-boundary "
+                      f"divergence is too high to safely correct).")
+                report_lines.append(
+                    f"Alignment ratio {alignment_ratio:.0%} below threshold; "
+                    f"no replacements made."
+                )
+                score = 6
+            else:
+                bogus = 0
+                for tts_i, wh_i in pairs:
+                    tts_t = tts_words[tts_i]["offset_ms"]
+                    wh_t = wh_words[wh_i]["offset_ms"]
+                    drift = abs(tts_t - wh_t)
+                    if drift > drift_ms and drift <= DRIFT_MAX_TRUSTED_MS:
+                        drift_count += 1
+                        verified_words[tts_i]["offset_ms"] = wh_t
+                        verified_words[tts_i]["duration_ms"] = (
+                            wh_words[wh_i]["duration_ms"]
+                        )
+                        verified_words[tts_i]["verified_by"] = "whisper"
+                        replaced_count += 1
+                        if drift_count <= 8:
+                            report_lines.append(
+                                f"- drift {drift:.0f}ms on "
+                                f"`{tts_words[tts_i]['text']}` "
+                                f"(tts {tts_t:.0f} → wh {wh_t:.0f})"
+                            )
+                    elif drift > DRIFT_MAX_TRUSTED_MS:
+                        bogus += 1
+                    else:
+                        verified_words[tts_i]["verified_by"] = "tts"
+
+                score = max(
+                    0,
+                    10 - int(10 * drift_count / max(1, len(pairs))),
+                )
+                if bogus:
+                    report_lines.append(
+                        f"Ignored {bogus} aligned word(s) with drift > "
+                        f"{DRIFT_MAX_TRUSTED_MS}ms (likely alignment errors)."
+                    )
         else:
             score = 7
             report_lines.append("No Whisper transcript — using TTS as-is.")

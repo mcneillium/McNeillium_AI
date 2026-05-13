@@ -4,74 +4,316 @@
     {
       "section_id": "hook",
       "shots": [
-        {"type": "footage", "query": "sleeping brain neural activity close up", "motion": "slow_zoom_in", "duration": 4},
-        {"type": "footage", "query": "artificial intelligence server room blue lights", "motion": "pan_right", "duration": 4},
-        {"type": "text_overlay", "text": "AI THAT DREAMS", "style": "glitch", "duration": 4}
+        {
+          "type": "footage",
+          "query": "sleeping brain neural activity close up",
+          "motion": "slow_zoom_in",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "anthropic assistant code dark room",
+          "motion": "pan_right",
+          "duration": 4,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "artificial intelligence server room blue lights"
+        },
+        {
+          "type": "text_overlay",
+          "text": "AI THAT DREAMS",
+          "style": "glitch",
+          "duration": 4
+        }
       ]
     },
     {
       "section_id": "intro",
       "shots": [
-        {"type": "footage", "query": "anthropic AI company technology office", "motion": "ken_burns_out", "duration": 10},
-        {"type": "footage", "query": "brain neurons firing synapses", "motion": "slow_zoom_in", "duration": 10},
-        {"type": "footage", "query": "person sleeping peaceful technology", "motion": "pan_left", "duration": 10},
-        {"type": "footage", "query": "AI chatbot interface computer screen", "motion": "ken_burns_in", "duration": 15}
+        {
+          "type": "footage",
+          "query": "agents dreaming ability close up",
+          "motion": "ken_burns_out",
+          "duration": 10,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "anthropic AI company technology office"
+        },
+        {
+          "type": "footage",
+          "query": "agents dreaming ability dark room",
+          "motion": "slow_zoom_in",
+          "duration": 10,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "brain neurons firing synapses"
+        },
+        {
+          "type": "illustration",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\illustrations\\illustration_001.mp4",
+          "duration": 6.0,
+          "motion": "static",
+          "trigger": "flowchart"
+        },
+        {
+          "type": "footage",
+          "query": "agents dreaming ability wide shot",
+          "motion": "pan_left",
+          "duration": 10,
+          "relevance_score": 10,
+          "relevance_score_original": 3,
+          "original_query": "person sleeping peaceful technology"
+        },
+        {
+          "type": "footage",
+          "query": "agents dreaming ability macro detail",
+          "motion": "ken_burns_in",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "AI chatbot interface computer screen"
+        }
       ]
     },
     {
       "section_id": "main_point_1",
       "shots": [
-        {"type": "footage", "query": "confused office worker computer frustrated", "motion": "slow_zoom_in", "duration": 15},
-        {"type": "stat_card", "stat": "100%", "label": "Memory lost between sessions", "duration": 8},
-        {"type": "footage", "query": "legal documents contract review desk", "motion": "pan_right", "duration": 15},
-        {"type": "footage", "query": "server database storage technology", "motion": "ken_burns_out", "duration": 15},
-        {"type": "footage", "query": "broken chain link failure concept", "motion": "slow_zoom_in", "duration": 17}
+        {
+          "type": "footage",
+          "query": "agents agent every close up",
+          "motion": "slow_zoom_in",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "confused office worker computer frustrated"
+        },
+        {
+          "type": "stat_card",
+          "stat": "100%",
+          "label": "Memory lost between sessions",
+          "duration": 8
+        },
+        {
+          "type": "footage",
+          "query": "legal documents contract review desk",
+          "motion": "pan_right",
+          "duration": 15,
+          "relevance_score": 10
+        },
+        {
+          "type": "footage",
+          "query": "agents agent every wide shot",
+          "motion": "ken_burns_out",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 3,
+          "original_query": "server database storage technology"
+        },
+        {
+          "type": "footage",
+          "query": "agents agent every macro detail",
+          "motion": "slow_zoom_in",
+          "duration": 17,
+          "relevance_score": 10,
+          "relevance_score_original": 3,
+          "original_query": "broken chain link failure concept"
+        }
       ]
     },
     {
       "section_id": "main_point_2",
       "shots": [
-        {"type": "footage", "query": "brain scan MRI neuroscience research", "motion": "ken_burns_in", "duration": 15},
-        {"type": "footage", "query": "person sleeping REM dream visualization", "motion": "slow_zoom_in", "duration": 15},
-        {"type": "footage", "query": "data processing algorithm visualization abstract", "motion": "pan_left", "duration": 15},
-        {"type": "stat_card", "stat": "3", "label": "Pattern categories scanned", "duration": 8},
-        {"type": "footage", "query": "team collaboration meeting approval", "motion": "ken_burns_out", "duration": 15},
-        {"type": "footage", "query": "security checkpoint verification process", "motion": "pan_right", "duration": 22}
+        {
+          "type": "footage",
+          "query": "brain scan MRI neuroscience research",
+          "motion": "ken_burns_in",
+          "duration": 15,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "agent dreaming memory dark room",
+          "motion": "slow_zoom_in",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "person sleeping REM dream visualization"
+        },
+        {
+          "type": "footage",
+          "query": "agent dreaming memory blue lights",
+          "motion": "pan_left",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 1,
+          "original_query": "data processing algorithm visualization abstract"
+        },
+        {
+          "type": "stat_card",
+          "stat": "3",
+          "label": "Pattern categories scanned",
+          "duration": 8
+        },
+        {
+          "type": "footage",
+          "query": "team collaboration meeting approval",
+          "motion": "ken_burns_out",
+          "duration": 15,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "agent dreaming memory office desk",
+          "motion": "pan_right",
+          "duration": 22,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "security checkpoint verification process"
+        }
       ]
     },
     {
       "section_id": "main_point_3",
       "shots": [
-        {"type": "stat_card", "stat": "6x", "label": "Harvey task completion improvement", "duration": 10},
-        {"type": "footage", "query": "law firm office technology modern", "motion": "slow_zoom_in", "duration": 15},
-        {"type": "stat_card", "stat": "50%", "label": "Wisedocs review time reduction", "duration": 10},
-        {"type": "footage", "query": "multiple screens data analysis dashboard", "motion": "pan_left", "duration": 15},
-        {"type": "footage", "query": "Netflix office technology streaming", "motion": "ken_burns_in", "duration": 15},
-        {"type": "footage", "query": "robot team cooperation artificial intelligence", "motion": "ken_burns_out", "duration": 25}
+        {
+          "type": "stat_card",
+          "stat": "6x",
+          "label": "Harvey task completion improvement",
+          "duration": 10
+        },
+        {
+          "type": "footage",
+          "query": "like agent agents dark room",
+          "motion": "slow_zoom_in",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "law firm office technology modern"
+        },
+        {
+          "type": "stat_card",
+          "stat": "50%",
+          "label": "Wisedocs review time reduction",
+          "duration": 10
+        },
+        {
+          "type": "footage",
+          "query": "multiple screens data analysis dashboard",
+          "motion": "pan_left",
+          "duration": 15,
+          "relevance_score": 8
+        },
+        {
+          "type": "footage",
+          "query": "Netflix office technology streaming",
+          "motion": "ken_burns_in",
+          "duration": 15,
+          "relevance_score": 8
+        },
+        {
+          "type": "footage",
+          "query": "like agent agents office desk",
+          "motion": "ken_burns_out",
+          "duration": 25,
+          "relevance_score": 10,
+          "relevance_score_original": 5,
+          "original_query": "robot team cooperation artificial intelligence"
+        }
       ]
     },
     {
       "section_id": "demo",
       "shots": [
-        {"type": "footage", "query": "calendar week days timeline planning", "motion": "pan_right", "duration": 15},
-        {"type": "footage", "query": "legal contract document review closeup", "motion": "slow_zoom_in", "duration": 15},
-        {"type": "footage", "query": "lightbulb moment discovery eureka", "motion": "ken_burns_in", "duration": 10},
-        {"type": "footage", "query": "customer service agent headset computer", "motion": "pan_left", "duration": 10},
-        {"type": "footage", "query": "coding programming software development", "motion": "ken_burns_out", "duration": 20}
+        {
+          "type": "footage",
+          "query": "agents agent contract close up",
+          "motion": "pan_right",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "calendar week days timeline planning"
+        },
+        {
+          "type": "footage",
+          "query": "legal contract document review closeup",
+          "motion": "slow_zoom_in",
+          "duration": 15,
+          "relevance_score": 10
+        },
+        {
+          "type": "footage",
+          "query": "agents agent contract blue lights",
+          "motion": "ken_burns_in",
+          "duration": 10,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "lightbulb moment discovery eureka"
+        },
+        {
+          "type": "footage",
+          "query": "agents agent contract wide shot",
+          "motion": "pan_left",
+          "duration": 10,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "customer service agent headset computer"
+        },
+        {
+          "type": "footage",
+          "query": "agents agent contract macro detail",
+          "motion": "ken_burns_out",
+          "duration": 20,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "coding programming software development"
+        }
       ]
     },
     {
       "section_id": "summary",
       "shots": [
-        {"type": "footage", "query": "memory brain concept abstract glowing", "motion": "slow_zoom_in", "duration": 15},
-        {"type": "footage", "query": "team collaboration AI technology future", "motion": "pan_right", "duration": 15},
-        {"type": "footage", "query": "futuristic timeline technology evolution", "motion": "ken_burns_in", "duration": 25}
+        {
+          "type": "footage",
+          "query": "dreaming agent agents close up",
+          "motion": "slow_zoom_in",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "memory brain concept abstract glowing"
+        },
+        {
+          "type": "footage",
+          "query": "dreaming agent agents dark room",
+          "motion": "pan_right",
+          "duration": 15,
+          "relevance_score": 10,
+          "relevance_score_original": 1,
+          "original_query": "team collaboration AI technology future"
+        },
+        {
+          "type": "footage",
+          "query": "dreaming agent agents blue lights",
+          "motion": "ken_burns_in",
+          "duration": 25,
+          "relevance_score": 10,
+          "relevance_score_original": 1,
+          "original_query": "futuristic timeline technology evolution"
+        }
       ]
     },
     {
       "section_id": "outro",
       "shots": [
-        {"type": "footage", "query": "subscribe bell notification technology", "motion": "ken_burns_out", "duration": 20}
+        {
+          "type": "footage",
+          "query": "next week agents close up",
+          "motion": "ken_burns_out",
+          "duration": 20,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "subscribe bell notification technology"
+        }
       ]
     }
   ]

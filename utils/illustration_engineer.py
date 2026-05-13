@@ -20,6 +20,7 @@ engineer still emits .py scene files and adds illustration beats marked
 """
 
 import argparse
+import io
 import json
 import math
 import os
@@ -28,6 +29,12 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8",
+                                  errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8",
+                                  errors="replace")
 
 from PIL import Image, ImageDraw, ImageFont
 

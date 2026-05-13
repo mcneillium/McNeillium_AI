@@ -20,10 +20,17 @@ Beats scoring <7 are rewritten using a per-section concrete-noun bank.
 """
 
 import argparse
+import io
 import json
 import re
 import sys
 from pathlib import Path
+
+if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8",
+                                  errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8",
+                                  errors="replace")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SHOT_LIST_PATH = PROJECT_ROOT / "output" / "shot_list.json"
