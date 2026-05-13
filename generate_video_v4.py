@@ -2,7 +2,7 @@
 """
 McNeillium_AI — Video Generator v4 (Stock Footage)
 ====================================================
-Uses REAL stock video clips from Pixabay as section backgrounds.
+Uses REAL stock video clips from Pexels as section backgrounds.
 No more static slides — every section has motion.
 
 Pipeline:
@@ -16,7 +16,6 @@ Pipeline:
 """
 
 import argparse
-import io
 import json
 import math
 import os
@@ -31,10 +30,6 @@ import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
-
-if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 import numpy as np
 import yaml
@@ -59,21 +54,19 @@ def load_config():
 
 
 def load_script(path):
-    with open(path, encoding="utf-8") as f:
+    with open(path) as f:
         return json.load(f)
 
 
 def get_audio_duration(path):
     try:
         from mutagen.mp3 import MP3
-        if path.lower().endswith(".mp3"):
-            return MP3(path).info.length
-    except Exception:
-        pass
-    r = subprocess.run(
-        ["ffprobe", "-v", "quiet", "-show_entries", "format=duration",
-         "-of", "csv=p=0", path], capture_output=True, text=True)
-    return float(r.stdout.strip())
+        return MP3(path).info.length
+    except ImportError:
+        r = subprocess.run(
+            ["ffprobe", "-v", "quiet", "-show_entries", "format=duration",
+             "-of", "csv=p=0", path], capture_output=True, text=True)
+        return float(r.stdout.strip())
 
 
 def find_ffmpeg():
@@ -144,18 +137,17 @@ ACCENTS = [
 
 
 # ═══════════════════════════════════════════════════════════════
-# PIXABAY VIDEO API
+# PEXELS VIDEO API
 # ═══════════════════════════════════════════════════════════════
 
-def fetch_stock_video(query, min_duration=8, target_w=1920):
+def fetch_pexels_video(query, min_duration=8, target_w=1920):
     """
-    Fetch a stock video clip from Pixabay (free, no attribution required).
-    API docs: https://pixabay.com/api/docs/#videos
-    Returns path to downloaded MP4 or None.
+    Fetch a stock video clip from Pexels. Returns path to downloaded MP4 or None.
+    Uses the Pexels Video Search API (same API key as photos).
     """
-    api_key = os.getenv("PIXABAY_API_KEY", "")
+    api_key = os.getenv("PEXELS_API_KEY", "")
     if not api_key:
-        print(f"        ⚠️  No PIXABAY_API_KEY — skipping video fetch")
+        print(f"        ⚠️  No PEXELS_API_KEY — skipping video fetch")
         return None
 
     CLIP_CACHE.mkdir(parents=True, exist_ok=True)
@@ -168,45 +160,50 @@ def fetch_stock_video(query, min_duration=8, target_w=1920):
 
     try:
         enc = urllib.parse.quote(query)
-        url = (f"https://pixabay.com/api/videos/"
-               f"?key={api_key}"
-               f"&q={enc}"
-               f"&video_type=film"
-               f"&min_width=1280"
-               f"&min_height=720"
-               f"&per_page=10")
+        url = (f"https://api.pexels.com/videos/search"
+               f"?query={enc}&per_page=10&orientation=landscape"
+               f"&size=medium&min_duration={min_duration}")
 
-        with urllib.request.urlopen(url, timeout=15) as resp:
+        req = urllib.request.Request(url, headers={"Authorization": api_key})
+        with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode())
 
-        hits = data.get("hits", [])
-        if not hits:
+        videos = data.get("videos", [])
+        if not videos:
             print(f"        ⚠️  No videos found for '{query}'")
             return None
 
-        # Pick a random video from top results for variety
-        video = random.choice(hits[:min(5, len(hits))])
+        # Pick a random video from results for variety
+        video = random.choice(videos[:min(5, len(videos))])
 
-        # Prefer "large" (1920x1080), fall back to "medium" (1280x720)
-        videos = video.get("videos", {})
-        dl_url = None
-        for quality in ["large", "medium", "small"]:
-            entry = videos.get(quality, {})
-            if entry.get("url"):
-                dl_url = entry["url"]
-                w = entry.get("width", 0)
-                h = entry.get("height", 0)
-                print(f"        📥 Downloading {w}x{h} clip ({quality})...")
-                break
+        # Find the best HD file (prefer 1920w or 1280w)
+        best_file = None
+        for vf in video.get("video_files", []):
+            w = vf.get("width", 0)
+            h = vf.get("height", 0)
+            quality = vf.get("quality", "")
+            ft = vf.get("file_type", "")
 
-        if not dl_url:
+            if "mp4" not in ft:
+                continue
+            if w >= 1280 and h >= 720:
+                if best_file is None or abs(w - target_w) < abs(best_file["width"] - target_w):
+                    best_file = {"url": vf["link"], "width": w, "height": h}
+
+        if not best_file:
+            # Fall back to any mp4
+            for vf in video.get("video_files", []):
+                if "mp4" in vf.get("file_type", ""):
+                    best_file = {"url": vf["link"], "width": vf.get("width", 0),
+                                 "height": vf.get("height", 0)}
+                    break
+
+        if not best_file:
             return None
 
-        req = urllib.request.Request(dl_url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            with open(cache_path, "wb") as f:
-                f.write(resp.read())
-        time.sleep(0.3)
+        print(f"        📥 Downloading {best_file['width']}x{best_file['height']} clip...")
+        urllib.request.urlretrieve(best_file["url"], str(cache_path))
+        time.sleep(0.5)  # Rate limit courtesy
         return str(cache_path)
 
     except Exception as e:
@@ -214,9 +211,9 @@ def fetch_stock_video(query, min_duration=8, target_w=1920):
         return None
 
 
-def fetch_stock_photo(query):
-    """Fallback: fetch a photo from Pixabay if video unavailable."""
-    api_key = os.getenv("PIXABAY_API_KEY", "")
+def fetch_pexels_photo(query):
+    """Fallback: fetch a photo if video is unavailable."""
+    api_key = os.getenv("PEXELS_API_KEY", "")
     if not api_key:
         return None
 
@@ -232,31 +229,16 @@ def fetch_stock_photo(query):
 
     try:
         enc = urllib.parse.quote(query)
-        url = (f"https://pixabay.com/api/"
-               f"?key={api_key}"
-               f"&q={enc}"
-               f"&image_type=photo"
-               f"&orientation=horizontal"
-               f"&min_width=1280"
-               f"&per_page=5")
-
-        with urllib.request.urlopen(url, timeout=10) as resp:
+        url = f"https://api.pexels.com/v1/search?query={enc}&per_page=5&orientation=landscape"
+        req = urllib.request.Request(url, headers={"Authorization": api_key})
+        with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read().decode())
-
-        hits = data.get("hits", [])
-        if not hits:
+        photos = data.get("photos", [])
+        if not photos:
             return None
-
-        photo = random.choice(hits[:min(5, len(hits))])
-        img_url = photo.get("largeImageURL", photo.get("webformatURL"))
-        if not img_url:
-            return None
-
-        req = urllib.request.Request(img_url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            with open(cache_path, "wb") as f:
-                f.write(resp.read())
-        time.sleep(0.2)
+        photo = random.choice(photos[:min(5, len(photos))])
+        urllib.request.urlretrieve(photo["src"]["landscape"], str(cache_path))
+        time.sleep(0.3)
         return Image.open(cache_path).convert("RGB")
     except Exception:
         return None
@@ -749,12 +731,12 @@ def generate_video(script_path, audio_path, config):
         query = section_search_query(sec)
         print(f"      [{i+1}/{n_secs}] Searching: {query}")
 
-        clip_path = fetch_stock_video(query, min_duration=int(sec_durs[i]) + 2)
+        clip_path = fetch_pexels_video(query, min_duration=int(sec_durs[i]) + 2)
 
         if clip_path is None:
             # Fallback to photo
             print(f"        📷 Trying photo fallback...")
-            photo = fetch_stock_photo(query)
+            photo = fetch_pexels_photo(query)
             clip_paths.append(("photo", photo))
         else:
             clip_paths.append(("video", clip_path))
