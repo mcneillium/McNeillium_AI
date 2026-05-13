@@ -135,6 +135,36 @@ def generate_ass(words: list[dict], output_path: str,
     return str(output)
 
 
+def load_verified_words(verified_path: str,
+                         audio_start_offset_ms: float) -> list[dict] | None:
+    """
+    Load Whisper-verified word timestamps written by Agent 26 (sync_validator).
+    Word offset_ms is stored relative to the audio start, so we add the
+    intro/logo offset to align with the final video timeline.
+
+    Returns None if no verified file exists or it has no words.
+    """
+    path = Path(verified_path)
+    if not path.exists():
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return None
+    words = data.get("words", []) if isinstance(data, dict) else []
+    if not words:
+        return None
+    return [
+        {
+            "text": w["text"],
+            "offset_ms": float(w["offset_ms"]) + audio_start_offset_ms,
+            "duration_ms": float(w["duration_ms"]),
+        }
+        for w in words
+    ]
+
+
 def load_caption_words(captions_dir: str, section_indices: list[tuple[int, str]],
                        section_offsets_ms: list[float]) -> list[dict]:
     """

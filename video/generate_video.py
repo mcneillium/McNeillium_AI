@@ -33,7 +33,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from captions import generate_ass, load_caption_words
+from captions import generate_ass, load_caption_words, load_verified_words
 
 load_dotenv()
 
@@ -508,232 +508,234 @@ def create_static_clip(image, duration, output_path, w=1920, h=1080, kb_effect=0
 
 
 # ═══════════════════════════════════════════════════════════════
-# TEXT OVERLAY GENERATION (4 layouts)
+# BEAT-LEVEL ASSEMBLY (Phase 4)
+# Visual Director produces a shot list with multiple "beats" per section
+# (one every 5-8 seconds). The Video Producer fetches a clip per beat
+# and concatenates them. Stat cards and text overlays become their own
+# beats rather than section-wide overlays.
 # ═══════════════════════════════════════════════════════════════
 
-def _line_alpha(fp, appear_time, duration):
-    """Fade-in alpha for an accumulating line."""
-    if fp < appear_time:
-        return 0, 0
-    fade = max(0.01, 0.5 / max(0.1, duration))
-    p = min(1.0, (fp - appear_time) / fade)
-    return int(255 * p), int(12 * (1 - p))
+MOTION_MAP = {
+    "ken_burns_in": 0,
+    "ken_burns_out": 1,
+    "slow_zoom_in": 0,
+    "slow_zoom_out": 1,
+    "pan_left": 2,
+    "pan_right": 3,
+    "diagonal": 4,
+    "static": 0,
+}
 
 
-def _draw_layout_a(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
-    """Layout A — Full Screen: single-line lower-third caption."""
-    n = len(lines)
-    if n == 0:
-        return
+def _render_stat_card_clip(stat, label, source, duration, output_path,
+                            w, h, fps, accent):
+    """Render a stat card as a single beat clip (static image with fade)."""
+    img = Image.new("RGB", (w, h), (6, 10, 20))
+    draw = ImageDraw.Draw(img)
+    for y in range(h):
+        shade = int(6 + 14 * (y / h))
+        draw.line([(0, y), (w, y)], fill=(shade, shade + 4, shade + 14))
 
-    bar_h, bar_y = 76, h - 106
+    cx, cy = w // 2, h // 2
+    if stat:
+        sf = font_heading(180)
+        draw.text((cx + 4, cy - 30 + 4), stat, font=sf,
+                  fill=(0, 0, 0), anchor="mm")
+        draw.text((cx, cy - 30), stat, font=sf, fill=accent, anchor="mm")
+    if label:
+        lf = font_body(36)
+        draw.text((cx, cy + 80), label, font=lf,
+                  fill=(220, 228, 236), anchor="mm")
+    if source:
+        sff = font_small(18)
+        draw.text((cx, cy + 140), source, font=sff,
+                  fill=(120, 130, 150), anchor="mm")
+    draw.rectangle([cx - 120, cy - 130, cx + 120, cy - 128], fill=accent)
 
-    if fp < cs:
-        cur = -1
-    elif fp >= ce:
-        cur = n - 1
-    else:
-        cur = min(int((fp - cs) / (ce - cs) * n), n - 1)
-    if cur < 0:
-        return
+    temp_img = output_path.parent / f"{output_path.stem}_bg.png"
+    img.save(str(temp_img), "PNG")
+    fade_out_st = max(0.0, duration - 0.3)
+    vf = f"fade=t=in:st=0:d=0.3,fade=t=out:st={fade_out_st:.2f}:d=0.3"
 
-    ld = (ce - cs) / max(1, n)
-    ls = cs + cur * ld
-    local = min(1.0, (fp - ls) / ld) if ld > 0 else 1.0
-
-    if local < 0.12:
-        t = local / 0.12
-        x_off, alpha = int(140 * (1 - t)), int(255 * t)
-    elif local > 0.88 and cur < n - 1:
-        t = (local - 0.88) / 0.12
-        x_off, alpha = 0, int(255 * (1 - t))
-    else:
-        x_off, alpha = 0, 255
-
-    ba = min(190, alpha)
-    for gy in range(20):
-        draw.rectangle([0, bar_y - 20 + gy, w, bar_y - 19 + gy],
-                       fill=(0, 0, 0, int(ba * gy / 20)))
-    draw.rectangle([0, bar_y, w, bar_y + bar_h], fill=(0, 0, 0, ba))
-    draw.rectangle([pad - 10, bar_y, pad - 4, bar_y + bar_h],
-                   fill=(*accent, alpha))
-    bf = font_body(30)
-    draw.text((pad + x_off + 1, bar_y + bar_h // 2 + 1), lines[cur],
-              font=bf, fill=(0, 0, 0, alpha // 2), anchor="lm")
-    draw.text((pad + x_off, bar_y + bar_h // 2), lines[cur],
-              font=bf, fill=(240, 245, 250, alpha), anchor="lm")
-
-
-def _draw_layout_b(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
-    """Layout B — Lower Third: gradient bar at bottom with accumulating text."""
-    panel_h = 280
-    panel_y = h - panel_h
-    n = len(lines)
-
-    for gy in range(50):
-        draw.rectangle([0, panel_y - 50 + gy, w, panel_y - 49 + gy],
-                       fill=(8, 12, 20, int(210 * gy / 50)))
-    draw.rectangle([0, panel_y, w, h], fill=(8, 12, 20, 210))
-
-    head_y = panel_y + 16
-    if heading and fp > 0.04:
-        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
-        hf = font_heading(34)
-        draw.rectangle([pad - 8, head_y, pad - 2, head_y + 30],
-                       fill=(*accent, ha))
-        draw.text((pad + 8 + 1, head_y + 1), heading,
-                  font=hf, fill=(0, 0, 0, ha // 2))
-        draw.text((pad + 8, head_y), heading,
-                  font=hf, fill=(230, 237, 243, ha))
-        head_y += 44
-        draw.rectangle([pad, head_y, w - pad, head_y + 1],
-                       fill=(*accent, min(150, ha)))
-        head_y += 14
-
-    bf = font_body(25)
-    line_h = 40
-    max_vis = min(4, (h - head_y - 16) // line_h)
-
-    for i in range(min(n, max_vis)):
-        if n == 0:
-            break
-        appear = cs + i * ((ce - cs) / max(1, n))
-        la, slide = _line_alpha(fp, appear, duration)
-        if la == 0:
-            break
-        y = head_y + i * line_h
-        draw.ellipse([pad + 2, y + 13 + slide - 3, pad + 10, y + 13 + slide + 5],
-                     fill=(*accent, la))
-        draw.text((pad + 22 + 1, y + slide + 1), lines[i],
-                  font=bf, fill=(0, 0, 0, la // 2))
-        draw.text((pad + 22, y + slide), lines[i],
-                  font=bf, fill=(220, 228, 236, la))
+    cmd = [
+        FFMPEG, "-y",
+        "-loop", "1", "-i", str(temp_img),
+        "-t", str(duration), "-vf", vf,
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
+        "-pix_fmt", "yuv420p", "-r", str(fps),
+        str(output_path),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    temp_img.unlink(missing_ok=True)
+    return result.returncode == 0
 
 
-def _draw_layout_c(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
-    """Layout C — Side Panel: dark panel on right 38%."""
-    panel_x = int(w * 0.62)
-    pp = 28
-    n = len(lines)
+def _render_text_overlay_clip(text, duration, output_path, w, h, fps, accent):
+    """Render a text-overlay beat (title card) as a clip."""
+    img = Image.new("RGB", (w, h), (4, 8, 16))
+    draw = ImageDraw.Draw(img)
+    for y in range(h):
+        shade = int(4 + 10 * (y / h))
+        draw.line([(0, y), (w, y)], fill=(shade, shade + 2, shade + 8))
+    cx, cy = w // 2, h // 2
+    sf = font_heading(96)
+    draw.text((cx + 4, cy + 4), text, font=sf, fill=(0, 0, 0), anchor="mm")
+    draw.text((cx, cy), text, font=sf, fill=accent, anchor="mm")
+    draw.rectangle([cx - 200, cy + 75, cx + 200, cy + 78], fill=accent)
 
-    draw.rectangle([panel_x, 44, w, h], fill=(8, 12, 20, 215))
-    draw.rectangle([panel_x, 44, panel_x + 3, h], fill=(*accent, 180))
-
-    head_y = 68
-    tx = panel_x + pp
-    tw = w - panel_x - pp * 2
-
-    if heading and fp > 0.04:
-        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
-        hf = font_heading(30)
-        draw.text((tx + 1, head_y + 1), heading,
-                  font=hf, fill=(0, 0, 0, ha // 2))
-        draw.text((tx, head_y), heading,
-                  font=hf, fill=(230, 237, 243, ha))
-        head_y += 40
-        draw.rectangle([tx, head_y, tx + min(180, tw), head_y + 1],
-                       fill=(*accent, min(150, ha)))
-        head_y += 16
-
-    bf = font_body(22)
-    line_h = 34
-    mc = max(18, int(tw / 12))
-    pl = []
-    for l in lines:
-        pl.extend(textwrap.wrap(l, width=mc))
-    n_pl = len(pl)
-
-    for i, line in enumerate(pl):
-        y = head_y + i * line_h
-        if y + line_h > h - 24:
-            break
-        appear = cs + i * ((ce - cs) / max(1, n_pl))
-        la, slide = _line_alpha(fp, appear, duration)
-        if la == 0:
-            break
-        draw.ellipse([tx + 2, y + 11 + slide - 3, tx + 10, y + 11 + slide + 5],
-                     fill=(*accent, la))
-        draw.text((tx + 18 + 1, y + slide + 1), line,
-                  font=bf, fill=(0, 0, 0, la // 2))
-        draw.text((tx + 18, y + slide), line,
-                  font=bf, fill=(220, 228, 236, la))
+    temp_img = output_path.parent / f"{output_path.stem}_bg.png"
+    img.save(str(temp_img), "PNG")
+    fade_out_st = max(0.0, duration - 0.3)
+    vf = f"fade=t=in:st=0:d=0.3,fade=t=out:st={fade_out_st:.2f}:d=0.3"
+    cmd = [
+        FFMPEG, "-y", "-loop", "1", "-i", str(temp_img),
+        "-t", str(duration), "-vf", vf,
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
+        "-pix_fmt", "yuv420p", "-r", str(fps),
+        str(output_path),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    temp_img.unlink(missing_ok=True)
+    return result.returncode == 0
 
 
-def _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration):
-    """Layout D — Full Text: near-full dark panel for code/demo."""
-    m = 55
-    n = len(lines)
+def build_section_background(section_idx, section_dur, shots,
+                              w, h, fps, blur_strength="0:0", darken=0.0):
+    """
+    Build the background video for a section by assembling beat clips.
 
-    draw.rounded_rectangle([m, 50, w - m, h - 28], radius=12,
-                           fill=(8, 12, 20, 215))
+    Each shot in `shots` becomes its own clip:
+      - "footage"       → fetch a stock clip for shot["query"]
+      - "illustration"  → use shot["path"] (pre-rendered Manim MP4)
+      - "stat_card"     → render a static stat card image
+      - "text_overlay"  → render a title card
+      - anything else   → gradient fallback
 
-    head_y = 50 + 22
-    if heading and fp > 0.04:
-        ha = min(255, int(255 * min(1.0, (fp - 0.04) * 6)))
-        hf = font_heading(34)
-        draw.rectangle([m + pad - 8, head_y, m + pad - 2, head_y + 30],
-                       fill=(*accent, ha))
-        draw.text((m + pad + 8 + 1, head_y + 1), heading,
-                  font=hf, fill=(0, 0, 0, ha // 2))
-        draw.text((m + pad + 8, head_y), heading,
-                  font=hf, fill=(230, 237, 243, ha))
-        head_y += 48
-        draw.rectangle([m + pad, head_y, w - m - pad, head_y + 1],
-                       fill=(*accent, min(150, ha)))
-        head_y += 16
+    Returns the path to the concatenated section bg, or None on failure.
+    """
+    if not shots:
+        return None
 
-    bf = font_body(23)
-    line_h = 38
+    durs = [max(1.0, float(s.get("duration", 5.0))) for s in shots]
+    total_d = sum(durs)
+    scaled = [d * section_dur / total_d for d in durs]
 
-    for i, line in enumerate(lines):
-        y = head_y + i * line_h
-        if y + line_h > h - 55:
-            break
-        appear = cs + i * ((ce - cs) / max(1, n))
-        la, slide = _line_alpha(fp, appear, duration)
-        if la == 0:
-            break
-        nx = m + pad
-        draw.text((nx, y + slide), str(i + 1).rjust(2),
-                  font=font_small(15), fill=(80, 90, 110, la))
-        draw.text((nx + 32 + 1, y + slide + 1), line,
-                  font=bf, fill=(0, 0, 0, la // 2))
-        draw.text((nx + 32, y + slide), line,
-                  font=bf, fill=(220, 228, 236, la))
+    beat_paths = []
+    accent = ACCENTS[section_idx % len(ACCENTS)]
+
+    for bi, shot in enumerate(shots):
+        beat_dur = scaled[bi]
+        shot_type = (shot.get("type") or shot.get("shot_type")
+                     or "footage").lower()
+        beat_path = TEMP_DIR / f"beat_{section_idx:02d}_{bi:02d}.mp4"
+        motion = shot.get("motion", "ken_burns_in")
+        kb_idx = MOTION_MAP.get(motion, (section_idx + bi) % 5)
+
+        ok = False
+        if shot_type == "illustration":
+            ill_path = shot.get("path") or shot.get("illustration_path")
+            if ill_path and Path(ill_path).exists():
+                ok = prepare_clip_segment(
+                    ill_path, beat_dur, beat_path, w, h,
+                    darken=0.0, blur_strength="0:0", kb_effect=0,
+                )
+            print(f"          beat {bi+1}: illustration ", end="")
+        elif shot_type == "stat_card":
+            overlay = shot.get("overlay_data", {})
+            stat = shot.get("stat") or overlay.get("stat", "")
+            label = shot.get("label") or overlay.get("label", "")
+            source = shot.get("source") or overlay.get("source", "")
+            ok = _render_stat_card_clip(
+                stat, label, source, beat_dur, beat_path,
+                w, h, fps, accent,
+            )
+            print(f"          beat {bi+1}: stat_card '{stat}' ", end="")
+        elif shot_type == "text_overlay":
+            txt = shot.get("text") or shot.get("query") or "..."
+            ok = _render_text_overlay_clip(
+                txt, beat_dur, beat_path, w, h, fps, accent,
+            )
+            print(f"          beat {bi+1}: text '{txt[:24]}' ", end="")
+        else:
+            query = shot.get("query") or shot.get("footage_query") or ""
+            print(f"          beat {bi+1}: '{query[:40]}' ", end="")
+            if query:
+                clip = fetch_stock_video(query, min_duration=int(beat_dur) + 2)
+                if clip:
+                    ok = prepare_clip_segment(
+                        clip, beat_dur, beat_path, w, h,
+                        darken=darken, blur_strength=blur_strength,
+                        kb_effect=kb_idx,
+                    )
+                if not ok:
+                    photo = fetch_stock_photo(query)
+                    ok = create_static_clip(photo, beat_dur, beat_path,
+                                            w, h, kb_effect=kb_idx)
+            else:
+                ok = create_static_clip(None, beat_dur, beat_path,
+                                        w, h, kb_effect=kb_idx)
+
+        if ok and beat_path.exists():
+            beat_paths.append(str(beat_path))
+            print("✅")
+        else:
+            print("⚠️  (skipped)")
+
+    if not beat_paths:
+        return None
+
+    concat_list = TEMP_DIR / f"section_{section_idx:02d}_beats.txt"
+    with open(concat_list, "w") as f:
+        for bp in beat_paths:
+            f.write(f"file '{bp}'\n")
+
+    section_bg = TEMP_DIR / f"section_bg_{section_idx:02d}.mp4"
+    cmd = [
+        FFMPEG, "-y",
+        "-f", "concat", "-safe", "0",
+        "-i", str(concat_list),
+        "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
+        "-pix_fmt", "yuv420p", "-r", str(fps),
+        str(section_bg),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"        ⚠️  Section concat failed: {result.stderr[-200:]}")
+        return None
+    return str(section_bg)
+
+
+# ═══════════════════════════════════════════════════════════════
+# OVERLAY GENERATION (Phase 4: minimal — progress bar + stat cards only)
+# Word-by-word captions are rendered separately as ASS subtitles
+# (see captions.py + STEP 6 below). This avoids the doubled-text issue.
+# ═══════════════════════════════════════════════════════════════
 
 
 def create_text_overlay_frames(
-    heading, lines, duration, w, h, fps, section_num, total_sections,
-    channel_name, accent, layout="B", stat_overlay=None
+    duration, w, h, fps, section_num, total_sections,
+    accent, stat_overlay=None
 ):
+    """
+    Generate transparent overlay frames containing only:
+    - A thin 3px progress bar across the top of the frame
+    - The animated stat card (when a beat declares one)
+
+    Headings, bullets, and the channel-name bar were removed in Phase 4;
+    word captions handle all text communication via the ASS overlay step.
+    """
     frames_dir = TEMP_DIR / f"overlay_{section_num}"
     frames_dir.mkdir(parents=True, exist_ok=True)
     total_frames = int(duration * fps)
-    pad = 80
-    CS, CE = 0.12, 0.88
 
     for f_idx in range(total_frames):
         fp = f_idx / max(1, total_frames - 1)
         img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
 
-        draw.rectangle([0, 0, w, 38], fill=(0, 0, 0, 130))
-        draw.text((pad, 19), channel_name, font=font_small(14),
-                  fill=(88, 166, 255, 190), anchor="lm")
-        draw.text((w - pad, 19), f"{section_num}/{total_sections}",
-                  font=font_small(13), fill=(140, 150, 165, 170), anchor="rm")
-        draw.rectangle([0, 38, w, 40], fill=(30, 30, 30, 140))
+        draw.rectangle([0, 0, w, 3], fill=(30, 30, 30, 140))
         prog = (section_num - 1 + fp) / total_sections
-        draw.rectangle([0, 38, int(w * prog), 40], fill=(*accent, 210))
-
-        if layout == "A":
-            _draw_layout_a(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
-        elif layout == "C":
-            _draw_layout_c(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
-        elif layout == "D":
-            _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
-        else:
-            _draw_layout_b(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
+        draw.rectangle([0, 0, int(w * prog), 3], fill=(*accent, 220))
 
         if stat_overlay:
             _draw_stat_card(draw, w, h, fp, accent, stat_overlay)
@@ -1012,39 +1014,28 @@ def generate_video(script_path, audio_path, config):
     current_time = INTRO_DUR
 
     # ════════════════════════════════════════════
-    # STEP 1: Fetch stock video clips
+    # STEP 1: Index shot list by section
     # ════════════════════════════════════════════
-    print(f"\n    📹 STEP 1: Fetching stock video clips for {n_secs} sections...")
-    clip_paths = []
+    print(f"\n    📹 STEP 1: Indexing shot list for {n_secs} sections...")
     shot_section_data = {}
-
-    for i, sec in enumerate(sections):
-        sid = sec.get("id", f"section_{i}")
-
-        sl_section = None
-        if shot_list:
+    if shot_list:
+        for i, sec in enumerate(sections):
+            sid = sec.get("id", f"section_{i}")
             for sl_s in shot_list.get("sections", []):
                 if sl_s.get("section_id") == sid:
-                    sl_section = sl_s
+                    shot_section_data[i] = sl_s
                     break
 
-        if sl_section and sl_section.get("shots"):
-            shot = sl_section["shots"][0]
-            query = shot.get("query") or section_search_query(sec)
-            shot_section_data[i] = sl_section
-        else:
-            query = section_search_query(sec)
-
-        print(f"      [{i+1}/{n_secs}] Searching: {query}")
-
-        clip_path = fetch_stock_video(query, min_duration=int(sec_durs[i]) + 2)
-
-        if clip_path is None:
-            print(f"        📷 Trying photo fallback...")
-            photo = fetch_stock_photo(query)
-            clip_paths.append(("photo", photo))
-        else:
-            clip_paths.append(("video", clip_path))
+    beat_counts = [
+        len(shot_section_data.get(i, {}).get("shots", []))
+        for i in range(n_secs)
+    ]
+    total_beats = sum(beat_counts)
+    if total_beats:
+        print(f"      📋 Total beats planned: {total_beats} "
+              f"(avg {total_beats / n_secs:.1f}/section)")
+    else:
+        print(f"      ⚠️  No shot list — will fall back to section-level fetch")
 
     # ════════════════════════════════════════════
     # STEP 2: Generate intro
@@ -1063,69 +1054,53 @@ def generate_video(script_path, audio_path, config):
         sid = sec.get("id", f"section_{i}")
         dur = sec_durs[i]
         heading = sec.get("heading", "")
-        screen_text = sec.get("screen_text", sec.get("narration", ""))
         accent = ACCENTS[i % len(ACCENTS)]
         layout = LAYOUT_MAP.get(sid, "B")
-        bg_p = LAYOUT_BG.get(layout, {"blur": "1:1", "darken": 0.0})
+        bg_p = LAYOUT_BG.get(layout, {"blur": "0:0", "darken": 0.0})
 
         mins = int(current_time) // 60
         secs_t = int(current_time) % 60
         chapters.append({"time": f"{mins}:{secs_t:02d}", "label": heading or sid})
         current_time += dur
 
-        max_chars = max(45, int((W - 200) / 16))
-        wrapped = textwrap.wrap(screen_text, width=max_chars)
-
-        stat_overlay = None
-        if i in shot_section_data:
-            for shot in shot_section_data[i].get("shots", []):
-                if shot.get("shot_type") == "stat_card" and shot.get("overlay_data"):
-                    stat_overlay = shot["overlay_data"]
-                    break
-
-        if shot_list and i in shot_section_data:
-            shots = shot_section_data[i].get("shots", [])
-            if shots:
-                motion = shots[0].get("motion", "ken_burns_in")
-                motion_map = {
-                    "ken_burns_in": 0, "ken_burns_out": 1,
-                    "pan_left": 2, "pan_right": 3, "diagonal": 4, "static": 0,
-                }
-                kb_idx = motion_map.get(motion, i)
-                shot_layout = shots[0].get("layout", layout)
-                if shot_layout in LAYOUT_MAP.values():
-                    layout = shot_layout
-            else:
-                kb_idx = i
-        else:
-            kb_idx = i
-
-        bg_p = LAYOUT_BG.get(layout, {"blur": "1:1", "darken": 0.0})
-
-        stat_tag = " +stat" if stat_overlay else ""
-        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) [{layout}]{stat_tag} — ", end="")
-
+        shots = shot_section_data.get(i, {}).get("shots", [])
         bg_clip_path = TEMP_DIR / f"bg_{i:02d}.mp4"
-        clip_type, clip_data = clip_paths[i]
 
-        if clip_type == "video":
-            print("video bg ", end="")
-            ok = prepare_clip_segment(
-                clip_data, dur, bg_clip_path, W, H,
-                darken=bg_p["darken"], blur_strength=bg_p["blur"],
-                kb_effect=kb_idx,
+        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) "
+              f"— {len(shots) if shots else 1} beat(s)")
+
+        section_bg = None
+        if shots:
+            section_bg = build_section_background(
+                i, dur, shots, W, H, FPS,
+                blur_strength=bg_p["blur"], darken=bg_p["darken"],
             )
-            if not ok:
-                print("-> fallback ", end="")
-                create_static_clip(None, dur, bg_clip_path, W, H, kb_effect=kb_idx)
+
+        if section_bg:
+            shutil.copy2(section_bg, bg_clip_path)
         else:
-            print("photo bg ", end="")
-            create_static_clip(clip_data, dur, bg_clip_path, W, H, kb_effect=kb_idx)
+            # Fallback: single-clip section-level fetch
+            query = section_search_query(sec)
+            print(f"        📥 Section-level fallback: '{query}'")
+            clip = fetch_stock_video(query, min_duration=int(dur) + 2)
+            kb_idx = i % 5
+            if clip:
+                ok = prepare_clip_segment(
+                    clip, dur, bg_clip_path, W, H,
+                    darken=bg_p["darken"], blur_strength=bg_p["blur"],
+                    kb_effect=kb_idx,
+                )
+                if not ok:
+                    create_static_clip(None, dur, bg_clip_path, W, H,
+                                       kb_effect=kb_idx)
+            else:
+                photo = fetch_stock_photo(query)
+                create_static_clip(photo, dur, bg_clip_path, W, H,
+                                   kb_effect=kb_idx)
 
         overlay_pattern, n_frames = create_text_overlay_frames(
-            heading, wrapped, dur, W, H, FPS,
-            i + 1, n_secs, ch_name, accent, layout,
-            stat_overlay=stat_overlay
+            dur, W, H, FPS, i + 1, n_secs, accent,
+            stat_overlay=None,
         )
 
         # Composite: video background + text overlay
@@ -1253,9 +1228,17 @@ def generate_video(script_path, audio_path, config):
         section_offsets_ms.append(offset)
         offset += dur_s * 1000
 
-    caption_words = load_caption_words(
-        str(CAPTIONS_DIR), section_indices, section_offsets_ms
-    )
+    # Prefer Whisper-verified timestamps (Agent 26) when available
+    verified_path = AUDIO_DIR / "latest_words_verified.json"
+    audio_start_ms = (LOGO_DUR + INTRO_DUR) * 1000
+    caption_words = load_verified_words(str(verified_path), audio_start_ms)
+    if caption_words:
+        print(f"    ✅ Using Whisper-verified word timestamps "
+              f"({len(caption_words)} words)")
+    else:
+        caption_words = load_caption_words(
+            str(CAPTIONS_DIR), section_indices, section_offsets_ms
+        )
 
     # Build VF filter chain: captions + end screen overlay
     vf_filters = []

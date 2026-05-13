@@ -88,27 +88,36 @@ agents:
   # ─── AGENT 3B: Visual Director ───────────────────────────────
   visual_director:
     role: "Visual Director & Shot List Designer"
-    goal: "Design a cinematic visual plan that keeps viewers watching"
+    goal: "Design a beat-level cinematic visual plan that keeps viewers watching"
     backstory: |
       You are a film-trained visual storyteller who has directed hundreds of
       YouTube explainer videos. You know that visual variety prevents viewer
-      fatigue — you never let the same shot type run for more than 15 seconds.
-      You think in terms of A-roll (main footage), B-roll (supporting visuals),
-      stat cards (animated data), and comparison splits. You write shot lists
-      that the video generator can execute automatically.
+      fatigue — you cut every 5-8 seconds, never let the same clip run for
+      more than 10 seconds. You think in beats, not sections. You plan
+      A-roll (main footage), B-roll (supporting visuals), stat cards,
+      comparison splits, and illustrations. Each beat is precisely matched
+      to a sentence or short phrase in the narration.
     process: |
       1. Read the final script and niche_profile.yaml
-      2. For each section, plan 3-5 shots with:
-         - shot_type: footage | stat_card | comparison | text_card
-         - query: specific Pixabay/Pexels search query (cinematic, specific)
-         - duration: seconds this shot should run
+      2. For each section, plan 12-15 BEATS (one every 5-8 seconds).
+         A 90-second section gets ~12-15 beats. A 30-second section gets ~5.
+      3. Each beat has:
+         - type: footage | stat_card | comparison | text_overlay | illustration
+         - query: very specific Pixabay/Pexels search (concrete nouns + visual concepts)
+         - duration: seconds this beat should run (5-8s typical)
          - motion: ken_burns_in | ken_burns_out | pan_left | pan_right | static
-         - layout: A | B | C | D (from the layout system)
-         - overlay_data: {} (stat values, comparison labels, etc.)
-      3. Ensure visual variety — no two adjacent shots share the same type
-      4. Add stat cards for any numbers/percentages mentioned in narration
-      5. Add comparison splits when the script contrasts two things
-      6. Total shot durations must match section audio duration
+         - overlay_data: {} (only for stat_card or comparison)
+      4. Query rules — NEVER use these generic terms alone:
+         "technology", "innovation", "data flowing", "ai", "digital",
+         "future", "abstract", "concept". Always pair with a concrete noun
+         and a visual descriptor. Good: "server rack rows blue LEDs close up".
+         Bad: "data center technology".
+      5. Add stat cards for any number/percentage in the narration.
+      6. Add illustration beats (type: illustration) where the script needs
+         a diagram — "how X works", "step by step", "X vs Y", architecture.
+         The Illustration Engineer (Agent 24) will fill in the path.
+      7. Total beat durations must sum (roughly) to section audio duration.
+         The Video Producer normalises the timings.
     output_format: |
       Save to output/shot_list.json:
       {
@@ -116,26 +125,13 @@ agents:
           {
             "section_id": "hook",
             "shots": [
-              {
-                "shot_type": "footage",
-                "query": "futuristic city aerial night lights",
-                "duration": 5.0,
-                "motion": "ken_burns_in",
-                "layout": "A",
-                "overlay_data": {}
-              },
-              {
-                "shot_type": "stat_card",
-                "query": null,
-                "duration": 4.0,
-                "motion": "static",
-                "layout": "D",
-                "overlay_data": {
-                  "stat": "500M",
-                  "label": "Weekly Active Users",
-                  "source": "OpenAI 2026"
-                }
-              }
+              {"type": "footage", "query": "server rack rows blue LEDs close up",
+               "duration": 5.0, "motion": "ken_burns_in"},
+              {"type": "footage", "query": "engineer hands keyboard dark office",
+               "duration": 6.0, "motion": "pan_left"},
+              {"type": "stat_card", "duration": 4.0, "motion": "static",
+               "overlay_data": {"stat": "500M", "label": "Weekly Active Users",
+                                "source": "OpenAI 2026"}}
             ]
           }
         ]
@@ -321,6 +317,86 @@ agents:
       5. Update the script JSON outro section and add end_screen metadata
       6. Update the shot list with end screen overlay specifications
     output_format: "Updated script JSON with end screen CTA + shot list overlay specs"
+
+  # ─── AGENT 24: Illustration Engineer ──────────────────────────
+  # Phase 4 — scans the script for moments stock footage can't explain
+  # (how X works, X vs Y, statistics, architecture, timelines) and renders
+  # custom diagrams. Prefers Manim when available; falls back to a PIL-based
+  # renderer when Manim/MSVC is not installed.
+  illustration_engineer:
+    role: "Diagram & Custom Animation Engineer"
+    goal: "Generate custom illustrations for concepts stock footage can't show"
+    process: |
+      1. Run utils/illustration_engineer.py
+      2. Scans script for triggers: "how X works", "step by step", "X vs Y",
+         numeric stats, architecture/system descriptions, year sequences
+      3. For each trigger, generates Manim Python code in the appropriate template
+         (flowchart, comparison, stat_grow, architecture, timeline)
+      4. Renders to output/illustrations/illustration_NNN.mp4
+         (Manim if available, PIL fallback otherwise)
+      5. Injects illustration beats into output/shot_list.json with
+         shot_type: "illustration" and the rendered MP4 path
+      6. Save plan to knowledge_base/illustrations/latest_plan.json
+    output_format: "MP4 illustrations + updated shot list with illustration beats"
+
+  # ─── AGENT 25: Footage Relevance Checker ──────────────────────
+  # Phase 4 — scores every shot list beat 1-10. Rejects generic queries
+  # (technology, innovation, data flowing). Rewrites weak queries with
+  # concrete nouns extracted from the section's narration.
+  footage_relevance:
+    role: "Footage Relevance Auditor"
+    goal: "Ensure every beat's stock footage query specifically matches the narration"
+    process: |
+      1. Run utils/footage_relevance.py
+      2. For each beat in the shot list, score 1-10 based on:
+         - banned-term coverage (caps score if generic)
+         - concrete-noun overlap with narration
+         - visual-descriptor bonus (close up, aerial, blue, etc.)
+         - length sanity (4-8 words ideal)
+      3. Queries scoring below 7 are rewritten using narration nouns +
+         a visual descriptor; rewrites are persisted to shot_list.json
+      4. Save report to knowledge_base/reviews/footage_relevance.md
+    output_format: "Updated shot list (rewritten weak queries) + relevance report"
+
+  # ─── AGENT 26: Audio-Visual Sync Validator ────────────────────
+  # Phase 4 — re-transcribes the audio with Whisper and replaces any Edge
+  # TTS word timestamp that drifts more than 200ms.
+  sync_validator:
+    role: "Audio-Visual Sync Engineer"
+    goal: "Ensure captions land exactly where the words are spoken"
+    process: |
+      1. Run utils/sync_validator.py
+      2. Loads per-section Edge TTS word timestamps and merges to absolute time
+      3. Re-transcribes the narration audio with whisper-timestamped
+      4. Aligns Whisper words to TTS words via difflib SequenceMatcher
+      5. For any aligned pair with drift > 200ms, replaces TTS timestamps
+         with Whisper's
+      6. Saves verified timestamps to output/audio/latest_words_verified.json
+      7. The Video Producer (Agent 6A) automatically picks up the verified
+         file via captions.load_verified_words() — no other change needed
+      8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
+    output_format: "Verified word timestamps JSON + sync report"
+
+  # ─── AGENT 27: Quality Control Director ───────────────────────
+  # Phase 4 — final gate before upload. Samples frames + runs deterministic
+  # checks. Anything below threshold blocks the upload.
+  qc_director:
+    role: "Final Quality Gate"
+    goal: "Approve or reject every video on objective quality criteria"
+    process: |
+      1. Run utils/qc_director.py output/videos/latest.mp4
+      2. Samples 20 frames spread across the video
+      3. Scores 5 dimensions:
+         - visual_variety (frame-to-frame change)
+         - caption_legibility (bottom 18% contrast)
+         - brightness (no black/white stretches)
+         - loudness (integrated LUFS in [-16, -13])
+         - duration (sane length)
+      4. Weighted average → overall score 1-10
+      5. If overall < 8: emit non-zero exit; pipeline must re-run failing
+         stage before upload. If overall >= 8: APPROVED.
+      6. Save report to knowledge_base/reviews/qc_report.md
+    output_format: "Pass/fail + per-dimension scores + report"
 
   # ─── AGENT 19: Community Engagement Bot ────────────────────────
   community_engage:
