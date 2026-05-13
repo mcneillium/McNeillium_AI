@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
 """
-McNeillium_AI — Video Generator v5 (Professional Quality)
-============================================================
-Real stock footage with Ken Burns motion, lower-third captions,
-varied section layouts, cinematic colour grade, and paced text.
-
-Pipeline per section:
-  1. Fetch relevant HD stock video from Pixabay
-  2. Apply Ken Burns zoom/pan + teal-orange colour grade via FFmpeg
-  3. Generate layout-specific text overlay (Full Screen / Lower Third /
-     Side Panel / Full Text) with paced line-by-line animation
-  4. Composite overlay onto graded footage
-  5. Concatenate all sections + mix narration + background music
+McNeillium_AI — Video Generator v6
+====================================
+Stock footage, Ken Burns, animated word-by-word captions,
+shot list support, stat cards, voice ducking, loudness normalization.
 """
 
 import argparse
@@ -39,6 +31,9 @@ import numpy as np
 import yaml
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 from dotenv import load_dotenv
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from captions import generate_ass, load_caption_words
 
 load_dotenv()
 
@@ -338,6 +333,69 @@ def section_search_query(section):
             return footage_query
 
     return f"{heading} technology cinematic" if heading else "technology innovation aerial"
+
+
+# ═══════════════════════════════════════════════════════════════
+# SHOT LIST + CAPTION DATA LOADING
+# ═══════════════════════════════════════════════════════════════
+
+SHOT_LIST_PATH = PROJECT_ROOT / "output" / "shot_list.json"
+CAPTIONS_DIR = AUDIO_DIR / "captions"
+
+
+def load_shot_list():
+    """Load shot list from Visual Director if it exists."""
+    if SHOT_LIST_PATH.exists():
+        try:
+            with open(SHOT_LIST_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+            print(f"    📋 Shot list loaded ({len(data.get('sections', []))} sections)")
+            return data
+        except Exception as e:
+            print(f"    ⚠️  Shot list load failed: {e}")
+    return None
+
+
+# ═══════════════════════════════════════════════════════════════
+# STAT CARD OVERLAY
+# ═══════════════════════════════════════════════════════════════
+
+def _draw_stat_card(draw, w, h, fp, accent, overlay_data):
+    """Draw an animated stat card overlay (big number + label + source)."""
+    stat = overlay_data.get("stat", "")
+    label = overlay_data.get("label", "")
+    source = overlay_data.get("source", "")
+
+    if not stat:
+        return
+
+    cx, cy = w // 2, h // 2
+
+    if fp < 0.1:
+        alpha = int(255 * (fp / 0.1))
+        scale = 0.8 + 0.2 * (fp / 0.1)
+    elif fp > 0.85:
+        alpha = int(255 * ((1.0 - fp) / 0.15))
+        scale = 1.0
+    else:
+        alpha = 255
+        scale = 1.0
+
+    card_w, card_h = 600, 300
+    rx, ry = cx - card_w // 2, cy - card_h // 2
+    draw.rounded_rectangle([rx, ry, rx + card_w, ry + card_h], radius=16,
+                           fill=(10, 14, 24, min(220, alpha)))
+    draw.rectangle([rx, ry, rx + 5, ry + card_h], fill=(*accent, alpha))
+
+    sf = font_heading(int(72 * scale))
+    draw.text((cx, cy - 30), stat, font=sf, fill=(*accent, alpha), anchor="mm")
+
+    lf = font_body(int(26 * scale))
+    draw.text((cx, cy + 40), label, font=lf, fill=(220, 228, 236, alpha), anchor="mm")
+
+    if source:
+        srf = font_small(14)
+        draw.text((cx, cy + 80), source, font=srf, fill=(120, 130, 150, alpha), anchor="mm")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -646,7 +704,7 @@ def _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, cs, ce, duration
 
 def create_text_overlay_frames(
     heading, lines, duration, w, h, fps, section_num, total_sections,
-    channel_name, accent, layout="B"
+    channel_name, accent, layout="B", stat_overlay=None
 ):
     frames_dir = TEMP_DIR / f"overlay_{section_num}"
     frames_dir.mkdir(parents=True, exist_ok=True)
@@ -676,6 +734,9 @@ def create_text_overlay_frames(
             _draw_layout_d(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
         else:
             _draw_layout_b(draw, heading, lines, w, h, fp, accent, pad, CS, CE, duration)
+
+        if stat_overlay:
+            _draw_stat_card(draw, w, h, fp, accent, stat_overlay)
 
         frame_path = frames_dir / f"overlay_{f_idx:06d}.png"
         img.save(str(frame_path), "PNG")
@@ -874,10 +935,16 @@ def generate_video(script_path, audio_path, config):
     audio_dur = get_audio_duration(audio_path)
     print(f"    🎵 Audio: {audio_dur:.1f}s")
 
+    shot_list = load_shot_list()
+
     # Clean temp
     if TEMP_DIR.exists():
         shutil.rmtree(TEMP_DIR)
     TEMP_DIR.mkdir(parents=True)
+
+    # ── Logo intro ──
+    LOGO_PATH = PROJECT_ROOT / "assets" / "logo_intro" / "mcneillium_intro.mp4"
+    LOGO_DUR = 3.0 if LOGO_PATH.exists() else 0.0
 
     # ── Timing ──
     INTRO_DUR = 3.5
@@ -897,14 +964,30 @@ def generate_video(script_path, audio_path, config):
     # ════════════════════════════════════════════
     print(f"\n    📹 STEP 1: Fetching stock video clips for {n_secs} sections...")
     clip_paths = []
+    shot_section_data = {}
+
     for i, sec in enumerate(sections):
-        query = section_search_query(sec)
+        sid = sec.get("id", f"section_{i}")
+
+        sl_section = None
+        if shot_list:
+            for sl_s in shot_list.get("sections", []):
+                if sl_s.get("section_id") == sid:
+                    sl_section = sl_s
+                    break
+
+        if sl_section and sl_section.get("shots"):
+            shot = sl_section["shots"][0]
+            query = shot.get("query") or section_search_query(sec)
+            shot_section_data[i] = sl_section
+        else:
+            query = section_search_query(sec)
+
         print(f"      [{i+1}/{n_secs}] Searching: {query}")
 
         clip_path = fetch_stock_video(query, min_duration=int(sec_durs[i]) + 2)
 
         if clip_path is None:
-            # Fallback to photo
             print(f"        📷 Trying photo fallback...")
             photo = fetch_stock_photo(query)
             clip_paths.append(("photo", photo))
@@ -933,18 +1016,43 @@ def generate_video(script_path, audio_path, config):
         layout = LAYOUT_MAP.get(sid, "B")
         bg_p = LAYOUT_BG.get(layout, {"blur": "1:1", "darken": 0.0})
 
-        # Chapter marker
         mins = int(current_time) // 60
-        secs = int(current_time) % 60
-        chapters.append({"time": f"{mins}:{secs:02d}", "label": heading or sid})
+        secs_t = int(current_time) % 60
+        chapters.append({"time": f"{mins}:{secs_t:02d}", "label": heading or sid})
         current_time += dur
 
         max_chars = max(45, int((W - 200) / 16))
         wrapped = textwrap.wrap(screen_text, width=max_chars)
 
-        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) [{layout}] — ", end="")
+        stat_overlay = None
+        if i in shot_section_data:
+            for shot in shot_section_data[i].get("shots", []):
+                if shot.get("shot_type") == "stat_card" and shot.get("overlay_data"):
+                    stat_overlay = shot["overlay_data"]
+                    break
 
-        # Prepare background clip with Ken Burns + colour grade
+        if shot_list and i in shot_section_data:
+            shots = shot_section_data[i].get("shots", [])
+            if shots:
+                motion = shots[0].get("motion", "ken_burns_in")
+                motion_map = {
+                    "ken_burns_in": 0, "ken_burns_out": 1,
+                    "pan_left": 2, "pan_right": 3, "diagonal": 4, "static": 0,
+                }
+                kb_idx = motion_map.get(motion, i)
+                shot_layout = shots[0].get("layout", layout)
+                if shot_layout in LAYOUT_MAP.values():
+                    layout = shot_layout
+            else:
+                kb_idx = i
+        else:
+            kb_idx = i
+
+        bg_p = LAYOUT_BG.get(layout, {"blur": "1:1", "darken": 0.0})
+
+        stat_tag = " +stat" if stat_overlay else ""
+        print(f"      [{i+1}/{n_secs}] {sid} ({dur:.1f}s) [{layout}]{stat_tag} — ", end="")
+
         bg_clip_path = TEMP_DIR / f"bg_{i:02d}.mp4"
         clip_type, clip_data = clip_paths[i]
 
@@ -953,19 +1061,19 @@ def generate_video(script_path, audio_path, config):
             ok = prepare_clip_segment(
                 clip_data, dur, bg_clip_path, W, H,
                 darken=bg_p["darken"], blur_strength=bg_p["blur"],
-                kb_effect=i,
+                kb_effect=kb_idx,
             )
             if not ok:
-                print("→ fallback ", end="")
-                create_static_clip(None, dur, bg_clip_path, W, H, kb_effect=i)
+                print("-> fallback ", end="")
+                create_static_clip(None, dur, bg_clip_path, W, H, kb_effect=kb_idx)
         else:
             print("photo bg ", end="")
-            create_static_clip(clip_data, dur, bg_clip_path, W, H, kb_effect=i)
+            create_static_clip(clip_data, dur, bg_clip_path, W, H, kb_effect=kb_idx)
 
-        # Generate text overlay frames
         overlay_pattern, n_frames = create_text_overlay_frames(
             heading, wrapped, dur, W, H, FPS,
-            i + 1, n_secs, ch_name, accent, layout
+            i + 1, n_secs, ch_name, accent, layout,
+            stat_overlay=stat_overlay
         )
 
         # Composite: video background + text overlay
@@ -1003,6 +1111,9 @@ def generate_video(script_path, audio_path, config):
     # Write concat list
     concat_list = TEMP_DIR / "concat.txt"
     with open(concat_list, "w") as f:
+        if LOGO_PATH.exists():
+            f.write(f"file '{LOGO_PATH}'\n")
+            print(f"    🎨 Logo intro prepended ({LOGO_DUR}s)")
         f.write(f"file '{intro_path}'\n")
         for sp in section_clip_paths:
             f.write(f"file '{sp}'\n")
@@ -1036,17 +1147,19 @@ def generate_video(script_path, audio_path, config):
     has_music = bg_music.exists()
 
     if has_music:
-        print(f"    🎵 Mixing narration + background music...")
+        print(f"    🎵 Mixing narration + background music (voice ducking)...")
         cmd = [
             FFMPEG, "-y",
             "-i", str(concat_path),
             "-i", str(audio_path),
             "-i", str(bg_music),
             "-filter_complex",
-            "[1:a]volume=1.0[narr];"
-            "[2:a]volume=0.10,afade=t=in:st=0:d=3,"
-            f"afade=t=out:st={max(0, audio_dur - 3)}:d=3[music];"
-            "[narr][music]amix=inputs=2:duration=first[aout]",
+            "[1:a]aformat=fltp:44100:stereo,asplit[narr][sc];"
+            "[2:a]aformat=fltp:44100:stereo,volume=0.12,"
+            f"afade=t=in:st=0:d=3,afade=t=out:st={max(0, audio_dur - 3)}:d=3[music];"
+            "[music][sc]sidechaincompress=threshold=0.02:ratio=6:attack=200:release=1000[ducked];"
+            "[narr][ducked]amix=inputs=2:duration=first,"
+            "loudnorm=I=-14:TP=-1.5:LRA=11[aout]",
             "-map", "0:v",
             "-map", "[aout]",
             "-c:v", "copy",
@@ -1056,7 +1169,7 @@ def generate_video(script_path, audio_path, config):
             str(output_file),
         ]
     else:
-        print(f"    🎵 Adding narration audio...")
+        print(f"    🎵 Adding narration audio (normalized)...")
         cmd = [
             FFMPEG, "-y",
             "-i", str(concat_path),
@@ -1064,6 +1177,7 @@ def generate_video(script_path, audio_path, config):
             "-map", "0:v",
             "-map", "1:a",
             "-c:v", "copy",
+            "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
             "-c:a", "aac", "-b:a", "192k",
             "-shortest",
             "-movflags", "+faststart",
@@ -1074,6 +1188,53 @@ def generate_video(script_path, audio_path, config):
     if result.returncode != 0:
         print(f"  ERROR final: {result.stderr[-500:]}")
         sys.exit(1)
+
+    # ════════════════════════════════════════════
+    # STEP 6: Burn ASS captions (if word timestamps exist)
+    # ════════════════════════════════════════════
+    section_indices = [
+        (i, sec.get("id", f"section_{i}")) for i, sec in enumerate(sections)
+    ]
+    section_offsets_ms = []
+    offset = (LOGO_DUR + INTRO_DUR) * 1000
+    for dur_s in sec_durs:
+        section_offsets_ms.append(offset)
+        offset += dur_s * 1000
+
+    caption_words = load_caption_words(
+        str(CAPTIONS_DIR), section_indices, section_offsets_ms
+    )
+
+    if caption_words:
+        print(f"\n    📝 STEP 6: Burning {len(caption_words)} word captions...")
+        ass_path = TEMP_DIR / "captions.ass"
+        TEMP_DIR.mkdir(parents=True, exist_ok=True)
+        generate_ass(caption_words, str(ass_path), W, H)
+
+        captioned_file = output_file.parent / f"{output_file.stem}_captioned.mp4"
+        ass_escaped = str(ass_path).replace("\\", "/").replace(":", "\\:")
+        cap_cmd = [
+            FFMPEG, "-y",
+            "-i", str(output_file),
+            "-vf", f"ass='{ass_escaped}'",
+            "-c:v", "libx264",
+            "-preset", "fast",
+            "-crf", "22",
+            "-c:a", "copy",
+            "-movflags", "+faststart",
+            str(captioned_file),
+        ]
+        cap_result = subprocess.run(cap_cmd, capture_output=True, text=True)
+        if cap_result.returncode == 0:
+            output_file.unlink()
+            captioned_file.rename(output_file)
+            print(f"    ✅ Captions burned in successfully")
+        else:
+            print(f"    ⚠️  Caption burn failed (video still usable without captions)")
+            print(f"        {cap_result.stderr[-300:]}")
+            captioned_file.unlink(missing_ok=True)
+    else:
+        print(f"\n    ⚠️  No word timestamps available — skipping captions")
 
     shutil.copy2(output_file, latest)
 
@@ -1096,7 +1257,7 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
-    print("\n🎬 McNeillium_AI — Professional Video Generator v5")
+    print("\n🎬 McNeillium_AI — Professional Video Generator v6")
     print("=" * 55)
 
     output = generate_video(args.script, args.audio, config)

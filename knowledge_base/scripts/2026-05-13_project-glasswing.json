@@ -1,0 +1,75 @@
+{
+  "title": "The AI That Found Thousands of Zero-Day Bugs",
+  "description": "Anthropic built an AI model so good at hacking it found thousands of zero-day vulnerabilities in every major operating system and browser — including a 27-year-old bug in OpenBSD. Then the White House stepped in.\n\nProject Glasswing gives Claude Mythos Preview to AWS, Apple, Google, Microsoft, and other defenders to patch critical software before attackers get similar capabilities. But the White House blocked its expansion, raising questions about who controls the most powerful cybersecurity tool ever built.\n\n⏱ Timestamps:\n0:00 - The AI That's Too Dangerous to Release\n0:15 - What Anthropic Actually Found\n1:30 - The 27-Year-Old Bug Nobody Caught\n3:30 - Project Glasswing Explained\n5:15 - The White House Steps In\n6:45 - What This Means for You\n8:00 - Three Key Takeaways\n8:45 - Outro\n\n👋 About McNeillium_AI:\nAI and emerging tech explained clearly. New videos weekly.\nLike & Subscribe for more!\n\n#AI #Cybersecurity #Anthropic #Claude #ZeroDay #ProjectGlasswing #AISecurity #Hacking #McNeilliumAI #Tech",
+  "tags": ["Anthropic", "Claude Mythos", "Project Glasswing", "zero day vulnerability", "AI cybersecurity", "AI hacking", "OpenBSD bug", "FreeBSD vulnerability", "AI security", "cybersecurity 2026", "Claude AI", "Anthropic Mythos", "White House AI", "zero day", "AI news 2026", "artificial intelligence", "cybersecurity news", "AI explained", "McNeillium AI"],
+  "seo": {
+    "title_options": [
+      "The AI That Found Thousands of Zero-Day Bugs",
+      "This AI Is Too Dangerous to Release (Project Glasswing)",
+      "Anthropic's AI Found a 27-Year-Old Bug Nobody Knew Existed",
+      "The AI That Can Hack Any Operating System",
+      "Project Glasswing: The AI the White House Tried to Stop"
+    ],
+    "chosen_title": "The AI That Found Thousands of Zero-Day Bugs",
+    "thumbnail_text": "AI FINDS BUGS",
+    "thumbnail_query": "cybersecurity hacking dark screen code"
+  },
+  "sections": [
+    {
+      "id": "hook",
+      "heading": "The AI That's Too Dangerous to Release",
+      "narration": "Anthropic just built an AI so good at finding security flaws that it discovered thousands of zero-day vulnerabilities in every major operating system and every major web browser. One of those bugs had been hiding in plain sight for twenty-seven years. And Anthropic's own response was to call the model, quote, too dangerous for general release. So what exactly did this AI find, why is the White House involved, and what does this mean for every device you own?",
+      "screen_text": "Anthropic's AI found thousands of zero-day bugs\nin every major OS and browser.\n\nOne bug: hidden for 27 years.\n\nAnthropic: \"Too dangerous for general release.\"",
+      "visual_notes": "Dark terminal with scrolling code. Red warning icons appearing. Lock/shield imagery."
+    },
+    {
+      "id": "intro",
+      "heading": "What Anthropic Actually Found",
+      "narration": "Welcome to McNeillium AI. On April eighth, twenty twenty-six, Anthropic published something unusual. Not a product launch. Not a benchmark score. A security disclosure. Their unreleased model, Claude Mythos Preview, had been set loose on the source code of the world's most critical software. And it found problems everywhere. We're talking thousands of zero-day vulnerabilities. That means security flaws that nobody knew about and nobody had patched. Not in some obscure hobby project. In Windows. In macOS. In Linux. In Chrome. In Firefox. In Safari. In FreeBSD. In OpenBSD. Think of it like hiring the world's best locksmith to check every lock in your house. Except the locksmith checked every lock on the entire internet. And found that most of them could be picked. Anthropic says they have over one thousand critical severity vulnerabilities and thousands more high severity ones waiting to be disclosed. Critical severity means an attacker could take full control of your machine. Not just read your files. Own your machine. If these numbers hold up, this is the single largest vulnerability discovery in the history of computing.",
+      "screen_text": "Claude Mythos Preview:\nUnreleased frontier model\n\nVulnerabilities found in:\nWindows, macOS, Linux\nChrome, Firefox, Safari\nFreeBSD, OpenBSD\n\nOver 1,000 critical severity\nThousands more high severity\n\nCritical = full machine takeover",
+      "visual_notes": "Grid of OS and browser logos. Counter animating up. Red warning overlays."
+    },
+    {
+      "id": "main_point_1",
+      "heading": "The 27-Year-Old Bug Nobody Caught",
+      "narration": "Let me give you a concrete example of what Mythos found, because the numbers alone don't tell the full story. OpenBSD added a feature called SACK to its networking code back in nineteen ninety-eight. SACK stands for Selective Acknowledgment. It's how computers track which chunks of data arrived and which got lost during a network transfer. Think of it like a postal service that tells you which letters in a batch arrived safely and which ones went missing. OpenBSD's implementation tracks missing data as a list of gaps. Mythos found that this list has no size limit. An attacker can send specially crafted network packets that grow this list until the system crashes. This bug has been sitting in one of the most security-focused operating systems in the world for twenty-seven years. OpenBSD's entire brand is being unhackable. Their website literally says only two remote holes in the default install in a heck of a long time. And an AI found a crash bug in their networking stack that every human auditor missed for nearly three decades. But it gets worse. Mythos also found a seventeen-year-old remote code execution vulnerability in FreeBSD. That's CVE twenty twenty-six dash forty-seven forty-seven. It lets anyone gain root access on a machine running NFS. Root access means you own that machine completely. And Mythos found and exploited this entirely on its own. No human guidance. Fully autonomous.",
+      "screen_text": "OpenBSD SACK Bug (1998-2026):\nSACK = Selective Acknowledgment\nTracks missing data in network transfers\nNo size limit on the tracking list\nAttacker can crash the system\n\n27 years undetected\n\nFreeBSD RCE (CVE-2026-4747):\n17-year-old remote code execution\nRoot access via NFS\nFound and exploited autonomously",
+      "visual_notes": "Network packet diagram. Timeline 1998-2026. Terminal showing root access."
+    },
+    {
+      "id": "main_point_2",
+      "heading": "Project Glasswing Explained",
+      "narration": "So Anthropic has an AI that can find critical vulnerabilities in basically everything. What do you do with that? You could sell it. You could keep it secret. You could hand it to a government. Anthropic chose option four. They created Project Glasswing. Think of it like a controlled vaccine rollout, but for cybersecurity. Instead of releasing Mythos to the public where attackers could use it, Anthropic gave it to a hand-picked group of about fifty organizations. The partner list reads like a tech industry who's who. Amazon Web Services. Apple. Google. Microsoft. NVIDIA. Cisco. CrowdStrike. Palo Alto Networks. JPMorgan Chase. The Linux Foundation. Broadcom. These are the companies that build and maintain the software that runs the world. The idea is simple but radical. Give defenders a head start. Because here's the uncomfortable truth. If Mythos can find these vulnerabilities today, similar models will be able to find them within twelve to eighteen months. And those models won't all be in responsible hands. So the question isn't whether these vulnerabilities will be found. It's whether the good guys find them first. Anthropic is also putting serious money behind this. One hundred million dollars in Mythos usage credits for partners. Plus four million dollars in direct donations to open-source security organizations.",
+      "screen_text": "Project Glasswing:\nControlled access to Mythos\nAbout 50 partner organizations\n\nPartners include:\nAWS, Apple, Google, Microsoft\nNVIDIA, Cisco, CrowdStrike\nJPMorgan, Linux Foundation\n\nAnthropic's bet:\nSimilar models in 12-18 months\nDefenders must find bugs first\n\nInvestment:\n$100M in Mythos credits\n$4M to open-source security",
+      "visual_notes": "Shield expanding into partner network. Timeline showing 12-18 month window."
+    },
+    {
+      "id": "main_point_3",
+      "heading": "The White House Steps In",
+      "narration": "Here's where it gets political. Anthropic wanted to expand Glasswing. They asked the White House to approve adding seventy more companies to the program, bringing the total from about fifty to one hundred and twenty. The White House said no. Their concerns were twofold. First, national security. The more organizations that have access to a tool that can find zero-days in any software, the harder it is to control where that capability ends up. Second, and this is the part that raised eyebrows, the NSA was worried about losing its share of Mythos compute time. Let that sink in. The National Security Agency is already using Claude Mythos. And they don't want to share. This created a genuine dilemma. Keeping the circle small means fewer defenders can patch their systems. But expanding it increases the risk of the capability leaking. It's the cybersecurity version of the nuclear nonproliferation debate. And right now, nobody has a clear answer. The White House is currently drafting plans for how federal agencies can use Anthropic's tools, which suggests they see the value but want guardrails.",
+      "screen_text": "Anthropic wanted 50 to 120 partners\nWhite House: Blocked\n\nReasons:\n1. National security concerns\n2. NSA losing Mythos compute time\n\nThe dilemma:\nSmall circle = fewer defenders\nBig circle = higher leak risk\n\nWhite House drafting federal AI plans",
+      "visual_notes": "White House with AI overlay. Scale balancing security vs access. Policy document."
+    },
+    {
+      "id": "demo",
+      "heading": "What This Actually Means For You",
+      "narration": "So what does all this mean for you sitting at your computer right now? First, the good news. Anthropic is disclosing these vulnerabilities responsibly. They're working with each affected vendor to patch the bugs before going public. So patches are coming. Many have already shipped. You've probably installed some of them without even knowing it. Second, the shift is already happening. If you've noticed more frequent security updates on your phone or computer in the past few weeks, this is likely why. The entire industry is scrambling to patch what Mythos found. Third, and this is the part that keeps security researchers up at night. Mythos is just the beginning. Every major AI lab is building models that get better at coding every month. If Anthropic's model can find zero-days today, what happens when five or ten different models have the same capability? The uncomfortable answer is that the entire concept of software security is about to change. We've spent fifty years relying on the fact that finding vulnerabilities is hard. It requires deep expertise, patience, and luck. AI just made it automated, fast, and cheap. The old model of security through obscurity and slow human auditing is ending.",
+      "screen_text": "Good news:\nResponsible disclosure happening\nPatches shipping now\nCheck your system updates\n\nThe bigger picture:\nEvery AI lab building code models\nFinding vulns is now automated\n50 years of security assumptions ending\n\nThe future:\nAI vs AI: automated attack vs defense",
+      "visual_notes": "Update notifications. Timeline of AI labs. Shield vs sword metaphor."
+    },
+    {
+      "id": "summary",
+      "heading": "Three Things to Remember",
+      "narration": "Let me leave you with three key takeaways. Number one. Anthropic's Claude Mythos found thousands of zero-day vulnerabilities in the software you use every day. This is not theoretical. These are real bugs in real systems that real attackers could exploit. Number two. Project Glasswing is an unprecedented experiment in responsible AI deployment. Whether you agree with Anthropic's approach or not, they chose to give defenders a head start rather than sell this capability to the highest bidder. That matters. Number three. This is the new normal. AI models that can find and exploit software vulnerabilities will become more common, not less. The companies and governments that adapt fastest will have the advantage. Update your devices. Support open-source security. And pay attention, because the rules of cybersecurity just changed permanently.",
+      "screen_text": "1. Thousands of real zero-day bugs found\n   in your everyday software\n\n2. Project Glasswing: defenders first,\n   not sold to highest bidder\n\n3. AI vulnerability hunting\n   is the new normal",
+      "visual_notes": "Three key points with icons. Shield with AI brain overlay."
+    },
+    {
+      "id": "outro",
+      "heading": "Thanks for Watching",
+      "narration": "If this blew your mind, smash that subscribe button. We cover the biggest AI stories every week, explained so you actually understand what's happening and why it matters. Hit the bell so you don't miss the next one. See you in the next video.",
+      "screen_text": "Subscribe for more AI content\nNew videos every week",
+      "visual_notes": "Subscribe button animation. Bell icon. Channel branding."
+    }
+  ]
+}

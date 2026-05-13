@@ -1,0 +1,144 @@
+{
+  "sections": [
+    {
+      "section_id": "hook",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "cybersecurity hacking dark screen code terminal",
+          "duration": 5.0,
+          "motion": "ken_burns_in",
+          "layout": "A",
+          "overlay_data": {}
+        }
+      ]
+    },
+    {
+      "section_id": "intro",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "server room data center blue lights close up",
+          "duration": 30.0,
+          "motion": "pan_left",
+          "layout": "A",
+          "overlay_data": {}
+        },
+        {
+          "shot_type": "stat_card",
+          "query": null,
+          "duration": 5.0,
+          "motion": "static",
+          "layout": "D",
+          "overlay_data": {
+            "stat": "1,000+",
+            "label": "Critical Severity Vulnerabilities",
+            "source": "Anthropic, April 2026"
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "main_point_1",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "network cables fiber optic blue light close up",
+          "duration": 40.0,
+          "motion": "ken_burns_out",
+          "layout": "B",
+          "overlay_data": {}
+        },
+        {
+          "shot_type": "stat_card",
+          "query": null,
+          "duration": 5.0,
+          "motion": "static",
+          "layout": "D",
+          "overlay_data": {
+            "stat": "27 Years",
+            "label": "Bug Hidden in OpenBSD",
+            "source": "SACK implementation, 1998"
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "main_point_2",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "shield security protection technology abstract",
+          "duration": 35.0,
+          "motion": "pan_right",
+          "layout": "B",
+          "overlay_data": {}
+        },
+        {
+          "shot_type": "stat_card",
+          "query": null,
+          "duration": 5.0,
+          "motion": "static",
+          "layout": "D",
+          "overlay_data": {
+            "stat": "$100M",
+            "label": "Mythos Credits for Partners",
+            "source": "Anthropic Glasswing Commitment"
+          }
+        }
+      ]
+    },
+    {
+      "section_id": "main_point_3",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "government building washington political",
+          "duration": 45.0,
+          "motion": "diagonal",
+          "layout": "C",
+          "overlay_data": {}
+        }
+      ]
+    },
+    {
+      "section_id": "demo",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "person using laptop software update dark room",
+          "duration": 50.0,
+          "motion": "ken_burns_in",
+          "layout": "D",
+          "overlay_data": {}
+        }
+      ]
+    },
+    {
+      "section_id": "summary",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "aerial city lights night drone technology",
+          "duration": 35.0,
+          "motion": "pan_left",
+          "layout": "C",
+          "overlay_data": {}
+        }
+      ]
+    },
+    {
+      "section_id": "outro",
+      "shots": [
+        {
+          "shot_type": "footage",
+          "query": "sunset city skyline timelapse golden hour",
+          "duration": 10.0,
+          "motion": "ken_burns_out",
+          "layout": "A",
+          "overlay_data": {}
+        }
+      ]
+    }
+  ]
+}

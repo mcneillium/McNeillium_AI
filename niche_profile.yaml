@@ -1,0 +1,95 @@
+# McNeillium_AI — Niche Profile
+# Read by all agents to maintain consistent brand identity.
+
+channel:
+  name: "McNeillium_AI"
+  tagline: "AI explained for everyone"
+  url: "https://youtube.com/@McNeillium_AI"
+
+audience:
+  primary: "Tech-curious adults (25-45) who want to understand AI without needing a CS degree"
+  secondary: "Developers and product managers evaluating AI tools for their work"
+  pain_points:
+    - "AI news moves too fast to keep up"
+    - "Most AI content is either too basic or too academic"
+    - "Hard to tell hype from real breakthroughs"
+  viewer_goal: "Feel informed and confident talking about AI after watching one video"
+
+content_pillars:
+  - id: "breaking_news"
+    name: "Breaking AI News"
+    description: "First-week coverage of major launches, papers, and announcements"
+    frequency: "2-3 per week"
+    examples: ["New model launches", "Policy changes", "Major acquisitions"]
+
+  - id: "explainers"
+    name: "Deep Explainers"
+    description: "Thorough breakdowns of how AI systems work under the hood"
+    frequency: "1 per week"
+    examples: ["How transformers work", "RAG explained", "Fine-tuning vs prompting"]
+
+  - id: "practical"
+    name: "Practical AI"
+    description: "Hands-on demos and tutorials showing real-world AI use"
+    frequency: "1 per week"
+    examples: ["Build an AI agent", "Automate your workflow", "Best AI tools 2026"]
+
+  - id: "impact"
+    name: "AI Impact & Ethics"
+    description: "How AI changes jobs, society, and daily life"
+    frequency: "1-2 per month"
+    examples: ["Will AI take your job?", "AI regulation updates", "Deepfake detection"]
+
+visual_brand:
+  primary_color: "#00D4AA"       # Teal accent
+  secondary_color: "#FF6B35"     # Orange highlight
+  background: "#0A0A1A"         # Deep navy/black
+  text_color: "#FFFFFF"
+  font_heading: "Montserrat Bold"
+  font_body: "Inter Regular"
+  thumbnail_style: "Bold text (max 4 words), teal-orange palette, relevant image, face when possible"
+  video_style: "Stock footage with Ken Burns, lower-third captions, cinematic colour grade"
+  resolution: "1920x1080"
+  fps: 30
+
+tone:
+  personality: "Smart friend who's genuinely excited about AI"
+  formality: "Casual professional — no slang, no jargon without explanation"
+  humor: "Light, observational — never forced or meme-heavy"
+  pacing: "Energetic but not rushed — let big ideas breathe"
+  voice_id: "en-GB-RyanNeural"
+  voice_rate: "+8%"
+  voice_pitch: "+0Hz"
+
+seo:
+  primary_keywords:
+    - "artificial intelligence"
+    - "AI news"
+    - "AI explained"
+    - "machine learning"
+    - "AI tools"
+  long_tail_patterns:
+    - "[Product] explained"
+    - "What is [concept] in AI"
+    - "[Company] AI announcement"
+    - "AI vs [alternative]"
+    - "How to use [tool]"
+  title_rules:
+    - "Under 60 characters"
+    - "Lead with the most searchable term"
+    - "Use power words: Now, Just, Finally, Changes Everything"
+    - "Numbers when relevant (5 AI Tools, 3 Reasons)"
+  hashtags:
+    - "#AI"
+    - "#ArtificialIntelligence"
+    - "#TechNews"
+    - "#MachineLearning"
+
+competitors:
+  watch_list:
+    - "Fireship"
+    - "Two Minute Papers"
+    - "AI Explained"
+    - "Matt Wolfe"
+    - "The AI Advantage"
+  differentiation: "We bridge news and education — every video teaches something concrete, not just reports what happened"

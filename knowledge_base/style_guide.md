@@ -50,3 +50,20 @@ Every video follows this arc:
 - **Stakes**: Make the viewer feel this affects them personally
 - **Contrasts**: "Most people think X. The reality is Y."
 - **Lists of three**: Three examples, three reasons, three takeaways
+- **Pattern interrupts every 60-90s**: Rhetorical question, callback, surprising stat
+- **Mid-roll CTAs**: "If this is blowing your mind, hit subscribe — we do this every week"
+- **Energy mapping**: Never let two low-energy sections sit adjacent
+
+## Visual Writing Rules
+- **Stat callouts**: When citing a number, add visual_notes: "STAT CARD: [number] — [label]"
+- **Comparison framing**: When contrasting two things, note "SPLIT SCREEN: [A] vs [B]"
+- **Screen text brevity**: Max 6 words per bullet point for readability at 1080p
+- **Caption-friendly pacing**: Leave 0.5s breaths between key phrases for caption sync
+- **Avoid text-heavy sections**: If screen_text exceeds 5 bullets, split into two sections
+
+## Shot List Guidance (for Visual Director)
+- No two adjacent shots should share the same type (footage/stat/text)
+- Vary Ken Burns direction between sections (zoom in, pan left, etc.)
+- Use stat cards for any number over 1 million or any percentage
+- Use Layout A for hooks and outros, B for main points, C for side panels, D for demos
+- Search queries must be specific and cinematic: "server room blue lights close up" not "technology"
