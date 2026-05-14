@@ -171,15 +171,19 @@ def _resolve_font():
     return None
 
 
-def render_short(video_path, start, duration, output_path, watermark=WATERMARK):
-    """Cut the window, reframe to vertical 1080x1920, burn watermark."""
+def render_short(video_path, start, duration, output_path,
+                 watermark=WATERMARK, subtitle_words=None):
+    """Cut the window, reframe to vertical 1080x1920, burn watermark,
+    and overlay sentence-chunk subtitles (Phase 12.2).
+
+    subtitle_words: list of {text, offset_ms, duration_ms} in SHORT-LOCAL
+    time (t=0 = start of Short). When provided, builds an ASS overlay
+    using captions_v2.build_short_subtitles_ass.
+    """
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    # The source is 1920x1080. We scale up so height fills 1920 and
-    # crop horizontally to 1080 wide.
     font = _resolve_font()
     drawtext = ""
     if font:
-        # FFmpeg needs forward slashes and escaped colons inside drawtext
         font_esc = font.replace("\\", "/").replace(":", "\\:")
         drawtext = (
             f",drawtext=fontfile='{font_esc}':text='{watermark}':"
@@ -187,10 +191,29 @@ def render_short(video_path, start, duration, output_path, watermark=WATERMARK):
             f"boxcolor=black@0.4:boxborderw=10:"
             f"x=(w-text_w)/2:y=h-110"
         )
+
+    subtitle_filter = ""
+    if subtitle_words:
+        try:
+            sys.path.insert(0, str(PROJECT_ROOT / "video"))
+            from captions_v2 import build_short_subtitles_ass
+            ass_path = output_path.with_suffix(".ass")
+            _, n_chunks = build_short_subtitles_ass(
+                subtitle_words, str(ass_path),
+                width=1080, height=1920,
+            )
+            print(f"      📝 {n_chunks} subtitle chunks")
+            ass_escaped = (str(ass_path)
+                           .replace("\\", "/").replace(":", "\\:"))
+            subtitle_filter = f",ass='{ass_escaped}'"
+        except Exception as e:
+            print(f"      ⚠️  subtitle build failed: {e}")
+
     vf = (
         "scale=-2:1920:flags=lanczos,"
         "crop=1080:1920:(in_w-1080)/2:0"
         + drawtext
+        + subtitle_filter
     )
     cmd = [
         FFMPEG, "-y",
@@ -215,7 +238,44 @@ def render_short(video_path, start, duration, output_path, watermark=WATERMARK):
 # Main
 # ═══════════════════════════════════════════════════════════════
 
-def run(script_path, video_path, out_dir, n=5):
+LOGO_INTRO_MS = 6500   # 3s logo intro + 3.5s cinematic intro in main video
+
+
+def _slice_words_for_short(verified_path, start_s, end_s):
+    """Return word dicts in SHORT-LOCAL time for the [start_s, end_s] window.
+
+    Verified words have offset_ms in AUDIO time. Main video adds
+    LOGO_INTRO_MS. Short t=0 = main video start_s.
+    """
+    if not Path(verified_path).exists():
+        return []
+    try:
+        data = json.loads(Path(verified_path).read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    all_words = data.get("words") if isinstance(data, dict) else None
+    if not all_words:
+        return []
+
+    start_ms = start_s * 1000
+    end_ms = end_s * 1000
+    sliced = []
+    for w in all_words:
+        # Main-video time of this word
+        vt_ms = float(w["offset_ms"]) + LOGO_INTRO_MS
+        dur = float(w["duration_ms"])
+        if vt_ms + dur < start_ms or vt_ms > end_ms:
+            continue
+        # Shift to short-local
+        sliced.append({
+            "text": w["text"],
+            "offset_ms": max(0.0, vt_ms - start_ms),
+            "duration_ms": dur,
+        })
+    return sliced
+
+
+def run(script_path, video_path, out_dir, n=5, prefix=""):
     if not Path(script_path).exists() or not Path(video_path).exists():
         print("❌ Script or video not found")
         return False
@@ -234,15 +294,19 @@ def run(script_path, video_path, out_dir, n=5):
 
     title = script.get("title", "untitled").lower()
     slug = re.sub(r"[^a-z0-9]+", "_", title).strip("_")[:40]
+    verified_path = PROJECT_ROOT / "output" / "audio" / "latest_words_verified.json"
 
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     manifest = []
     for idx, (s, e, sec) in enumerate(moments, 1):
         sid = sec.get("id", "section")
-        out_path = Path(out_dir) / f"short_{idx:02d}_{slug}_{sid}.mp4"
+        fname = f"{prefix}short_{idx:02d}_{slug}_{sid}.mp4"
+        out_path = Path(out_dir) / fname
         print(f"  ✂️  Short {idx}: {sid} @ {s:.1f}s → {e:.1f}s "
               f"({e - s:.1f}s) — {out_path.name}")
-        ok = render_short(video_path, s, e - s, out_path)
+        words = _slice_words_for_short(verified_path, s, e)
+        ok = render_short(video_path, s, e - s, out_path,
+                          subtitle_words=words)
         manifest.append({
             "index": idx,
             "section_id": sid,
@@ -251,6 +315,7 @@ def run(script_path, video_path, out_dir, n=5):
             "duration": e - s,
             "path": str(out_path),
             "ok": ok,
+            "subtitle_words": len(words),
         })
 
     manifest_path = Path(out_dir) / "shorts_manifest.json"
@@ -266,8 +331,11 @@ def main():
     p.add_argument("--video", default=str(VIDEO_PATH))
     p.add_argument("--out-dir", default=str(SHORTS_DIR))
     p.add_argument("--n", type=int, default=5)
+    p.add_argument("--prefix", default="",
+                   help="Prefix for output filenames, e.g. 'v3_'")
     args = p.parse_args()
-    ok = run(args.script, args.video, args.out_dir, n=args.n)
+    ok = run(args.script, args.video, args.out_dir, n=args.n,
+             prefix=args.prefix)
     sys.exit(0 if ok else 1)
 
 

@@ -637,7 +637,37 @@ def build_section_background(section_idx, section_dur, shots,
         kb_idx = MOTION_MAP.get(motion, (section_idx + bi) % 5)
 
         ok = False
-        if shot_type == "hero":
+        # Phase 12.3: real-asset shot types from the News Asset Collector
+        if shot_type in ("person_photo", "company_logo",
+                          "article_screenshot"):
+            # These are pre-rendered PNGs (styled cards). Use as static
+            # clip with Ken Burns motion already baked into kb_idx.
+            asset_path = shot.get("path")
+            if asset_path and Path(asset_path).exists():
+                try:
+                    image = Image.open(asset_path).convert("RGB")
+                    ok = create_static_clip(image, beat_dur, beat_path,
+                                            w, h, kb_effect=kb_idx)
+                except Exception as e:
+                    print(f"\n        ⚠️  asset render failed: {e}")
+            label_map = {
+                "person_photo": shot.get("name", "person"),
+                "company_logo": shot.get("company", "logo"),
+                "article_screenshot": shot.get("source", "article"),
+            }
+            print(f"          beat {bi+1}: {shot_type} "
+                  f"({label_map[shot_type]}) ", end="")
+        elif shot_type == "chart":
+            # Animated chart MP4 produced by news_asset_collector
+            chart_path = shot.get("path")
+            if chart_path and Path(chart_path).exists():
+                ok = prepare_clip_segment(
+                    chart_path, beat_dur, beat_path, w, h,
+                    darken=0.0, blur_strength="0:0", kb_effect=0,
+                )
+            print(f"          beat {bi+1}: chart "
+                  f"({shot.get('stat', '?')}) ", end="")
+        elif shot_type == "hero":
             # Phase 11: cinematic hero shot via Kling on fal.ai.
             # The shot list should provide either `path` (pre-fetched) or
             # `prompt` (we generate on demand and cache).
@@ -1297,14 +1327,39 @@ def generate_video(script_path, audio_path, config):
         section_offsets_ms.append(offset)
         offset += dur_s * 1000
 
-    # Prefer Whisper-verified timestamps (Agent 26) when available
+    # Phase 12.1: be LOUD about which timestamp source is feeding captions.
+    # The verified file is the ground truth (AssemblyAI in Phase 11+, or
+    # Whisper in earlier runs). The ElevenLabs / Edge TTS per-section
+    # fallback is much less accurate — surface that as a banner warning.
     verified_path = AUDIO_DIR / "latest_words_verified.json"
     audio_start_ms = (LOGO_DUR + INTRO_DUR) * 1000
     caption_words = load_verified_words(str(verified_path), audio_start_ms)
+
+    # Inspect the verified file's asr_source metadata if present
+    verified_source = "unknown"
+    try:
+        if verified_path.exists():
+            _vdata = json.loads(verified_path.read_text(encoding="utf-8"))
+            verified_source = (_vdata.get("asr_source")
+                                or "verified (legacy format)")
+    except Exception:
+        pass
+
     if caption_words:
-        print(f"    ✅ Using Whisper-verified word timestamps "
-              f"({len(caption_words)} words)")
+        print(f"\n    📝 CAPTION SOURCE: ✅ "
+              f"{verified_path.name}  ({verified_source}, "
+              f"{len(caption_words)} words)")
     else:
+        # Fall back to the per-section ElevenLabs / Edge TTS captions.
+        # This is much less accurate — flag it prominently.
+        print(f"\n    📝 CAPTION SOURCE: ⚠️  ⚠️  ⚠️")
+        print(f"    📝 CAPTION SOURCE: latest_words_verified.json "
+              f"NOT FOUND at {verified_path}")
+        print(f"    📝 CAPTION SOURCE: Falling back to per-section "
+              f"TTS timestamps (ElevenLabs / Edge TTS).")
+        print(f"    📝 CAPTION SOURCE: These are less accurate. "
+              f"Run utils/assemblyai_verify.py before next render.")
+        print(f"    📝 CAPTION SOURCE: ⚠️  ⚠️  ⚠️\n")
         caption_words = load_caption_words(
             str(CAPTIONS_DIR), section_indices, section_offsets_ms
         )
@@ -1313,19 +1368,26 @@ def generate_video(script_path, audio_path, config):
     vf_filters = []
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-    if caption_words:
-        # Phase 10: pick caption style from mode_config.json
-        mode_cfg_path = PROJECT_ROOT / "output" / "mode_config.json"
-        mode = "fireship"
-        caption_style = "word_simple"
-        if mode_cfg_path.exists():
-            try:
-                cfg = json.loads(mode_cfg_path.read_text(encoding="utf-8"))
-                mode = cfg.get("mode", "fireship")
-                caption_style = cfg.get("caption_style", "word_simple")
-            except Exception:
-                pass
+    # Phase 12.2: caption_style="none" → skip the entire captions burn.
+    # All long-form modes (reaction / explainer / tutorial / fireship)
+    # are now caption-free; viewers toggle YouTube's auto-CC for
+    # accessibility. Shorts get their own subtitle pass downstream.
+    mode_cfg_path = PROJECT_ROOT / "output" / "mode_config.json"
+    mode = "reaction"
+    caption_style = "none"
+    if mode_cfg_path.exists():
+        try:
+            cfg = json.loads(mode_cfg_path.read_text(encoding="utf-8"))
+            mode = cfg.get("mode", "reaction")
+            caption_style = cfg.get("caption_style", "none")
+        except Exception:
+            pass
+    if caption_style == "none":
+        print(f"\n    📝 STEP 6: captions DISABLED ({mode} mode, "
+              f"long-form). YouTube auto-CC handles accessibility.")
+        caption_words = []  # short-circuit the rest of the captions block
 
+    if caption_words:
         palette_terms = {}
         palette_path = PROJECT_ROOT / "output" / "color_palette.json"
         if palette_path.exists():
@@ -1359,7 +1421,7 @@ def generate_video(script_path, audio_path, config):
             generate_ass(caption_words, str(ass_path), W, H)
         ass_escaped = str(ass_path).replace("\\", "/").replace(":", "\\:")
         vf_filters.append(f"ass='{ass_escaped}'")
-    else:
+    elif caption_style != "none":
         print(f"\n    ⚠️  No word timestamps available — skipping captions")
 
     # End screen teaser overlay (last 15 seconds)

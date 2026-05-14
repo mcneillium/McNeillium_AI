@@ -42,10 +42,14 @@ CONFIG_PATH = PROJECT_ROOT / "output" / "mode_config.json"
 # music_style: energetic | minimal_ambient | dramatic | focused_calm
 # illustration_density_per_minute: target illustrations per minute of narration
 MODE_CONFIGS = {
+    # Phase 12.2: captions are off for all long-form modes. YouTube's
+    # auto-CC handles accessibility — viewers toggle it. Burned-in
+    # captions only happen on Shorts (where sound-off mobile viewing
+    # makes them essential). The shorts_producer adds them separately.
     "fireship": {
         "beat_hold_seconds": [5, 8],
         "footage_to_illustration": 70,
-        "caption_style": "word_simple",
+        "caption_style": "none",
         "music_style": "energetic",
         "illustration_density_per_minute": 0.5,
         "stat_card_emphasis": "high",
@@ -54,7 +58,7 @@ MODE_CONFIGS = {
     "explainer": {
         "beat_hold_seconds": [15, 30],
         "footage_to_illustration": 20,
-        "caption_style": "phrase_semantic",
+        "caption_style": "none",
         "music_style": "minimal_ambient",
         "illustration_density_per_minute": 2.4,
         "stat_card_emphasis": "subtle",
@@ -63,7 +67,7 @@ MODE_CONFIGS = {
     "reaction": {
         "beat_hold_seconds": [3, 5],
         "footage_to_illustration": 80,
-        "caption_style": "word_emphasis",
+        "caption_style": "none",
         "music_style": "dramatic",
         "illustration_density_per_minute": 0.25,
         "stat_card_emphasis": "high",
@@ -72,7 +76,7 @@ MODE_CONFIGS = {
     "tutorial": {
         "beat_hold_seconds": [10, 15],
         "footage_to_illustration": 30,
-        "caption_style": "phrase_code",
+        "caption_style": "none",
         "music_style": "focused_calm",
         "illustration_density_per_minute": 1.2,
         "stat_card_emphasis": "subtle",

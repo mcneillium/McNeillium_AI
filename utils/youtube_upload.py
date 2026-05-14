@@ -140,6 +140,13 @@ def upload_video(
     video_url = f"https://youtu.be/{video_id}"
 
     print(f"  ✅ Uploaded! {video_url}")
+    # Phase 12.2: long-form videos ship with no burned-in captions.
+    # YouTube auto-generates English CC from the audio within ~24 hours
+    # of upload — viewers toggle them via the CC button. No API flag
+    # is needed; this is the default behaviour for any video with a
+    # detectable language.
+    print(f"  📝 YouTube will auto-generate captions from audio within "
+          f"~24h — viewers can toggle CC on this video.")
     return video_id
 
 

@@ -7,8 +7,9 @@
       "start": 64.06075979381443,
       "end": 115.35639828178694,
       "duration": 51.29563848797251,
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\short_01_sam_altman_just_testified_under_oath_her_main_point_1.mp4",
-      "ok": true
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\v3_short_01_sam_altman_just_testified_under_oath_her_main_point_1.mp4",
+      "ok": true,
+      "subtitle_words": 140
     },
     {
       "index": 2,
@@ -16,8 +17,9 @@
       "start": 171.3152766323024,
       "end": 229.97392542955328,
       "duration": 58.65864879725086,
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\short_02_sam_altman_just_testified_under_oath_her_main_point_3.mp4",
-      "ok": true
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\v3_short_02_sam_altman_just_testified_under_oath_her_main_point_3.mp4",
+      "ok": true,
+      "subtitle_words": 155
     },
     {
       "index": 3,
@@ -25,8 +27,9 @@
       "start": 115.35639828178694,
       "end": 171.3152766323024,
       "duration": 55.95887835051548,
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\short_03_sam_altman_just_testified_under_oath_her_main_point_2.mp4",
-      "ok": true
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\v3_short_03_sam_altman_just_testified_under_oath_her_main_point_2.mp4",
+      "ok": true,
+      "subtitle_words": 136
     },
     {
       "index": 4,
@@ -34,8 +37,9 @@
       "start": 229.97392542955328,
       "end": 271.45079450171824,
       "duration": 41.47686907216496,
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\short_04_sam_altman_just_testified_under_oath_her_demo.mp4",
-      "ok": true
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\v3_short_04_sam_altman_just_testified_under_oath_her_demo.mp4",
+      "ok": true,
+      "subtitle_words": 111
     },
     {
       "index": 5,
@@ -43,8 +47,9 @@
       "start": 292.9276635738832,
       "end": 340.97130584192445,
       "duration": 48.04364226804125,
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\short_05_sam_altman_just_testified_under_oath_her_summary.mp4",
-      "ok": true
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\shorts\\v3_short_05_sam_altman_just_testified_under_oath_her_summary.mp4",
+      "ok": true,
+      "subtitle_words": 127
     }
   ]
 }

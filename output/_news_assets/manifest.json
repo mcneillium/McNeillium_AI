@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-05-14T19:06:43.195675Z",
+  "title": "Sam Altman Just Testified Under Oath. Here's What He Said.",
+  "people": {
+    "sam-altman": {
+      "name": "Sam Altman",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\sam-altman.jpg"
+    },
+    "elon-musk": {
+      "name": "Elon Musk",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\elon-musk.jpg"
+    },
+    "dario-amodei": {
+      "name": "Dario Amodei",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\dario-amodei.jpg"
+    }
+  },
+  "logos": {
+    "openai": {
+      "name": "OpenAI",
+      "domain": "openai.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\openai.png"
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "domain": "anthropic.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\anthropic.png"
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "domain": "microsoft.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\microsoft.png"
+    }
+  },
+  "articles": {
+    "cnbc-altman-testimony": {
+      "url": "https://www.cnbc.com/2026/05/13/altman-musk-trial-testimony-takeaways.html",
+      "label": "CNBC Altman testimony",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\cnbc-altman-testimony-8aff23169b82.png"
+    },
+    "cnbc-trial-updates": {
+      "url": "https://www.cnbc.com/2026/05/12/openai-trial-updates-sam-altman-set-to-testify-in-musk-suit.html",
+      "label": "CNBC trial updates",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\cnbc-trial-updates-203f1e93437c.png"
+    },
+    "fortune-googlebook-anthropic-valuation": {
+      "url": "https://fortune.com/2026/05/13/behold-the-googlebook/",
+      "label": "Fortune Googlebook Anthropic valuation",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\fortune-googlebook-anthropic-valuation-2e809e90f6ad.png"
+    }
+  },
+  "charts": []
+}
