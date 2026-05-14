@@ -637,7 +637,30 @@ def build_section_background(section_idx, section_dur, shots,
         kb_idx = MOTION_MAP.get(motion, (section_idx + bi) % 5)
 
         ok = False
-        if shot_type == "illustration":
+        if shot_type == "hero":
+            # Phase 11: cinematic hero shot via Kling on fal.ai.
+            # The shot list should provide either `path` (pre-fetched) or
+            # `prompt` (we generate on demand and cache).
+            hero_path = shot.get("path")
+            if not hero_path or not Path(hero_path).exists():
+                prompt = shot.get("prompt") or shot.get("query") or ""
+                if prompt:
+                    try:
+                        sys.path.insert(0, str(PROJECT_ROOT))
+                        from utils import kling_via_fal
+                        hero_path = kling_via_fal.fetch_hero(
+                            prompt, title="",
+                        )
+                    except Exception as e:
+                        print(f"\n        ⚠️  hero fetch failed: {e}")
+                        hero_path = None
+            if hero_path and Path(hero_path).exists():
+                ok = prepare_clip_segment(
+                    hero_path, beat_dur, beat_path, w, h,
+                    darken=0.0, blur_strength="0:0", kb_effect=kb_idx,
+                )
+            print(f"          beat {bi+1}: hero ", end="")
+        elif shot_type == "illustration":
             ill_path = shot.get("path") or shot.get("illustration_path")
             if ill_path and Path(ill_path).exists():
                 ok = prepare_clip_segment(
