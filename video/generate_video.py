@@ -1200,10 +1200,19 @@ def generate_video(script_path, audio_path, config):
         except Exception:
             pass
     if mix_mode == "explainer":
+        # Voice sits far forward, music near-silent under speech, -16 LUFS
         music_vol = 0.08
         duck_ratio = 20
         target_lufs = -16
+    elif mix_mode == "reaction":
+        # Slightly hotter than explainer but voice still has to win — the
+        # baseline music level is just below voice and ducking pulls it
+        # ~10dB deeper when speech is active.
+        music_vol = 0.10
+        duck_ratio = 10
+        target_lufs = -14
     else:
+        # fireship / tutorial / default — energetic, music more present
         music_vol = 0.12
         duck_ratio = 6
         target_lufs = -14
