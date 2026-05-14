@@ -53,12 +53,30 @@ FPS = 30
 
 
 STEP_CUES = re.compile(
-    r"\b(step\s+(?:one|two|three|four|five|1|2|3|4|5)|"
-    r"first(?:ly|,)?|second(?:ly|,)?|third(?:ly|,)?|"
-    r"then,?|next,?|after that|finally|"
-    r"so how does .* work)\b",
-    re.I,
+    # Tightened in Phase 10.1: "next" and "first" without explicit step
+    # context were matching "next week" / "first time"; now we require:
+    #   - explicit step markers ("step one", "step 1")
+    #   - OR an ordinal with a comma ("first,", "second,", "thirdly,")
+    #   - OR position at start of clause with punctuation following
+    #     ("Then,", "Next,", "Finally,")
+    #   - OR section-opening cue ("so how does X work")
+    r"(?:^|[.;]\s)"          # start of sentence/clause
+    r"\s*("
+    r"step\s+(?:one|two|three|four|five|1|2|3|4|5)\b"
+    r"|first(?:ly)?[,.]"
+    r"|second(?:ly)?[,.]"
+    r"|third(?:ly)?[,.]"
+    r"|then[,.]"
+    r"|next[,.]"
+    r"|after that"
+    r"|finally[,.]"
+    r"|so how does \w[\w\s]*?work"
+    r")",
+    re.I | re.M,
 )
+
+# Sections that aren't process explanations — never run evolution on them.
+SKIP_SECTION_IDS = {"hook", "intro", "outro", "summary"}
 
 
 def _find_ffmpeg():
@@ -332,6 +350,10 @@ def run(script_path, shot_list_path, mode_config_path, palette_path,
     rendered = 0
     for sec, dur in zip(sections, durations):
         sid = sec.get("id")
+        # Phase 10.1: hook/intro/outro/summary are housekeeping sections,
+        # not process explanations — don't try to mine steps from them.
+        if sid in SKIP_SECTION_IDS:
+            continue
         if dur < min_section_seconds:
             continue
         steps = extract_steps(sec.get("narration", ""))

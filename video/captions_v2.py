@@ -140,12 +140,15 @@ def _style_phrase_text(phrase_text, technical_terms, palette_terms):
 
 def build_phrase_ass(words, output_path, width=1920, height=1080,
                      fade_ms=200, palette=None, technical_terms=None,
-                     position_hint_by_time=None):
+                     position_hint_by_time=None, mode="fireship"):
     """
     palette: dict of {term_lower: ASS_colour}
     technical_terms: extra terms to colour TEAL
     position_hint_by_time: list of (start_ms, end_ms, "top"|"bottom") slots —
         phrases overlapping a "top" slot get rendered at the top instead.
+    mode: "explainer" uses Phase 10.1 high-contrast styling (semi-transparent
+        backdrop box at alpha 0.65, ExtraBold weight, white outer glow) so
+        captions remain legible over Manim's dark stylistic backgrounds.
     """
     palette = palette or {}
     technical_terms = set(t.lower() for t in (technical_terms or []))
@@ -154,6 +157,25 @@ def build_phrase_ass(words, output_path, width=1920, height=1080,
     phrases = group_into_phrases(words)
     margin_v_bottom = int(height * 0.16)
     margin_v_top = int(height * 0.10)
+
+    if mode == "explainer":
+        # Backdrop alpha 0xA0 ≈ 0.63 opacity dark box; BorderStyle=3 draws
+        # the box, Outline acts as padding around the text. The Outline
+        # colour is white at alpha 0xC8 (≈0.22 transparent) — that's the
+        # "white outer glow" sitting between text and backdrop.
+        styles = (
+            f"Style: Phrase,Arial Black,56,{WHITE},&H000000FF,"
+            f"&HC8FFFFFF,&HA0000000,-1,0,0,0,100,100,0,0,3,5,3,2,40,40,{margin_v_bottom},1\n"
+            f"Style: PhraseTop,Arial Black,56,{WHITE},&H000000FF,"
+            f"&HC8FFFFFF,&HA0000000,-1,0,0,0,100,100,0,0,3,5,3,8,40,40,{margin_v_top},1"
+        )
+    else:
+        styles = (
+            f"Style: Phrase,Arial Black,52,{WHITE},&H000000FF,"
+            f"{OUTLINE},{SHADOW},-1,0,0,0,100,100,0,0,1,3,3,2,40,40,{margin_v_bottom},1\n"
+            f"Style: PhraseTop,Arial Black,52,{WHITE},&H000000FF,"
+            f"{OUTLINE},{SHADOW},-1,0,0,0,100,100,0,0,1,3,3,8,40,40,{margin_v_top},1"
+        )
 
     header = f"""[Script Info]
 Title: McNeillium_AI Phrase Captions
@@ -165,8 +187,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Phrase,Arial Black,52,{WHITE},&H000000FF,{OUTLINE},{SHADOW},-1,0,0,0,100,100,0,0,1,3,3,2,40,40,{margin_v_bottom},1
-Style: PhraseTop,Arial Black,52,{WHITE},&H000000FF,{OUTLINE},{SHADOW},-1,0,0,0,100,100,0,0,1,3,3,8,40,40,{margin_v_top},1
+{styles}
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

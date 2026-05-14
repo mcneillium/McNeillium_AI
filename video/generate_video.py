@@ -1190,6 +1190,26 @@ def generate_video(script_path, audio_path, config):
     bg_music = MUSIC_DIR / "ambient_tech.mp3"
     has_music = bg_music.exists()
 
+    # Phase 10.1: per-mode mix settings. Explainer: deeper ducking,
+    # quieter base music, -16 LUFS so the voice sits forward.
+    mode_cfg_path = PROJECT_ROOT / "output" / "mode_config.json"
+    mix_mode = "fireship"
+    if mode_cfg_path.exists():
+        try:
+            mix_mode = json.loads(mode_cfg_path.read_text(encoding="utf-8")).get("mode", "fireship")
+        except Exception:
+            pass
+    if mix_mode == "explainer":
+        music_vol = 0.08
+        duck_ratio = 20
+        target_lufs = -16
+    else:
+        music_vol = 0.12
+        duck_ratio = 6
+        target_lufs = -14
+    print(f"    🎚  Mix: mode={mix_mode}, music_vol={music_vol}, "
+          f"duck_ratio={duck_ratio}, target {target_lufs} LUFS")
+
     if has_music:
         print(f"    🎵 Mixing narration + background music (voice ducking)...")
         cmd = [
@@ -1199,11 +1219,11 @@ def generate_video(script_path, audio_path, config):
             "-i", str(bg_music),
             "-filter_complex",
             "[1:a]aformat=fltp:44100:stereo,asplit[narr][sc];"
-            "[2:a]aformat=fltp:44100:stereo,volume=0.12,"
+            f"[2:a]aformat=fltp:44100:stereo,volume={music_vol},"
             f"afade=t=in:st=0:d=3,afade=t=out:st={max(0, audio_dur - 3)}:d=3[music];"
-            "[music][sc]sidechaincompress=threshold=0.02:ratio=6:attack=200:release=1000[ducked];"
+            f"[music][sc]sidechaincompress=threshold=0.02:ratio={duck_ratio}:attack=200:release=1000[ducked];"
             "[narr][ducked]amix=inputs=2:duration=first,"
-            "loudnorm=I=-14:TP=-1.5:LRA=11[aout]",
+            f"loudnorm=I={target_lufs}:TP=-1.5:LRA=11[aout]",
             "-map", "0:v",
             "-map", "[aout]",
             "-c:v", "copy",
@@ -1221,7 +1241,7 @@ def generate_video(script_path, audio_path, config):
             "-map", "0:v",
             "-map", "1:a",
             "-c:v", "copy",
-            "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
+            "-af", f"loudnorm=I={target_lufs}:TP=-1.5:LRA=11",
             "-c:a", "aac", "-b:a", "192k",
             "-shortest",
             "-movflags", "+faststart",
@@ -1296,7 +1316,7 @@ def generate_video(script_path, audio_path, config):
                   f"({mode} mode, {len(caption_words)} words → phrases)...")
             _, n_phrases = build_phrase_ass(
                 caption_words, str(ass_path), W, H,
-                palette=palette_terms,
+                palette=palette_terms, mode=mode,
             )
             print(f"        {n_phrases} phrases rendered")
         else:

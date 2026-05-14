@@ -257,13 +257,28 @@ WEIGHTS = {
 }
 
 
+def _mode_aware_threshold(default_threshold):
+    """Phase 10.1: explainer mode uses 7.0 — Manim's dark aesthetic isn't a defect."""
+    mode_cfg = PROJECT_ROOT / "output" / "mode_config.json"
+    if not mode_cfg.exists():
+        return default_threshold, "fireship"
+    try:
+        mode = json.loads(mode_cfg.read_text(encoding="utf-8")).get("mode", "fireship")
+    except Exception:
+        return default_threshold, "fireship"
+    if mode == "explainer":
+        return 7.0, mode
+    return default_threshold, mode
+
+
 def run(video_path, samples=20, threshold=8):
     video_path = Path(video_path)
     if not video_path.exists():
         print(f"❌ Video not found: {video_path}")
         return False, 0
 
-    print(f"🎬 QC Director — analysing {video_path.name}")
+    threshold, mode = _mode_aware_threshold(threshold)
+    print(f"🎬 QC Director — analysing {video_path.name}  (mode={mode}, threshold={threshold})")
 
     duration = probe_duration(video_path)
     print(f"    ⏱  Duration: {duration:.1f}s")
