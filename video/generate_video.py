@@ -35,6 +35,11 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from captions import generate_ass, load_caption_words, load_verified_words
 
+try:
+    from captions_v2 import build_phrase_ass
+except ImportError:
+    build_phrase_ass = None
+
 load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -1257,9 +1262,47 @@ def generate_video(script_path, audio_path, config):
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
     if caption_words:
-        print(f"\n    📝 STEP 6: Burning {len(caption_words)} word captions...")
+        # Phase 10: pick caption style from mode_config.json
+        mode_cfg_path = PROJECT_ROOT / "output" / "mode_config.json"
+        mode = "fireship"
+        caption_style = "word_simple"
+        if mode_cfg_path.exists():
+            try:
+                cfg = json.loads(mode_cfg_path.read_text(encoding="utf-8"))
+                mode = cfg.get("mode", "fireship")
+                caption_style = cfg.get("caption_style", "word_simple")
+            except Exception:
+                pass
+
+        palette_terms = {}
+        palette_path = PROJECT_ROOT / "output" / "color_palette.json"
+        if palette_path.exists():
+            try:
+                pdata = json.loads(palette_path.read_text(encoding="utf-8"))
+                for term, hex_c in pdata.get("term_colours", {}).items():
+                    h = hex_c.lstrip("#")
+                    if len(h) == 6:
+                        r, g, b = h[0:2], h[2:4], h[4:6]
+                        palette_terms[term.lower()] = (
+                            f"&H00{b}{g}{r}".upper()
+                        )
+            except Exception:
+                pass
+
         ass_path = TEMP_DIR / "captions.ass"
-        generate_ass(caption_words, str(ass_path), W, H)
+        if (caption_style.startswith("phrase")
+                and build_phrase_ass is not None):
+            print(f"\n    📝 STEP 6: Burning phrase captions "
+                  f"({mode} mode, {len(caption_words)} words → phrases)...")
+            _, n_phrases = build_phrase_ass(
+                caption_words, str(ass_path), W, H,
+                palette=palette_terms,
+            )
+            print(f"        {n_phrases} phrases rendered")
+        else:
+            print(f"\n    📝 STEP 6: Burning "
+                  f"{len(caption_words)} word captions...")
+            generate_ass(caption_words, str(ass_path), W, H)
         ass_escaped = str(ass_path).replace("\\", "/").replace(":", "\\:")
         vf_filters.append(f"ass='{ass_escaped}'")
     else:

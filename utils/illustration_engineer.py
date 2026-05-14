@@ -104,12 +104,35 @@ def _ease_out(t):
     return 1 - (1 - t) ** 3
 
 
+VENV_MANIM_PY = PROJECT_ROOT / "venv_manim" / "Scripts" / "python.exe"
+
+
 def _manim_available():
+    """Manim is available either via the current Python OR via venv_manim."""
+    if VENV_MANIM_PY.exists():
+        r = subprocess.run(
+            [str(VENV_MANIM_PY), "-c", "import manim"],
+            capture_output=True,
+        )
+        if r.returncode == 0:
+            return True
     try:
         import manim  # noqa: F401
         return True
     except Exception:
         return False
+
+
+def _manim_python():
+    """Return the Python interpreter that has Manim installed."""
+    if VENV_MANIM_PY.exists():
+        r = subprocess.run(
+            [str(VENV_MANIM_PY), "-c", "import manim"],
+            capture_output=True,
+        )
+        if r.returncode == 0:
+            return str(VENV_MANIM_PY)
+    return sys.executable
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -122,12 +145,16 @@ FLOW_PATTERNS = [
     re.compile(r"\bstep\s+(?:one|1|two|2|three|3|four|4)\b", re.I),
     re.compile(r"\bfirst,?\s+\w+.*\bthen,?\s+\w+.*\bfinally\b", re.I),
     re.compile(r"\bprocess\s+(?:of|is|works)\b", re.I),
+    re.compile(r"\bpipeline\b", re.I),
+    re.compile(r"\bworkflow\b", re.I),
 ]
 COMPARE_PATTERNS = [
     re.compile(r"\b(\w+)\s+vs\.?\s+(\w+)\b", re.I),
     re.compile(r"\bcompared to\b", re.I),
     re.compile(r"\bunlike\s+(\w+)\b", re.I),
     re.compile(r"\bdifference between\b", re.I),
+    re.compile(r"\binstead of\b", re.I),
+    re.compile(r"\brather than\b", re.I),
 ]
 STAT_PATTERN = re.compile(
     r"\b(\d+(?:\.\d+)?\s*(?:%|percent|x|times|million|billion|trillion|k|m|b))\b",
@@ -138,37 +165,99 @@ ARCH_PATTERNS = [
     re.compile(r"\bconsists of\b", re.I),
     re.compile(r"\bmade up of\b", re.I),
     re.compile(r"\b(?:three|four|five)\s+(?:components?|parts?|stages?|layers?)\b", re.I),
+    re.compile(r"\bsystem of\b", re.I),
+    re.compile(r"\bbuilt on top of\b", re.I),
 ]
 TIMELINE_PATTERN = re.compile(r"\b(19|20)\d{2}\b")
 
+# Phase 10 density boosters
+DEFINITION_PATTERN = re.compile(
+    r"\b(\w+)\s+(?:is|stands for|means|refers to)\s+([a-z].+?)(?:[.,;]|$)",
+    re.I,
+)
+RELATIONSHIP_PATTERN = re.compile(
+    r"\b(?:goes through|sends?\s+to|passes to|connects to|"
+    r"talks to|hands off to|feeds into|returns to)\b",
+    re.I,
+)
+TRANSFORMATION_PATTERN = re.compile(
+    r"\b(?:becomes|turns into|transforms into|converts to|gets converted|"
+    r"changes into|morphs into)\b",
+    re.I,
+)
+ENTITY_PATTERN = re.compile(
+    r"\b(OpenAI|Anthropic|Google|Meta|Microsoft|Apple|"
+    r"Claude|GPT-?\d?|Gemini|Llama|"
+    r"Pinecone|Weaviate|Qdrant|pgvector|"
+    r"Harvey|Hebbia|Netflix|Tesla|"
+    r"Stripe|Vercel|GitHub|Cursor)\b"
+)
 
-def detect_triggers(narration):
-    """Return a list of detected illustration triggers in order of priority."""
+
+def detect_triggers(narration, aggressive=False):
+    """Return a list of detected illustration triggers in order of priority.
+
+    aggressive=True (Phase 10) returns multiple instances per pattern and
+    catches definitions / relationships / transformations / entities.
+    Used in explainer mode for higher illustration density.
+    """
     triggers = []
 
+    # Flowchart triggers — multiple in aggressive mode
     for p in FLOW_PATTERNS:
-        if p.search(narration):
-            triggers.append(("flowchart", p.search(narration).group(0)))
+        for m in p.finditer(narration):
+            triggers.append(("flowchart", m.group(0)))
+            if not aggressive:
+                break
+        if not aggressive and triggers and triggers[-1][0] == "flowchart":
             break
 
+    # Architecture triggers
     for p in ARCH_PATTERNS:
-        if p.search(narration):
-            triggers.append(("architecture", p.search(narration).group(0)))
+        for m in p.finditer(narration):
+            triggers.append(("architecture", m.group(0)))
+            if not aggressive:
+                break
+        if not aggressive and any(t[0] == "architecture" for t in triggers):
             break
 
+    # Comparisons
     for p in COMPARE_PATTERNS:
-        m = p.search(narration)
-        if m:
+        for m in p.finditer(narration):
             triggers.append(("comparison", m.group(0)))
+            if not aggressive:
+                break
+        if not aggressive and any(t[0] == "comparison" for t in triggers):
             break
 
+    # Stats — multiple in aggressive mode
     stat_matches = STAT_PATTERN.findall(narration)
     if stat_matches:
-        triggers.append(("stat_grow", stat_matches[0]))
+        if aggressive:
+            for s in stat_matches[:4]:
+                triggers.append(("stat_grow", s))
+        else:
+            triggers.append(("stat_grow", stat_matches[0]))
 
     years = TIMELINE_PATTERN.findall(narration)
     if len(set(years)) >= 3:
         triggers.append(("timeline", ", ".join(sorted(set(years))[:5])))
+
+    if aggressive:
+        # Definitions become Definition flowcharts ("term" → "meaning")
+        for m in DEFINITION_PATTERN.finditer(narration):
+            triggers.append(("comparison", f"{m.group(1)} vs {m.group(2)[:30]}"))
+
+        # Relationships / transformations imply a flow
+        for p in (RELATIONSHIP_PATTERN, TRANSFORMATION_PATTERN):
+            for m in p.finditer(narration):
+                triggers.append(("flowchart", m.group(0)))
+
+        # Named entities → architecture-style card so the entity gets its
+        # own visible moment on screen
+        entities = list({m.group(0) for m in ENTITY_PATTERN.finditer(narration)})
+        for ent in entities[:3]:
+            triggers.append(("architecture", ent))
 
     return triggers
 
@@ -388,7 +477,7 @@ def render_manim_scene(scene_py_path, class_name, output_path):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     cmd = [
-        sys.executable, "-m", "manim",
+        _manim_python(), "-m", "manim",
         "-qm",
         "--format=mp4",
         "--media_dir", str(out_dir / "_manim_cache"),
@@ -854,13 +943,28 @@ def inject_illustration_beats(shot_list, plan):
 # Main entry
 # ═══════════════════════════════════════════════════════════════
 
-def run(script_path, shot_list_path, max_per_section=2, render=True):
+def run(script_path, shot_list_path, max_per_section=2, render=True,
+        mode_config_path=None):
     if not Path(script_path).exists():
         print(f"❌ Script not found: {script_path}")
         return False
 
     with open(script_path, encoding="utf-8") as f:
         script = json.load(f)
+
+    # Phase 10: mode-aware density
+    mode = "fireship"
+    if mode_config_path and Path(mode_config_path).exists():
+        try:
+            cfg = json.loads(Path(mode_config_path).read_text(encoding="utf-8"))
+            mode = cfg.get("mode", "fireship")
+        except Exception:
+            pass
+    aggressive = mode in {"explainer", "tutorial"}
+    if aggressive:
+        max_per_section = max(max_per_section, 5)
+    print(f"   mode={mode!r}, aggressive={aggressive}, "
+          f"max_per_section={max_per_section}")
 
     shot_list = None
     if Path(shot_list_path).exists():
@@ -878,7 +982,7 @@ def run(script_path, shot_list_path, max_per_section=2, render=True):
     for sec in script.get("sections", []):
         sid = sec.get("id", "")
         narration = sec.get("narration", "")
-        triggers = detect_triggers(narration)
+        triggers = detect_triggers(narration, aggressive=aggressive)
         if not triggers:
             continue
 
@@ -949,11 +1053,14 @@ def main():
     p.add_argument("--no-render", action="store_true",
                    help="Skip Manim rendering (write .py files only)")
     p.add_argument("--max-per-section", type=int, default=2)
+    p.add_argument("--mode-config",
+                   default=str(PROJECT_ROOT / "output" / "mode_config.json"))
     args = p.parse_args()
 
     ok = run(args.script, args.shot_list,
              max_per_section=args.max_per_section,
-             render=not args.no_render)
+             render=not args.no_render,
+             mode_config_path=args.mode_config)
     sys.exit(0 if ok else 1)
 
 

@@ -379,6 +379,100 @@ agents:
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
 
+  # ─── AGENT 52: Production Mode Selector ───────────────────────
+  # Phase 10 — picks the production rhythm per video.
+  mode_selector:
+    role: "Production Mode Selector"
+    goal: "Pick the right cut rhythm + caption style + music for this video"
+    process: |
+      1. Run: python agents/mode_selector.py
+      2. Reads title + metadata.content_pillar + hook_framework
+      3. Picks one of: fireship | explainer | reaction | tutorial
+      4. Writes output/mode_config.json with beat_hold_seconds,
+         footage_to_illustration%, caption_style, music_style,
+         illustration_density_per_minute
+      5. Downstream agents read this file and adapt their behaviour.
+    output_format: "output/mode_config.json"
+
+  # ─── AGENT 53: Phrase Caption Designer ────────────────────────
+  # Phase 10 — phrase-based ASS captions with semantic colouring,
+  # used in explainer and tutorial modes (video/captions_v2.py).
+  phrase_captions:
+    role: "Phrase Caption Designer"
+    goal: "Replace jittery word-by-word captions with grouped phrases"
+    process: |
+      1. The Video Producer auto-invokes captions_v2.build_phrase_ass
+         when mode_config.caption_style starts with "phrase"
+      2. Groups Whisper-verified words into 1.5-4s phrases at:
+         - pauses > 200ms
+         - punctuation
+         - max 5 words per phrase
+      3. Per-word colouring via color_palette.json term_colours:
+         proper noun → BLUE, technical term → TEAL, number → ORANGE
+      4. 200ms fade in / out, ASS Style "Phrase" at bottom 16%,
+         or "PhraseTop" at top when the active beat is an illustration
+    output_format: "ASS subtitle stream burned into the video"
+
+  # ─── AGENT 54: Illustration Density Booster ───────────────────
+  # Phase 10 — bumps the Illustration Engineer's trigger sensitivity.
+  illustration_density:
+    role: "Illustration Density Booster"
+    goal: "Hit 1 illustration per 25s of narration in explainer mode"
+    process: |
+      1. The Illustration Engineer reads output/mode_config.json
+      2. When mode is explainer or tutorial, sets aggressive=True
+      3. Aggressive mode adds triggers for: definitions, relationships,
+         transformations, named entities (OpenAI / Claude / GPT-N / etc.)
+         and allows multiple flowcharts / stats per section
+      4. Raises max_per_section from 2 to 5+
+    output_format: "More illustration beats injected into the shot list"
+
+  # ─── AGENT 55: Animated Equation Renderer ─────────────────────
+  # Phase 10 — held-shot equation that types in piece by piece.
+  equation_renderer:
+    role: "Animated Equation Renderer"
+    goal: "Visualise iconic equations the way 3B1B does"
+    process: |
+      1. Run: python agents/equation_renderer.py
+      2. Detects iconic equations in narration (attention softmax(QK/√d)V,
+         linear y=Wx+b, etc.)
+      3. PIL-renders a held-shot MP4 where each token fades in at its
+         narrated moment, coloured by element (Q blue, K green, V orange)
+      4. Injects an illustration beat near the start of matching sections
+      5. (Future: Manim Tex when MiKTeX is installed — see INSTALL_MANIM.md)
+    output_format: "output/illustrations/equation_NN_<sid>.mp4"
+
+  # ─── AGENT 56: Concept Evolution Designer ─────────────────────
+  # Phase 10 — 3B1B-style ONE-shot evolving diagram per section.
+  concept_evolution:
+    role: "Concept Evolution Designer"
+    goal: "Replace beat cuts with a single evolving illustration"
+    process: |
+      1. Run: python agents/concept_evolution.py
+      2. Only fires in explainer mode (reads mode_config.json)
+      3. Per section: needs ≥3 step cues ("first/then/finally") AND
+         ≥25s estimated duration to be eligible
+      4. Extracts step labels from the narration, renders ONE held-shot
+         MP4 where boxes appear in sync with the narration phrase pace
+      5. Rewrites the shot list — that section becomes a single
+         illustration beat covering the whole duration
+    output_format: "output/illustrations/evolution_<sid>.mp4 + shot list patch"
+
+  # ─── AGENT 57: Colour System Director ─────────────────────────
+  # Phase 10 — per-video palette consumed by captions + illustrations.
+  colour_system:
+    role: "Colour System Director"
+    goal: "Same elements get the same colour everywhere"
+    process: |
+      1. Run: python agents/colour_system.py
+      2. Counts content nouns (concept-boosted, stopword-pruned)
+      3. Assigns the top 4-6 to palette slots: primary BLUE, secondary
+         GREEN, tertiary ORANGE, quaternary PURPLE, quinary YELLOW
+      4. Writes output/color_palette.json with palette + term_colours
+      5. Caption Designer (53) maps phrase words by term_colours;
+         Illustration Engineer (24) reads palette for diagram colours
+    output_format: "output/color_palette.json"
+
   # ─── AGENT 46: Pipeline Orchestrator ──────────────────────────
   # Phase 9 — state-machine that resumes from checkpoints.
   pipeline_orchestrator:
