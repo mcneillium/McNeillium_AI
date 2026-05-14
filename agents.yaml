@@ -379,6 +379,49 @@ agents:
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
 
+  # ─── AGENT 34: Shorts Producer ────────────────────────────────
+  # Phase 7 — extracts 5 best 30-60s moments, reframes to vertical.
+  shorts_producer:
+    role: "YouTube Shorts Producer"
+    goal: "Repurpose the long video into 5 vertical Shorts"
+    process: |
+      1. Run utils/shorts_producer.py --n 5
+      2. Score every section window for hook strength + length + open-loop
+         phrases; pick top 5 non-overlapping windows
+      3. FFmpeg cut + scale to 1080x1920 vertical, crop centred,
+         drawtext watermark "@McNeillium_AI" at bottom
+      4. Save to output/shorts/short_NN_<slug>_<section>.mp4
+      5. Manifest at output/shorts/shorts_manifest.json
+      6. Upload separately via utils/youtube_upload.py with #Shorts in title
+    output_format: "Up to 5 vertical MP4s + manifest"
+
+  # ─── AGENT 37: Blog Writer ────────────────────────────────────
+  # Phase 7 — script → 1500-word markdown article.
+  blog_writer:
+    role: "Blog Article Adapter"
+    goal: "Convert the script into a 1500-word markdown article"
+    process: |
+      1. Run utils/blog_writer.py [--video-url <yt-url>]
+      2. Strip TTS markup, reflow narration into short paragraphs
+         (3 sentences each), add H2 per section
+      3. Lead with TL;DR pulled from hook + summary, end with subscribe CTA
+      4. Save to output/blog/<slug>.md — manual paste to Medium / dev.to /
+         Substack (no auto-publish without per-platform API tokens)
+    output_format: "Markdown article in output/blog/"
+
+  # ─── AGENT 38: Twitter Thread Generator ───────────────────────
+  # Phase 7 — 6-8 tweet thread.
+  twitter_thread:
+    role: "Twitter Thread Strategist"
+    goal: "Compress the script into a 6-8 tweet narrative thread"
+    process: |
+      1. Run utils/twitter_thread.py [--video-url <yt-url>]
+      2. Tweet 1: hook (220 chars) ending in 🧵👇
+      3. Tweets 2-N: one key insight per main_point, condensed to <=250
+      4. Closing tweet: summary + YouTube link + @McNeillium_AI + hashtags
+      5. Output both .txt (paste-ready) and .json
+    output_format: "output/social/twitter_thread.txt + .json"
+
   # ─── AGENT 31: Voice Director ─────────────────────────────────
   # Phase 6 — manages multiple Edge TTS voices so narration isn't monotone.
   voice_director:

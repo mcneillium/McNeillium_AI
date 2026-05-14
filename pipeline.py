@@ -94,10 +94,35 @@ def run_pipeline(topic: str, skip_git: bool = False, skip_video: bool = False):
         video_path = None
         print()
 
-    # ── STAGE 4: Git Push ──
+    # ── STAGE 4: Multi-platform distribution (Phase 7) ──
+    if video_path:
+        print("━" * 60)
+        print("  STAGE 4/5 — 🌐 Multi-platform Distribution")
+        print("━" * 60)
+        try:
+            from utils.shorts_producer import run as run_shorts
+            run_shorts(str(script_path), str(video_path),
+                       str(PROJECT_ROOT / "output" / "shorts"), n=5)
+        except Exception as e:
+            print(f"  ⚠️  Shorts producer failed: {e}")
+        try:
+            from utils.blog_writer import run as run_blog
+            run_blog(str(script_path),
+                     str(PROJECT_ROOT / "output" / "blog"))
+        except Exception as e:
+            print(f"  ⚠️  Blog writer failed: {e}")
+        try:
+            from utils.twitter_thread import run as run_thread
+            run_thread(str(script_path),
+                       str(PROJECT_ROOT / "output" / "social"))
+        except Exception as e:
+            print(f"  ⚠️  Twitter thread failed: {e}")
+        print()
+
+    # ── STAGE 5: Git Push ──
     if not skip_git:
         print("━" * 60)
-        print("  STAGE 4/4 — 📤 Git Push")
+        print("  STAGE 5/5 — 📤 Git Push")
         print("━" * 60)
         from utils.git_push import git_push
 
