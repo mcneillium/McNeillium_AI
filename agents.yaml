@@ -379,6 +379,53 @@ agents:
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
 
+  # ─── AGENT 31: Voice Director ─────────────────────────────────
+  # Phase 6 — manages multiple Edge TTS voices so narration isn't monotone.
+  voice_director:
+    role: "Multi-Voice Narration Director"
+    goal: "Plan which voice speaks each part of the script"
+    process: |
+      1. Run voice/voice_director.py
+      2. Parse narration for [voice:name]...[/voice] tags AND quoted speech
+      3. Build cue list with voice IDs:
+         - narrator   en-GB-RyanNeural
+         - quote      en-US-JennyNeural
+         - emphasis   en-AU-WilliamNeural
+      4. Attach SSML prosody (rate -5% for quotes, -12% for emphasis)
+      5. Save plan to output/audio/voice_plan.json — the voice generator
+         consumes this to render per-cue audio segments
+    output_format: "Voice plan JSON"
+
+  # ─── AGENT 32: Music Composer ─────────────────────────────────
+  # Phase 6 — picks a mood-matched track per section, crossfades them.
+  music_composer:
+    role: "Dynamic Music Composer"
+    goal: "Score each section with mood-appropriate music"
+    process: |
+      1. Run voice/music_composer.py
+      2. Map section ids to mood tracks (dramatic_build, ambient_calm,
+         energetic_tech, warm_outro) in assets/music/
+      3. Assemble a single music bed with 1s crossfades using FFmpeg
+         acrossfade, volume 0.18 (well below voice ducking threshold)
+      4. Output: output/audio/music_bed.mp3 — Video Producer's mix step
+         picks this up automatically if present.
+    output_format: "music_bed.mp3 matching narration duration"
+
+  # ─── AGENT 33: Sound Designer ─────────────────────────────────
+  # Phase 6 — places SFX at narrative beats (whoosh, ding, alert, etc.)
+  sound_designer:
+    role: "Sound Effects Designer"
+    goal: "Punctuate the narration with timed sound effects"
+    process: |
+      1. Run utils/sound_designer.py (--download once to seed library)
+      2. Load per-section word timestamps; build absolute timeline
+      3. Scan with trigger regexes (numeric stats → ding, "but/however"
+         → whoosh, "warning/critical" → alert, section intros → riser)
+      4. Dedupe to at most one SFX per 1.5s
+      5. Assemble into output/audio/sfx_track.mp3 via adelay+amix
+      6. Saves placement plan to output/audio/sfx_plan.json
+    output_format: "sfx_track.mp3 + placement plan JSON"
+
   # ─── AGENT 28: AI Image Generator ─────────────────────────────
   # Phase 5 — generates custom images for what stock can't show
   # (portraits of AI figures, product mockups, abstract concepts) via

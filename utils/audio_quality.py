@@ -42,27 +42,48 @@ AUDIO_CHAIN = (
     "loudnorm=I=-14:TP=-1.5:LRA=11"
 )
 
+# Phase 6 "pro" chain — adds de-esser, presence, gentle warmth saturation,
+# and a subtle short reverb send. Used when --pro is passed.
+AUDIO_CHAIN_PRO = (
+    "highpass=f=80,"
+    # de-esser: notch around 6.5 kHz where sibilants live
+    "equalizer=f=6500:width_type=h:width=1500:g=-3,"
+    # presence boost (same as default chain)
+    "equalizer=f=3000:width_type=h:width=2000:g=2,"
+    # subtle low-mid warmth
+    "equalizer=f=180:width_type=h:width=200:g=1.5,"
+    # compression
+    "compand=attacks=0.05:decays=0.3:"
+    "points=-90/-60|-60/-40|-40/-25|-20/-15:soft-knee=6:gain=0,"
+    # very subtle aecho for "studio room" feel (low wet)
+    "aecho=0.7:0.85:30:0.12,"
+    "loudnorm=I=-14:TP=-1.5:LRA=11"
+)
 
-def process_audio(input_path: str, output_path: str = None) -> str:
+
+def process_audio(input_path: str, output_path: str = None,
+                  pro: bool = False) -> str:
     """Apply the broadcast audio chain to a narration file.
 
-    Returns the path to the processed file.
+    Pass `pro=True` to use the Phase 6 chain with de-esser, warmth EQ,
+    and subtle reverb send.
     """
     inp = Path(input_path)
     if not inp.exists():
         raise FileNotFoundError(f"Audio file not found: {inp}")
 
     if output_path is None:
-        out = inp.with_stem(inp.stem + "_processed")
+        out = inp.with_stem(inp.stem + ("_pro" if pro else "_processed"))
     else:
         out = Path(output_path)
 
     out.parent.mkdir(parents=True, exist_ok=True)
 
+    chain = AUDIO_CHAIN_PRO if pro else AUDIO_CHAIN
     cmd = [
         FFMPEG, "-y",
         "-i", str(inp),
-        "-af", AUDIO_CHAIN,
+        "-af", chain,
         "-c:a", "libmp3lame", "-q:a", "2",
         str(out),
     ]
@@ -186,6 +207,8 @@ def main():
     parser.add_argument("-o", "--output", help="Output path (default: input_processed.mp3)")
     parser.add_argument("--replace", action="store_true", help="Replace original (backup saved)")
     parser.add_argument("--score-only", action="store_true", help="Just measure and score")
+    parser.add_argument("--pro", action="store_true",
+                        help="Phase 6 chain: de-esser + warmth + subtle reverb")
     args = parser.parse_args()
 
     print("\n🎛  McNeillium_AI — Audio Quality Director")
@@ -198,7 +221,19 @@ def main():
             print(f"    {d}")
         return
 
-    result = process_and_score(args.input, replace=args.replace)
+    if args.pro:
+        processed = process_audio(args.input, args.output, pro=True)
+        result = score_audio(processed) if processed else {"score": 0}
+        if args.replace and processed and result.get("score", 0) >= 5:
+            inp = Path(args.input)
+            backup = inp.with_suffix(".original.mp3")
+            if not backup.exists():
+                shutil.copy2(inp, backup)
+            shutil.move(processed, inp)
+            result["replaced"] = True
+            result["backup"] = str(backup)
+    else:
+        result = process_and_score(args.input, replace=args.replace)
     print(f"\n  Quality Score: {result.get('score', 0)}/10")
     for d in result.get("details", []):
         print(f"    {d}")
