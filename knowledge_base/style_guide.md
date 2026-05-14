@@ -1,117 +1,102 @@
-# McNeillium_AI — Style Guide
+# McNeillium AI — Style Guide (post-pivot, Phase 12)
+
+The channel is a daily AI news/commentary show. Reaction mode is the
+default. Explainer mode is opt-in only.
 
 ## Voice & Tone
-- **Conversational expert**: Like explaining AI to a smart friend over coffee
-- **Enthusiastic but grounded**: Excited about tech, but honest about limitations
-- **Inclusive**: Never assume the viewer is an engineer — explain jargon immediately
-- **Northern Irish/British flavour**: Natural, warm, approachable (matches our TTS voice)
+
+- **Informed insider with takes**. Not a teacher, not a news anchor — a
+  developer-friend who follows AI all day and has opinions.
+- **Confident, occasionally spicy, never grandstanding**. We say "I
+  think this is overhyped," "this is the smartest move I've seen,"
+  "Google's response to this is going to be embarrassing."
+- **British/Northern-Irish phrasing** survives the ElevenLabs Brian voice.
+  Use "brilliant," "spot-on," "having a moment," "absolute mess."
+- **No teacher-tone**. We're commenting, not lecturing. The viewer is
+  caught up — we don't define basic terms unless the news demands it.
+
+## Script Structure — Reaction Mode (default, 5-7 minutes)
+
+| Beat | Length | Content |
+|---|---|---|
+| HOOK | 0:00 - 0:15 | Punchy headline-style. "OpenAI just made a move nobody saw coming." Equation in two sentences. |
+| QUICK CONTEXT | 0:15 - 0:45 | 30 seconds of background. What is the company, what is the product, why is this happening NOW. |
+| MAIN STORY | 0:45 - 3:30 | The news itself. What was announced, by whom, with what specs. Quote the source. |
+| MY TAKE / ANALYSIS | 3:30 - 4:30 | This is the differentiator. "Here's why this matters / here's what they're not telling you / here's the part everyone is missing." Take a position. |
+| WHAT THIS MEANS | 4:30 - 5:30 | Implications for developers / users / the industry. Concrete predictions. |
+| CLOSER + HOOK | 5:30 - 6:00 | "Tomorrow we're going to see X" or "I'm watching Y next week." Subscribe ask. |
+
+Target length: **5-7 minutes**. Anything longer drags for news content.
 
 ## Writing Rules
-1. **Hook in 10 seconds**: Start with a surprising fact, bold claim, or question
-2. **Short sentences**: Max 20 words per sentence for TTS clarity
-3. **One idea per paragraph**: Don't stack concepts
-4. **Analogy rule**: Every technical concept gets a real-world analogy
-5. **Pattern interrupts every 90 seconds**: Rhetorical question, surprising stat, or "here's the wild part"
-6. **Specific over vague**: "Google's Remy can book flights" not "AI can do tasks"
-7. **No filler**: Cut "basically", "essentially", "in order to", "it's worth noting"
-8. **Active voice**: "Google launched Remy" not "Remy was launched by Google"
-9. **Numbers spoken out**: Write "two hundred million" not "200M" for TTS
-10. **End sections with hooks**: "But here's where it gets interesting..."
 
-## Words We Use
-- "Let's break this down" (section transitions)
-- "Here's why this matters" (significance)
-- "Think of it like..." (analogies)
-- "The short answer is..." (simplification)
-- "And this is the part that blew my mind" (excitement)
+1. **Lead with the entity**. "OpenAI just…" / "Anthropic dropped…" /
+   "Google quietly…". Front-load the noun the SEO cares about.
+2. **One claim per sentence**. News content is dense; never stack two
+   claims with a comma. Short sentences.
+3. **Quote when it matters**. If Altman / Amodei / Pichai said it, name
+   them and quote it. "Quote unquote" is fine for TTS.
+4. **Take a position by the 4-minute mark**. Audience came for our
+   take. Without one we're just a news reader.
+5. **Concrete numbers**. $5B funding, 95% accuracy, 200 employees.
+   Vague magnitudes hurt credibility.
+6. **No filler**. Cut "basically," "essentially," "it's worth noting,"
+   "what's interesting is." Just say the interesting thing.
+7. **Active voice**. "Google launched X" not "X was launched by Google."
+8. **Numbers spoken**. "Five billion" not "5B" because Brian reads it.
+9. **Energy doesn't dip**. Reaction mode is high-energy throughout. No
+   slow reflective sections. Cut anything that breathes too long.
+
+## Hook Frameworks (still useful for reaction)
+
+| Framework | Pattern | Use when |
+|---|---|---|
+| **SHOCK STAT** | Lead with a wild number | Funding / valuation / user counts |
+| **CONTRARIAN** | "Everyone is celebrating X but…" | Hot takes against the consensus |
+| **JUST HAPPENED** | "Twenty minutes ago, [Company] [verb]" | Time-sensitive news |
+| **NAMED PERSON** | "Sam Altman just said…" | Quote-driven stories |
+| **DRAMA** | "Anthropic and OpenAI are now openly fighting" | Conflict / rivalry stories |
+
+## Words We Use (reaction mode)
+
+- "Here's my take."
+- "I'll say what nobody else is saying."
+- "This is the smartest move / biggest blunder / most underrated…"
+- "Quietly", "finally", "cooked", "shipped"
+- "If you're a [developer / founder / PM]…"
 
 ## Words We Avoid
-- "Revolutionary" (overused)
-- "Game-changing" (overused)
-- "Simply put" (condescending)
-- "As you can see" (viewer can't see, they're listening)
-- "Without further ado" (filler)
-- "In this video" (meta, boring)
 
-## Hook Frameworks (Agent 3D — Hook Engineer)
-Choose ONE framework per video. The hook must confirm the promise in 3 seconds:
+- "Revolutionary" / "game-changing" — earned by results, not by us
+- "Hey guys", "welcome back", "in this video", "without further ado"
+- "Simply put", "as you can see"
+- Over-explaining basics — the viewer knows what ChatGPT is
 
-| Framework | Pattern | When to Use |
-|-----------|---------|-------------|
-| **QUESTION** | Open with a provocative question | Controversial or opinion-based topics |
-| **CONTRARIAN** | "Everyone thinks X, but..." | When challenging conventional wisdom |
-| **SHOCK STAT** | Lead with a jaw-dropping number | Data-heavy topics with strong numbers |
-| **IN MEDIAS RES** | Drop into the action | Demo-heavy or dramatic reveals |
-| **END-FIRST** | Show the payoff, then rewind | Before/after transformations |
+## Visual Direction for Reaction Mode
 
-Rules:
-- Zero filler words in the first 10 seconds (no "hey guys", "welcome back")
-- Feel like mid-conversation, not a cold start
-- Must create a curiosity gap that demands resolution
-- Include a visual direction note for the first 3 shots
+- **2-3 Kling hero shots** per video. Cinematic prompts for the most
+  visual moments (the product, the person, the abstract impact shot).
+- **Lots of Pixabay b-roll** — fast cuts every 3-5 seconds.
+- **NO Manim illustrations** in reaction mode (Phase 12 — disabled).
+- **NO concept evolution shots** — that's explainer territory.
+- **Stat cards welcome** for any concrete number from the news.
 
-## Open Loop Patterns (Agent 3E — Loop Specialist)
-Insert at section boundaries to prevent viewer drop-off:
+## Explainer Mode (opt-in only)
 
-- "But that's not even the wildest part..."
-- "We'll get to why that matters in a moment..."
-- "There's a catch, and it changes everything..."
-- "Hold that thought — you'll need it in a second..."
-- "And what happened next is what nobody expected..."
+If the user prefixes the title with "Explainer:" (e.g. "Explainer:
+How RAG Actually Works"), the legacy Phase 4-11 explainer pipeline
+runs: aggressive Manim density, held shots, concept evolution,
+equation animations, phrase captions, -16 LUFS. The full kit.
 
-Re-hook placement:
-- **25% mark**: Restate the promise with added stakes
-- **50% mark**: Introduce an unexpected twist ("but here's the thing...")
-- **75% mark**: Tease the payoff ("this is where it gets really interesting")
+This mode is rare. Reaction is the default.
 
-The "earn the next second" filter: every sentence must justify the viewer
-staying for the next one. If removing a sentence doesn't hurt the story, cut it.
+## Title Patterns That Work (post-pivot)
 
-## Structure Template
-Every video follows this arc:
-1. **HOOK** (15s): Shock, question, or bold claim
-2. **INTRO** (45s): What we'll cover and why they should care
-3. **CONTEXT** (90s): Background needed to understand the topic
-4. **CORE** (3-4 min): The main explanation, broken into digestible chunks
-5. **DEMO/EXAMPLE** (90s): Practical, concrete application
-6. **IMPLICATIONS** (60s): Why this changes things
-7. **SUMMARY** (30s): Three key takeaways
-8. **OUTRO** (15s): Like, subscribe, what's coming next
+- **News pattern**: "OpenAI Just [verb] [object]" — front-load the company
+- **Drama pattern**: "[Company A] vs [Company B] — [outcome]"
+- **Take pattern**: "Why [Common Belief] is Wrong About [Topic]"
+- **Number pattern**: "5 AI Stories You Missed Yesterday"
+- **Person pattern**: "[CEO] Just Said [Quote]"
 
-## Engagement Techniques
-- **Open loops**: Tease something coming later ("We'll get to why that's a problem in a moment")
-- **Direct address**: "You" not "viewers" or "people"
-- **Stakes**: Make the viewer feel this affects them personally
-- **Contrasts**: "Most people think X. The reality is Y."
-- **Lists of three**: Three examples, three reasons, three takeaways
-- **Pattern interrupts every 60-90s**: Rhetorical question, callback, surprising stat
-- **Mid-roll CTAs**: "If this is blowing your mind, hit subscribe — we do this every week"
-- **Energy mapping**: Never let two low-energy sections sit adjacent
-
-## Visual Writing Rules
-- **Stat callouts**: When citing a number, add visual_notes: "STAT CARD: [number] — [label]"
-- **Comparison framing**: When contrasting two things, note "SPLIT SCREEN: [A] vs [B]"
-- **Screen text brevity**: Max 6 words per bullet point for readability at 1080p
-- **Caption-friendly pacing**: Leave 0.5s breaths between key phrases for caption sync
-- **Avoid text-heavy sections**: If screen_text exceeds 5 bullets, split into two sections
-
-## Shot List Guidance (for Visual Director)
-- No two adjacent shots should share the same type (footage/stat/text)
-- Vary Ken Burns direction between sections (zoom in, pan left, etc.)
-- Use stat cards for any number over 1 million or any percentage
-- Use Layout A for hooks and outros, B for main points, C for side panels, D for demos
-- Search queries must be specific and cinematic: "server room blue lights close up" not "technology"
-
-## End Screen Strategy (Agent 6B)
-- Teaser text: max 8 words, framed as a natural continuation
-- Curiosity-driven CTA: "The next video explains why this matters even more"
-- Never say "smash that subscribe button" — use soft curiosity hooks
-- End screen overlay appears in the last 15 seconds of the video
-- Position teaser text for YouTube end screen element compatibility (top-right)
-
-## Title Patterns That Work
-- Open titles (curiosity gap): "The AI That [unexpected action]"
-- Contrarian: "Why [common belief] Is Wrong"
-- Listicle with hook: "5 AI Tools That [unexpected benefit]"
-- Urgency: "[Topic] Just Changed Everything"
-- Avoid: clickbait that the video doesn't deliver on
+Avoid: "Understanding…", "Deep Dive Into…", "How X Works" — those
+trigger explainer mode unless preceded by "Explainer:".

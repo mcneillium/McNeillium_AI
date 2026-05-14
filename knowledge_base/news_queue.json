@@ -1,0 +1,59 @@
+{
+  "captured_at": "2026-05-14T17:07:47.264221+00:00",
+  "candidates_considered": 105,
+  "top": [
+    {
+      "source": "r/LocalLLaMA",
+      "title": "VS Code's new \"Agents window\" lets you use local AI models. Still requires an Internet connection and a Github Copilot plan (because we can't have nice things)",
+      "url": "https://www.reddit.com/r/LocalLLaMA/comments/1td3uzi/vs_codes_new_agents_window_lets_you_use_local_ai/",
+      "votes": 10,
+      "comments": 10,
+      "created_ts": 1778777158,
+      "id": "1td3uzi",
+      "external_url": "https://code.visualstudio.com/docs/copilot/customization/language-models#_can-i-use-a-local-model-without-an-internet-connection",
+      "score": 89.0,
+      "breakdown": {
+        "recency": 39.8,
+        "engagement": 19.2,
+        "conflict": 15.0,
+        "audience": 15.0,
+        "age_hours": 0.4
+      }
+    },
+    {
+      "source": "r/singularity",
+      "title": "Gen AI web traffic share update Main takeaways: \u2192 Claude and Gemini continue to grow. \u2192 ChatGPT moves closer to the 50% mark.",
+      "url": "https://www.reddit.com/r/singularity/comments/1tcxx2x/gen_ai_web_traffic_share_update_main_takeaways/",
+      "votes": 95,
+      "comments": 25,
+      "created_ts": 1778764607,
+      "id": "1tcxx2x",
+      "external_url": "https://i.redd.it/y15voh5fs31h1.png",
+      "score": 82.9,
+      "breakdown": {
+        "recency": 37.9,
+        "engagement": 30.0,
+        "conflict": 0.0,
+        "audience": 15.0,
+        "age_hours": 3.9
+      }
+    },
+    {
+      "source": "hn",
+      "title": "Claude AI recovers an 11 yrs old BTC wallet holding 400k USD",
+      "url": "https://www.tomshardware.com/tech-industry/cryptocurrency/bitcoin-trader-recovers-usd400-000-using-claude-ai-after-losing-wallet-password-11-years-ago-bot-tried-3-5-trillion-passwords-before-decrypting-an-old-wallet-backup",
+      "votes": 192,
+      "comments": 80,
+      "created_ts": 1778770188,
+      "id": "48136240",
+      "score": 78.7,
+      "breakdown": {
+        "recency": 38.7,
+        "engagement": 30.0,
+        "conflict": 0.0,
+        "audience": 10,
+        "age_hours": 2.3
+      }
+    }
+  ]
+}

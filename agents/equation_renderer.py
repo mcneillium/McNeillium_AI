@@ -288,6 +288,17 @@ def run(script_path, shot_list_path, out_dir, plan_path):
     if not Path(script_path).exists():
         print(f"❌ Script not found: {script_path}")
         return False
+    # Phase 12 pivot: equation animations are explainer-only.
+    mode_cfg = PROJECT_ROOT / "output" / "mode_config.json"
+    if mode_cfg.exists():
+        try:
+            mode = json.loads(mode_cfg.read_text(encoding="utf-8")).get("mode")
+        except Exception:
+            mode = "reaction"
+        if mode not in {"explainer", "tutorial"}:
+            print(f"⏭  Equation Renderer disabled in {mode!r} mode "
+                  f"(Phase 12: explainer/tutorial only)")
+            return True
     with open(script_path, encoding="utf-8") as f:
         script = json.load(f)
 

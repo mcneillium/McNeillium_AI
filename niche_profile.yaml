@@ -1,95 +1,126 @@
-# McNeillium_AI — Niche Profile
+# McNeillium AI — Niche Profile (post-pivot, Phase 12)
 # Read by all agents to maintain consistent brand identity.
 
 channel:
-  name: "McNeillium_AI"
-  tagline: "AI explained for everyone"
+  name: "McNeillium AI"
+  tagline: "AI news, explained daily"
+  positioning: "Fast, opinionated coverage of the AI industry"
   url: "https://youtube.com/@McNeillium_AI"
 
 audience:
-  primary: "Tech-curious adults (25-45) who want to understand AI without needing a CS degree"
-  secondary: "Developers and product managers evaluating AI tools for their work"
+  primary: "Developers and tech enthusiasts who want the day's AI news without the fluff"
+  secondary: "AI-curious professionals (PMs, founders, marketers) who use AI tools at work"
   pain_points:
-    - "AI news moves too fast to keep up"
-    - "Most AI content is either too basic or too academic"
-    - "Hard to tell hype from real breakthroughs"
-  viewer_goal: "Feel informed and confident talking about AI after watching one video"
+    - "AI news moves faster than any single account can summarise"
+    - "Most coverage is either dry corporate PR or shallow hype reactions"
+    - "Hard to tell what actually matters from what's just trending"
+  viewer_goal: "Get the morning's AI take in 6 minutes — informed, opinionated, ready to discuss"
 
+# Pillar weights drive the Trend Researcher's daily picks.
 content_pillars:
-  - id: "breaking_news"
-    name: "Breaking AI News"
-    description: "First-week coverage of major launches, papers, and announcements"
-    frequency: "2-3 per week"
-    examples: ["New model launches", "Policy changes", "Major acquisitions"]
+  primary:
+    - id: "breaking_news"
+      name: "Breaking AI News"
+      frequency: "Daily, same-day"
+      examples: ["Model launches", "OpenAI / Anthropic / Google announcements", "Policy / regulatory drops"]
+    - id: "daily_roundup"
+      name: "Daily AI Roundup"
+      frequency: "Daily-weekly"
+      examples: ["5 stories this morning", "Yesterday in AI", "What you missed overnight"]
+    - id: "tool_review"
+      name: "AI Tool Review / Reaction"
+      frequency: "2-3 per week"
+      examples: ["New Claude feature", "Cursor update", "Hugging Face trending model"]
+    - id: "reaction"
+      name: "Reaction & Hot Takes"
+      frequency: "As news breaks"
+      examples: ["CEO interview reactions", "Twitter drama", "Paper drops"]
+  secondary:
+    - id: "weekly_recap"
+      name: "Week in AI"
+      frequency: "Sundays"
+      examples: ["This week in AI", "What mattered this week", "Five things you missed"]
+    - id: "industry_analysis"
+      name: "Industry Analysis"
+      frequency: "Occasional"
+      examples: ["Quarterly results breakdowns", "Funding round patterns", "Open vs closed model trajectory"]
+  deprecated:
+    # These pillars are still SUPPORTED for one-off explainer videos (use
+    # "Explainer:" prefix in the request), but the Trend Researcher should
+    # NOT pick them on its own from now on.
+    - "deep_dive"
+    - "explainers"
+    - "practical_tutorial"
+    - "impact_ethics"
 
-  - id: "explainers"
-    name: "Deep Explainers"
-    description: "Thorough breakdowns of how AI systems work under the hood"
-    frequency: "1 per week"
-    examples: ["How transformers work", "RAG explained", "Fine-tuning vs prompting"]
-
-  - id: "practical"
-    name: "Practical AI"
-    description: "Hands-on demos and tutorials showing real-world AI use"
-    frequency: "1 per week"
-    examples: ["Build an AI agent", "Automate your workflow", "Best AI tools 2026"]
-
-  - id: "impact"
-    name: "AI Impact & Ethics"
-    description: "How AI changes jobs, society, and daily life"
-    frequency: "1-2 per month"
-    examples: ["Will AI take your job?", "AI regulation updates", "Deepfake detection"]
+# Daily production target
+schedule:
+  videos_per_day: 1
+  optional_second: "if a major story breaks before 6pm GMT"
+  upload_slots: ["08:00 GMT", "16:00 GMT"]
 
 visual_brand:
   primary_color: "#00D4AA"       # Teal accent
   secondary_color: "#FF6B35"     # Orange highlight
-  background: "#0A0A1A"         # Deep navy/black
+  background: "#0A0A1A"          # Deep navy/black
   text_color: "#FFFFFF"
-  font_heading: "Montserrat Bold"
+  font_heading: "Impact"          # Viral caption font, Phase 11
   font_body: "Inter Regular"
-  thumbnail_style: "Bold text (max 4 words), teal-orange palette, relevant image, face when possible"
-  video_style: "Stock footage with Ken Burns, lower-third captions, cinematic colour grade"
+  thumbnail_style: "Bold text (max 4 words), teal-orange palette, news-style face/logo overlay"
+  video_style: "Reaction-paced (3-5s cuts), 2-3 Kling hero shots per video, viral captions"
   resolution: "1920x1080"
   fps: 30
 
 tone:
-  personality: "Smart friend who's genuinely excited about AI"
-  formality: "Casual professional — no slang, no jargon without explanation"
-  humor: "Light, observational — never forced or meme-heavy"
-  pacing: "Energetic but not rushed — let big ideas breathe"
-  voice_id: "en-GB-RyanNeural"
-  voice_rate: "+8%"
-  voice_pitch: "+0Hz"
+  personality: "Informed insider with takes — confident, occasionally spicy, never grandstanding"
+  formality: "Casual but professional. Says 'I think', 'here's my take', 'this is wrong'."
+  humor: "Dry, observational. Reaction-shot energy, not stand-up comedy."
+  pacing: "High energy throughout. No slow contemplative sections."
+  voice_id: "nPczCjzI2devNBz1zQrb"    # ElevenLabs Brian
+  voice_engine: "elevenlabs"
+  voice_settings:
+    model: "eleven_multilingual_v2"
+    stability: 0.4
+    similarity_boost: 0.75
+    style: 0.35
+    use_speaker_boost: true
 
 seo:
   primary_keywords:
-    - "artificial intelligence"
     - "AI news"
-    - "AI explained"
-    - "machine learning"
-    - "AI tools"
+    - "ChatGPT news"
+    - "Claude news"
+    - "OpenAI news"
+    - "Anthropic news"
+    - "AI announcement today"
   long_tail_patterns:
-    - "[Product] explained"
-    - "What is [concept] in AI"
-    - "[Company] AI announcement"
-    - "AI vs [alternative]"
-    - "How to use [tool]"
+    - "[Company] just [action]"
+    - "[Product] launch reaction"
+    - "Why [Company] [decision]"
+    - "[Person] said [claim] — my take"
+    - "This week in AI"
   title_rules:
     - "Under 60 characters"
-    - "Lead with the most searchable term"
-    - "Use power words: Now, Just, Finally, Changes Everything"
-    - "Numbers when relevant (5 AI Tools, 3 Reasons)"
+    - "Front-load the entity: OpenAI / Anthropic / Google / Claude / GPT-5"
+    - "Power words: Just, Now, Breaking, Quietly, Finally, Cooked"
+    - "Numbers when relevant (3 things you missed)"
   hashtags:
     - "#AI"
-    - "#ArtificialIntelligence"
+    - "#AINews"
+    - "#OpenAI"
+    - "#Anthropic"
     - "#TechNews"
-    - "#MachineLearning"
 
 competitors:
   watch_list:
-    - "Fireship"
-    - "Two Minute Papers"
-    - "AI Explained"
     - "Matt Wolfe"
+    - "AI Explained"
     - "The AI Advantage"
-  differentiation: "We bridge news and education — every video teaches something concrete, not just reports what happened"
+    - "The Rundown AI"
+    - "Wes Roth"
+    - "Two Minute Papers"
+  differentiation: |
+    Faster cadence than Matt Wolfe, more opinionated than The Rundown,
+    more news-current than AI Explained. Daily commentary on the
+    industry, not weekly recaps. British/Northern Irish voice cuts
+    through US-dominated AI YouTube noise.

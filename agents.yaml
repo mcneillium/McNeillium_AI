@@ -4,32 +4,64 @@
 
 agents:
 
-  # ─── AGENT 1: Trend Researcher ───────────────────────────────
+  # ─── AGENT 1: Trend Researcher (upgraded Phase 12) ──────────
+  # The most important agent now that the channel is a daily news show.
+  # A real script (utils/trend_researcher.py) scans HN / Reddit JSON /
+  # Hugging Face trending and writes a ranked top-5 to
+  # knowledge_base/news_queue.json. Claude Code (acting as Agent 1) then
+  # confirms the angle via WebSearch when needed.
   trend_researcher:
-    role: "Senior AI Trend Researcher"
-    goal: "Find the most compelling, timely AI topic that will get views"
+    role: "AI News & Trend Researcher"
+    goal: "Surface the 5 most ship-worthy AI stories every day"
     backstory: |
-      You are an expert AI industry analyst who tracks every major development
-      across OpenAI, Google DeepMind, Anthropic, Meta, Apple, Microsoft, and
-      the open-source community. You understand what makes a YouTube video
-      go viral in the tech/AI niche: timeliness, controversy, practical value,
-      or "wow factor". You read papers, press releases, and competitor channels
-      to find gaps — topics that are trending but underexplained.
+      The channel publishes daily AI news/commentary. You watch
+      OpenAI, Anthropic, Google DeepMind, Meta AI, Microsoft, xAI,
+      DeepSeek, Hugging Face, and the prominent voices on Twitter/X.
+      You know what gets clicks: time-sensitivity, controversy, named
+      people, big numbers. You filter ruthlessly — daily upload means
+      we only have time for stories that can carry 5-7 minutes.
+    sources: |
+      Free-tier / no-auth scraping:
+        - Hacker News top stories (AI keyword filter)
+        - Reddit JSON: r/MachineLearning, r/LocalLLaMA, r/OpenAI,
+          r/Anthropic, r/singularity
+        - Hugging Face trending models API
+      Authenticated (when keys configured):
+        - X/Twitter lists of Sam Altman / Dario Amodei / Demis Hassabis
+          / Greg Brockman / Yann LeCun / Andrej Karpathy
+        - The Rundown AI, Ben's Bites RSS
+        - Company blog RSS (OpenAI, Anthropic, Google AI, Meta AI)
+      Web search (Claude Code, on demand):
+        - General "AI news this week" queries to triangulate trending
+          stories the scrapers miss
+    scoring: |
+      Per candidate story, score 0-100:
+        recency      up to 40 pts, linear decay over 72 hours
+        engagement   up to 30 pts, log-scaled on votes + comments
+        conflict     up to 15 pts, regex hits on drama/fight/sues/quits
+        audience_fit up to 15 pts, AI + dev keyword density in title
     process: |
-      1. Search the web for the latest AI news from the past 7 days
-      2. Check what competitor AI YouTube channels have posted recently
-      3. Identify 3-5 candidate topics ranked by: timeliness, search demand, competition gap
-      4. For the top pick, gather 5-10 key facts, stats, and sources
-      5. Check the knowledge base to avoid duplicating past videos
+      1. Every 4 hours (or when asked): run
+         `python utils/trend_researcher.py`
+      2. Reads knowledge_base/topic_tracker.md to skip stories we have
+         already covered.
+      3. Writes the top 5 to knowledge_base/news_queue.json with full
+         scoring breakdown.
+      4. When the user picks one or asks for the day's angle, do a
+         WebSearch round to confirm the latest facts, gather quotes,
+         and check competitor coverage (Matt Wolfe, The Rundown AI,
+         AI Explained).
+      5. Stash full research at
+         knowledge_base/research/YYYY-MM-DD_topic-slug.md.
     output_format: |
-      Save to knowledge_base/research/YYYY-MM-DD_topic-slug.md:
-      - Topic: [chosen topic]
-      - Why now: [timeliness reason]
-      - Key facts: [bulleted list of 5-10 facts with sources]
-      - Target audience: [who cares about this]
-      - Competitor coverage: [what others have/haven't covered]
-      - Suggested angle: [unique McNeillium_AI take]
-      - Sources: [list of URLs]
+      knowledge_base/news_queue.json (auto, every run)
+      knowledge_base/research/YYYY-MM-DD_topic-slug.md (per chosen topic):
+        - Topic
+        - Why NOW (timeliness reason)
+        - Key facts with sources (5-10 bullets)
+        - Suggested hook angle
+        - Title candidates (3-5)
+        - Competitor coverage notes
 
   # ─── AGENT 2: Script Writer ─────────────────────────────────
   script_writer:

@@ -82,26 +82,24 @@ MODE_CONFIGS = {
 
 
 # Title-pattern triggers — ordered most-specific first.
-EXPLAINER_RE = re.compile(
-    r"\b(how\s+(?:.+?)\s+(?:work|works|actually works)|"
-    r"understanding\s+|"
-    r"\bexplained\b|"
-    r"\bwhy\s+(?:.+?)\s+matters?\b|"
-    r"intro to\s+|deep dive)\b",
-    re.I,
-)
+# Phase 12 pivot: explainer mode is now opt-in only. The title must
+# START with "Explainer:" (case-insensitive). Without that prefix we
+# pick reaction by default — the channel is an AI news channel now.
+EXPLAINER_PREFIX_RE = re.compile(r"^\s*explainer\s*:", re.I)
 REACTION_RE = re.compile(
-    r"\b(just\s+(?:launched|released|got|added)|"
+    r"\b(just\s+(?:launched|released|got|added|dropped|shipped|"
+    r"announced|tweeted|said|gave|raised|revealed)|"
     r"breaking|"
-    r"now has|"
+    r"now has|now offers|"
     r"new\s+(?:from|in)\s+|"
-    r"announces?|"
-    r"\b(?:yesterday|today)\b)",
+    r"announces?|launches?|releases?|"
+    r"\b(?:yesterday|today|this morning|this week)\b|"
+    r"quietly|cooked|finally|reacts?\b)",
     re.I,
 )
 TUTORIAL_RE = re.compile(
     r"\b(build\s+(?:your|a|an)|"
-    r"how to\s+(?:build|create|make|use|setup|set up|install)|"
+    r"how to\s+(?:build|create|make|use|setup|set up|install|deploy)|"
     r"tutorial|walkthrough|step by step|step-by-step|"
     r"\bfrom scratch\b)",
     re.I,
@@ -109,32 +107,35 @@ TUTORIAL_RE = re.compile(
 
 
 def select_mode(script):
-    """Pick a mode for this script. Returns (mode_name, reason)."""
+    """Pick a mode for this script. Returns (mode_name, reason).
+
+    Phase 12 pivot policy:
+      1. explainer  — opt-in only, requires "Explainer:" title prefix
+      2. tutorial   — opt-in via build/tutorial/walkthrough patterns
+      3. reaction   — DEFAULT for everything else (the channel is a
+                      daily AI news/commentary show)
+    """
     title = (script.get("title") or "").strip()
     meta = script.get("metadata") or {}
     pillar = (meta.get("content_pillar") or "").lower()
-    hook_framework = (meta.get("hook_framework") or "").lower()
 
-    # Pillar takes precedence when present.
-    if pillar in {"deep_dive", "fundamentals", "explainer"}:
-        return "explainer", f"metadata.content_pillar={pillar!r}"
-    if pillar in {"breaking_news", "news", "reaction"}:
-        return "reaction", f"metadata.content_pillar={pillar!r}"
-    if pillar in {"tutorial", "build", "walkthrough"}:
-        return "tutorial", f"metadata.content_pillar={pillar!r}"
+    # Explainer is opt-in only — explicit "Explainer:" prefix
+    if EXPLAINER_PREFIX_RE.match(title) or pillar in {
+        "deep_dive", "fundamentals", "explainer",
+    }:
+        return "explainer", f"explicit explainer opt-in (prefix or pillar)"
 
-    if EXPLAINER_RE.search(title):
-        return "explainer", f"title matches explainer pattern"
+    if pillar in {"tutorial", "build", "walkthrough"} or TUTORIAL_RE.search(title):
+        return "tutorial", "tutorial pillar or title pattern"
+
+    # Everything else is reaction (news/commentary default).
+    if pillar in {"breaking_news", "news", "reaction", "daily_roundup",
+                  "tool_review", "weekly_recap", "industry_analysis"}:
+        return "reaction", f"news pillar={pillar!r}"
     if REACTION_RE.search(title):
-        return "reaction", f"title matches reaction pattern"
-    if TUTORIAL_RE.search(title):
-        return "tutorial", f"title matches tutorial pattern"
+        return "reaction", "title matches news/reaction pattern"
 
-    # Hook framework hints
-    if hook_framework in {"contrarian", "question"}:
-        return "explainer", f"hook_framework={hook_framework!r} suggests explainer"
-
-    return "fireship", "default (no mode trigger matched)"
+    return "reaction", "default (news channel — pivoted Phase 12)"
 
 
 def run(script_path, config_path):

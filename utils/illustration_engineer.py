@@ -952,14 +952,20 @@ def run(script_path, shot_list_path, max_per_section=2, render=True,
     with open(script_path, encoding="utf-8") as f:
         script = json.load(f)
 
-    # Phase 10: mode-aware density
-    mode = "fireship"
+    # Phase 10: mode-aware density. Phase 12: skip outright in news modes.
+    mode = "reaction"
     if mode_config_path and Path(mode_config_path).exists():
         try:
             cfg = json.loads(Path(mode_config_path).read_text(encoding="utf-8"))
-            mode = cfg.get("mode", "fireship")
+            mode = cfg.get("mode", "reaction")
         except Exception:
             pass
+    # Phase 12 pivot: reaction / fireship videos use stock + Kling hero only.
+    # No Manim illustrations unless explicitly in explainer or tutorial.
+    if mode not in {"explainer", "tutorial"}:
+        print(f"   mode={mode!r} — Illustration Engineer disabled "
+              f"(Phase 12: explainer/tutorial only)")
+        return True
     aggressive = mode in {"explainer", "tutorial"}
     if aggressive:
         max_per_section = max(max_per_section, 5)

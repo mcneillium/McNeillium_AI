@@ -1,212 +1,181 @@
-# CLAUDE.md — McNeillium_AI Multi-Agent System
+# CLAUDE.md — McNeillium AI (post-pivot, Phase 12)
 
 ## What This Project Does
-Autonomous YouTube content pipeline for the McNeillium_AI channel.
-30+ AI agents collaborate to produce professional AI/tech educational videos,
-distribute them to multiple platforms, and learn from analytics over time.
 
-## The Agents (YOU play each role sequentially)
+Daily AI news / commentary channel. One video per day, sometimes two.
+Reaction mode is the default. Explainer mode is opt-in for the rare
+deep dive.
 
-### When asked to produce a video, follow the 19-stage build pipeline below.
-### After publishing, the Phase 7-9 agents handle distribution, learning, and ops.
+We are **not** a tutorials channel and we are **not** a deep-explainer
+channel. We are a **fast, opinionated daily AI news show** that takes
+positions and ships before the news goes stale.
 
-**AGENT 1 — Trend Researcher**
-Search the web for the latest AI news. Check knowledge_base/topic_tracker.md
-to avoid repeats. Read niche_profile.yaml for content pillars and audience.
-Find a timely, compelling angle. Save research to
-knowledge_base/research/YYYY-MM-DD_topic-slug.md with facts and sources.
+## Daily workflow
 
-**AGENT 2 — Script Writer**
-Read the research, niche_profile.yaml, AND knowledge_base/style_guide.md.
-Write a structured JSON script to output/scripts/latest.json. Follow the
-style guide strictly: hook in 10 seconds, analogies for every concept,
-no filler, natural TTS text. Target 1800-2200 words narration across 8 sections.
+```
+Morning (you):  ask Claude Code "what should we cover today?"
+  →             Trend Researcher (Agent 1) scans HN/Reddit/HF and
+                refreshes knowledge_base/news_queue.json
+  →             You pick a topic from the top 5
+Afternoon:      Claude Code runs the reaction pipeline (below)
+                → output/videos/_<date>_<slug>.mp4 sits ready
+Review:         You watch the local MP4
+Upload:         When you say so:
+                python utils/youtube_upload.py --video <path> --privacy private
+```
 
-**AGENT 3A — Quality Reviewer**
-Review the script against the quality rubric in agents.yaml. Score each section.
-Rewrite anything below 7/10. Add pattern interrupts every 90 seconds.
-Fix TTS issues (abbreviations, symbols). Save review to knowledge_base/reviews/.
+Expected wall time per video: ~25 min (3 Kling clips + voice + render).
+Expected cost per video: **~$1.80 - $2.10** (ElevenLabs + Kling + AssemblyAI).
 
-**AGENT 3B — Visual Director**
-Read the reviewed script. Design a BEAT-LEVEL shot list — 12-15 beats per
-section (one every 5-8 seconds). Each beat is footage / stat_card / comparison
-/ illustration with a specific Pixabay-style query, duration, and motion.
-Generic queries banned (technology, innovation, data flowing). Save to
-output/shot_list.json.
+## Modes
 
-**AGENT 24 — Illustration Engineer (Phase 4)**
-Run: python utils/illustration_engineer.py
-Scans the script for moments stock footage can't show ("how X works",
-"step by step", "X vs Y", statistics, architecture, timelines) and renders
-custom diagrams using Manim (when MSVC is available) or a PIL-based
-fallback renderer. Injects illustration beats into the shot list.
+Three modes survive the pivot. The Mode Selector picks one from the
+script title + metadata:
 
-**AGENT 25 — Footage Relevance Checker (Phase 4)**
-Run: python utils/footage_relevance.py
-Scores every beat's query 1-10. Rewrites anything below 7 using concrete
-nouns extracted from the narration. Banned generic queries are auto-rejected.
+| Mode | When | Caption style | Music | Illustrations |
+|---|---|---|---|---|
+| **reaction** | DEFAULT — all news/commentary | word-by-word viral | dramatic, music_vol 0.10 | none |
+| **tutorial** | Title starts with "Build" / "How to" / "Tutorial:" | phrase + code | focused calm | minimal |
+| **explainer** | Title starts with "Explainer:" or pillar=deep_dive | phrase semantic | minimal ambient | Manim + equations + concept evolution |
 
-**AGENT 3C — Engagement Writer**
-Add strategic hooks, open loops, pattern interrupts, and CTAs at 60-90 second
-intervals. Strengthen the hook and outro CTA. Update the script JSON.
+Reaction is the default for everything unless the user explicitly
+chooses otherwise. The explainer pipeline (Phase 4-11) is still
+intact — just dormant unless triggered.
 
-**AGENT 3D — Hook Engineer**
-Rewrite the first 10 seconds using a proven hook framework:
-QUESTION / CONTRARIAN / SHOCK STAT / IN MEDIAS RES / END-FIRST.
-Confirm the video's promise in 3 seconds. Zero filler words. Update script JSON.
+## Reaction-mode pipeline (the default daily flow)
 
-**AGENT 3E — Subconscious Loop Specialist**
-Insert open loops at section boundaries. Rewrite 30% of section endings for
-forward momentum. Add mid-video re-hooks at 25/50/75% marks. Apply the
-"earn the next second" filter — cut any sentence that doesn't advance the story.
+When you ask "make a video about X", I play these roles in order:
 
-**AGENT 4 — SEO Optimizer**
-Read knowledge_base/seo/description_template.md. Generate 5 title options,
-pick the best. Write a YouTube description with timestamps. Generate 15-20 tags.
-Write thumbnail text (max 4 words). Update output/scripts/latest.json metadata.
+1. **Trend Researcher (Agent 1)** — confirm the story is hot, pull
+   sources. `utils/trend_researcher.py` for the raw feed.
+2. **Script Writer (Agent 2)** — 5-7 minute reaction script following
+   `knowledge_base/style_guide.md` (post-pivot version: hook / context
+   / story / my take / implications / close).
+3. **Hook Engineer (Agent 3D)** — punchy first 10 seconds.
+4. **SEO Optimizer (Agent 4)** — clickable news title, description,
+   tags. Front-load the company name.
+5. **Mode Selector (Agent 52)** — should pick `reaction` unless title
+   includes "Explainer:" / "Build" / "Tutorial:".
+6. **Colour System (Agent 57)** — palette from script.
+7. **Voice Producer (ElevenLabs, Agent 5A)** —
+   `python voice/generate_voice_elevenlabs.py`. Brian voice, ~$1.15.
+8. **Audio Quality Director (Agent 5B, --pro)** —
+   `python utils/audio_quality.py output/audio/latest.mp3 --replace --pro`.
+9. **AssemblyAI Verifier (Agent 26b)** —
+   `python utils/assemblyai_verify.py`. Replaces drift > 100ms.
+10. **Visual Director (Agent 3B)** — shot list with **2-3 Kling hero
+    beats** + lots of Pixabay b-roll. NO Manim. NO concept evolution.
+11. **Kling Hero Pre-fetch (Agent 28b)** —
+    `python utils/kling_via_fal.py batch`. ~$0.60-0.90.
+12. **Footage Relevance (Agent 25)** — score and rewrite weak queries.
+13. **Video Producer (Agent 6A)** — `python video/generate_video.py`.
+    Viral captions (Impact 96pt), music ducking at reaction settings
+    (vol 0.10 / duck 10 / -14 LUFS), 2-pass loudnorm baked in.
+14. **QC Director (Agent 27)** — threshold 8.0 for reaction. APPROVE or
+    REJECT.
+15. **Shorts + Blog + Twitter (Agents 34/37/38)** — auto via pipeline.py
+    STAGE 4, or run individually.
+16. **Publisher (Agent 7A)** — only on your "upload it" command. Always
+    PRIVATE first.
 
-**AGENT 5A — Voice Producer**
-Run: python voice/generate_voice.py --script output/scripts/latest.json
-This generates audio + word-level caption timestamps for animated captions.
+## What's dormant (still here, just not invoked by default)
 
-**AGENT 5B — Audio Quality Director**
-Run: python utils/audio_quality.py output/audio/latest.mp3 --replace
-Applies broadcast audio chain: highpass → presence EQ → compression → loudnorm.
-Scores output quality (0-10). Reprocesses if score < 7.
+Phase 4-11 added a full explainer kit. It's all still in the repo and
+will run when explainer mode is invoked. The mode-skip guards added in
+Phase 12 mean the following silently no-op in reaction mode:
 
-**AGENT 26 — Sync Validator (Phase 4)**
-Run: python utils/sync_validator.py
-Re-transcribes the narration audio with whisper-timestamped. For any word
-where Edge TTS timestamps drift >200ms from Whisper, replaces with Whisper's.
-Writes output/audio/latest_words_verified.json. The Video Producer auto-picks
-this up via captions.load_verified_words().
+- **Illustration Engineer (Agent 24)** — Manim diagrams
+- **Concept Evolution Designer (Agent 56)** — held-shot evolving illustrations
+- **Animated Equation Renderer (Agent 55)** — formula animations
 
-**AGENT 6A — Video Producer**
-Run: python video/generate_video.py --script output/scripts/latest.json --audio output/audio/latest.mp3
-Run: python utils/generate_thumbnail.py --title "[THUMBNAIL TEXT]" --query "[relevant image query]"
+If you ever want the full explainer treatment again, prefix the topic
+with **`Explainer:`** in your request — e.g. "Explainer: How RAG
+Actually Works". That unlocks the full Phase 4-11 stack and costs
+~$2-4 per video (illustrations + held shots + equations).
 
-**AGENT 6B — End Screen Strategist**
-Add end_screen metadata to the script JSON: teaser_text (max 8 words) for
-the next video topic, curiosity-driven CTA. The video generator automatically
-burns this as an ASS overlay in the last 15 seconds.
+## Trend Researcher (Agent 1) — upgraded
 
-**AGENT 6C — Post-Production Director**
-Check audio loudness of the final video. If not -14 LUFS, re-normalize.
-Verify 1080p/30fps output, reasonable file size, duration match.
+Run: `python utils/trend_researcher.py`
 
-**AGENT 27 — QC Director (Phase 4)**
-Run: python utils/qc_director.py output/videos/latest.mp4
-Final gate before upload. Samples 20 frames + runs deterministic checks:
-visual variety, caption legibility, brightness, loudness, duration. Weighted
-score → pass/fail (threshold 8). NO upload without QC approval. Exits non-zero
-on failure so Agent 7A can decide whether to re-render.
+Pulls from (no auth needed):
+- Hacker News top stories (AI-keyword filter)
+- Reddit JSON: r/MachineLearning, r/LocalLLaMA, r/OpenAI, r/Anthropic,
+  r/singularity
+- Hugging Face trending models
 
-**AGENT 7A — Publisher**
-Run: python utils/youtube_upload.py --video output/videos/latest.mp4 --script output/scripts/latest.json --privacy private
-Archive the script to knowledge_base/scripts/
-Update knowledge_base/topic_tracker.md
-Git commit and push.
+Scoring (per story, 0-100):
+- **Recency** up to 40 pts (linear decay over 72h)
+- **Engagement** up to 30 pts (log-scaled votes + comments)
+- **Conflict** up to 15 pts (regex: lawsuit, leaves, fired, drama, vs)
+- **Audience fit** up to 15 pts (AI + developer keyword density)
 
-**AGENT 7B — Community Engagement Bot**
-Run: python utils/community_engage.py VIDEO_ID --script output/scripts/latest.json
-Posts a pinned comment with timestamps + engagement question.
-Replies to the first 30 commenters with personalized responses.
+Already-covered titles in `knowledge_base/topic_tracker.md` get
+filtered out. Top 5 stories saved to
+`knowledge_base/news_queue.json`.
 
----
+The current `knowledge_base/content_queue.md` was hand-curated via
+WebSearch on 2026-05-14 and contains 5 picks ranked by news heat.
 
-## Phase 5 — AI Visuals
-- AGENT 28 — AI Image Generator: utils/ai_image_generator.py (HF SDXL)
-- AGENT 30 — Style-Transfer Director: utils/style_director.py
+## Quick commands
 
-## Phase 6 — Audio Overhaul
-- AGENT 31 — Voice Director: voice/voice_director.py (multi-voice cues)
-- AGENT 32 — Music Composer: voice/music_composer.py (mood scoring)
-- AGENT 33 — Sound Designer: utils/sound_designer.py (SFX placement)
-- Audio Quality Director gains `--pro` chain (de-esser + warmth + reverb)
+| You say | I do |
+|---|---|
+| "What should we cover today?" | Run trend researcher, read top 5 |
+| "Make a video about [X]" | Full reaction pipeline → local MP4 |
+| "Explainer: [X]" | Full explainer pipeline (Phase 4-11) |
+| "Build a [X]" or "Tutorial: [X]" | Tutorial mode pipeline |
+| "Upload the latest video" | YouTube as PRIVATE, then commit |
+| "Cost so far this month?" | `python utils/cost_tracker.py` |
 
-## Phase 7 — Multi-Platform Distribution
-- AGENT 34 — Shorts Producer: utils/shorts_producer.py
-- AGENT 37 — Blog Writer: utils/blog_writer.py
-- AGENT 38 — Twitter Thread Generator: utils/twitter_thread.py
-- pipeline.py runs these as STAGE 4 after video assembly.
-- TikTok/Instagram/Medium auto-publish deferred (need per-platform API tokens).
+## Project structure (post-pivot snapshot)
 
-## Phase 8 — Self-Improving Learning Loop
-- AGENT 41 — Analytics Monitor: utils/analytics_monitor.py (daily snapshot)
-- AGENT 43 — Retention Decoder: utils/retention_decoder.py
-- AGENT 45 — Comment Analyzer: utils/comment_analyzer.py
-- Weekly Report: utils/weekly_report.py
-- Requires `yt-analytics.readonly` scope on the OAuth token (re-consent once).
+- `niche_profile.yaml` — Channel identity, audience, content pillars
+- `agents.yaml` — Agent role definitions (40+ agents)
+- `knowledge_base/style_guide.md` — Post-pivot writing rules
+- `knowledge_base/content_queue.md` — Hand-curated 5-pick queue
+- `knowledge_base/news_queue.json` — Auto-refreshed by trend_researcher
+- `knowledge_base/topic_tracker.md` — Already-covered titles
+- `voice/generate_voice_elevenlabs.py` — Primary voice (Brian)
+- `voice/generate_voice.py` — Edge TTS fallback
+- `utils/trend_researcher.py` — Daily news scanner (Phase 12)
+- `utils/assemblyai_verify.py` — Caption ground-truth
+- `utils/kling_via_fal.py` — Hero shot generator
+- `utils/cost_tracker.py` — Per-video billing log
+- `video/captions_v2.py` — Viral captions (Impact 96pt)
+- `video/generate_video.py` — Video assembly (mode-aware mix)
+- `utils/qc_director.py` — Final gate (mode-aware threshold + loudness)
+- `utils/shorts_producer.py` — Vertical reframe for YouTube Shorts
+- `utils/blog_writer.py` — Script → markdown article
+- `utils/twitter_thread.py` — Script → 6-8 tweets
 
-## Phase 9 — Production Maturity
-- AGENT 46 — Pipeline Orchestrator: utils/pipeline_orchestrator.py (checkpointed)
-- AGENT 47 — Error Recovery: utils/error_recovery.py (@recover decorator)
-- AGENT 48 — Resource Monitor: utils/resource_monitor.py (disk + quotas)
-- AGENT 49 — Content Scheduler: utils/content_scheduler.py (Tue/Thu/Sat slots)
-- AGENT 50 — Batch Producer: utils/batch_producer.py (a week in one run)
-- AGENT 51 — Dashboard Builder: utils/dashboard.py → output/dashboard.html
+## Key design decisions (post-pivot)
 
-## Quick Commands
+- **Reaction is the default**. Every reflex assumes news/commentary.
+- **5-7 min sweet spot**. Anything longer drags for news content.
+- **2-3 Kling hero shots** + Pixabay b-roll. No Manim.
+- **Viral captions** (Impact 96pt, yellow active word, dark blob).
+- **ElevenLabs Brian** is the default voice, Edge TTS is fallback.
+- **AssemblyAI** is the ground truth for captions (Whisper-tiny is fallback).
+- **2-pass loudnorm** in the final mix — hit target ±1 dB.
+- **Mode-aware loudness target**: reaction -14 LUFS, explainer -16.
+- **Upload is always manual**. PRIVATE first, you watch, you publish.
+- **Cost is tracked**: every API call logs to
+  `knowledge_base/costs/YYYY-MM.csv`.
 
-### Full pipeline (all 15 agents):
-Just tell me: "Make a video about [topic]"
+## Phase history (for context)
 
-### Individual agents:
-- "Research trending AI topics" -> Agent 1 only
-- "Write a script about [topic]" -> Agents 1-4
-- "Generate voice and video for the current script" -> Agents 5-6B
-- "Upload the latest video" -> Agent 7
+- Phases 1-3: original pipeline (Edge TTS, basic shot lists, Pillow text)
+- Phase 4: beat-level footage, stripped overlays, Manim illustrations,
+  Whisper sync validator, QC director
+- Phase 5: HF SDXL AI image generator, style director
+- Phase 6: Voice director (multi-Edge), Music composer, Sound designer
+- Phase 7: Shorts producer, Blog writer, Twitter thread
+- Phase 8: Analytics monitor, Retention decoder, Comment analyzer
+- Phase 9: Pipeline orchestrator, error recovery, scheduler, dashboard
+- Phase 10: Mode selector, phrase captions, concept evolution, equations
+- Phase 11: ElevenLabs primary, AssemblyAI, Kling hero, viral captions,
+  cost tracker
+- **Phase 12 (pivot)**: AI news/commentary channel. Reaction default.
+  Explainer opt-in. Trend Researcher upgraded with real source scraping.
 
-### Knowledge base:
-- "Add [topic] to the knowledge base" -> Create knowledge_base/topics/topic.md
-- "What topics have we covered?" -> Read knowledge_base/topic_tracker.md
-- "What should our next video be about?" -> Agent 1 research + topic_tracker check
-
-## Knowledge Base Location
-knowledge_base/ — Contains topics encyclopedia, research, past scripts,
-SEO patterns, competitor analysis, style guide, and topic tracker.
-Read from it before writing. Write to it after every video.
-
-## Project Structure
-- niche_profile.yaml — Channel identity, audience, content pillars, visual brand
-- agents.yaml — Agent role definitions and processes (15 agents)
-- utils/audio_quality.py — Broadcast audio processing chain (Agent 5B)
-- utils/community_engage.py — YouTube comment engagement bot (Agent 7B)
-- utils/illustration_engineer.py — Custom diagram generator (Agent 24, Phase 4)
-- utils/footage_relevance.py — Shot-list query auditor (Agent 25, Phase 4)
-- utils/sync_validator.py — Whisper-verified caption timestamps (Agent 26, Phase 4)
-- utils/qc_director.py — Final quality gate before upload (Agent 27, Phase 4)
-- video/captions.py — ASS subtitle generator with karaoke word highlights
-- video/logo_intro.py — 3-second branded logo animation intro
-- voice/generate_voice.py — Edge TTS narration + word-level caption timestamps
-- video/generate_video.py — Video assembly v6 (shot lists, animated captions, voice ducking)
-- utils/generate_thumbnail.py — YouTube thumbnail generator
-- utils/youtube_upload.py — YouTube upload with OAuth
-- utils/git_push.py — Auto git commit and push
-- knowledge_base/ — AI knowledge base (grows with every video)
-- output/shot_list.json — Visual Director's shot plan (generated per video)
-- output/audio/captions/ — Word-level timestamps for animated captions
-
-## Key Design Decisions
-- Claude Code IS the orchestrator — no external agent framework needed
-- Knowledge base is local markdown/JSON — simple, fast, version-controlled
-- Each agent stage reads from and writes to the knowledge base
-- Quality reviewer creates a feedback loop — scripts get revised before production
-- Visual Director designs shot lists before video generation
-- Engagement Writer adds retention hooks before production
-- SEO happens BEFORE production — titles and metadata inform the video
-- Voice producer generates word-level timestamps for animated captions
-- Video producer reads shot lists for multi-clip sections and stat cards
-- Voice ducking auto-ducks music when narration is active
-- Audio normalized to -14 LUFS broadcast standard
-- Audio quality chain: highpass → presence EQ → compression → loudnorm
-- End screen teaser overlay burns into last 15 seconds automatically
-- Hook Engineer rewrites first 10 seconds using proven frameworks
-- Loop Specialist adds open loops and re-hooks at 25/50/75% marks
-- Community engagement bot posts pinned comment + replies to 30 commenters
-- Videos upload as PRIVATE by default — review before publishing
-- (Phase 4) Stripped duplicate text overlays — captions are the only text
-- (Phase 4) Beat-level footage — every 5-8s a new clip, not one per section
-- (Phase 4) Custom illustrations via Manim (or PIL fallback) for diagrams
-- (Phase 4) Whisper-verified word timestamps catch any TTS drift &gt;200ms
-- (Phase 4) QC Director blocks upload on any objective quality failure
+The whole Phase 4-11 explainer stack is still there. It's just sleeping.
