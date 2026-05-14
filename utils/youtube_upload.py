@@ -87,6 +87,42 @@ def get_authenticated_service():
     return build("youtube", "v3", credentials=creds)
 
 
+EXPECTED_CHANNEL_FRAGMENT = "mcneillium"
+
+
+def verify_channel(youtube, expected_fragment=EXPECTED_CHANNEL_FRAGMENT):
+    """Refuse to upload unless the authenticated channel matches the brand.
+
+    Calls channels.list(mine=true), reads snippet.title, requires that
+    the expected_fragment (case-insensitive) appears in the title.
+    Returns (ok: bool, channel_title: str, channel_id: str).
+    """
+    try:
+        resp = youtube.channels().list(part="snippet", mine=True).execute()
+    except Exception as e:
+        print(f"  ❌ Could not query the authenticated channel: {e}")
+        return False, None, None
+    items = resp.get("items", []) or []
+    if not items:
+        print("  ❌ No channel returned by channels.list(mine=true).")
+        return False, None, None
+    ch = items[0]
+    title = ch.get("snippet", {}).get("title", "")
+    ch_id = ch.get("id", "")
+    print(f"  🎬 Authenticated channel: {title!r}  (id={ch_id})")
+    if expected_fragment.lower() not in title.lower():
+        print(f"  ❌ ABORT — expected the title to contain "
+              f"{expected_fragment!r}.")
+        print(f"  ❌ This looks like the WRONG channel "
+              f"(possibly a personal account).")
+        print(f"  ❌ Delete .youtube_token.json and re-run; the OAuth "
+              f"flow will let you pick the McNeillium AI brand account.")
+        return False, title, ch_id
+    print(f"  ✅ Channel verified — uploads will go to "
+          f"the McNeillium AI brand account.")
+    return True, title, ch_id
+
+
 def upload_video(
     video_path: str,
     title: str,
@@ -94,11 +130,17 @@ def upload_video(
     tags: list[str] = None,
     category: str = DEFAULT_CATEGORY,
     privacy: str = DEFAULT_PRIVACY,
+    skip_channel_check: bool = False,
 ) -> str:
     """Upload a video to YouTube and return the video ID."""
     from googleapiclient.http import MediaFileUpload
 
     youtube = get_authenticated_service()
+    if not skip_channel_check:
+        ok, _ct, _cid = verify_channel(youtube)
+        if not ok:
+            print("  ⛔ Upload aborted by channel verification.")
+            sys.exit(2)
 
     body = {
         "snippet": {
