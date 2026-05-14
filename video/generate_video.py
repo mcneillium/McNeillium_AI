@@ -1342,18 +1342,20 @@ def generate_video(script_path, audio_path, config):
                 pass
 
         ass_path = TEMP_DIR / "captions.ass"
-        if (caption_style.startswith("phrase")
-                and build_phrase_ass is not None):
-            print(f"\n    📝 STEP 6: Burning phrase captions "
-                  f"({mode} mode, {len(caption_words)} words → phrases)...")
-            _, n_phrases = build_phrase_ass(
+        # Phase 11+: route every mode through the viral renderer. It
+        # handles reaction (word-by-word, Impact 104pt) and explainer/
+        # tutorial (3-word phrase groups, Impact 96pt) internally.
+        if build_phrase_ass is not None:
+            print(f"\n    📝 STEP 6: Burning viral captions "
+                  f"({mode} mode, {len(caption_words)} words)...")
+            _, n_lines = build_phrase_ass(
                 caption_words, str(ass_path), W, H,
                 palette=palette_terms, mode=mode,
             )
-            print(f"        {n_phrases} phrases rendered")
+            print(f"        {n_lines} caption dialogue lines rendered")
         else:
             print(f"\n    📝 STEP 6: Burning "
-                  f"{len(caption_words)} word captions...")
+                  f"{len(caption_words)} word captions (legacy)...")
             generate_ass(caption_words, str(ass_path), W, H)
         ass_escaped = str(ass_path).replace("\\", "/").replace(":", "\\:")
         vf_filters.append(f"ass='{ass_escaped}'")

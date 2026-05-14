@@ -1,30 +1,34 @@
 {
-  "video_title": "Anthropic Just Taught AI to Dream",
+  "video_title": "Sam Altman Just Testified Under Oath. Here's What He Said.",
   "sections": [
     {
       "section_id": "hook",
       "shots": [
         {
-          "type": "footage",
-          "query": "sleeping brain neural activity close up",
+          "type": "hero",
+          "prompt": "Cinematic establishing shot of a federal courthouse exterior at dusk, imposing marble columns lit dramatically by warm interior light, slow camera dolly forward, deep blue sky, courtroom drama atmosphere, photographic 4K, shallow depth of field",
           "motion": "slow_zoom_in",
-          "duration": 4,
+          "duration": 5,
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\d106b35fe6e52710.mp4"
+        },
+        {
+          "type": "footage",
+          "query": "courtroom gavel wood close up dark",
+          "motion": "pan_left",
+          "duration": 3,
           "relevance_score": 7
         },
         {
-          "type": "footage",
-          "query": "anthropic assistant code dark room",
-          "motion": "pan_right",
-          "duration": 4,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "artificial intelligence server room blue lights"
+          "type": "text_overlay",
+          "text": "ALTMAN UNDER OATH",
+          "duration": 4
         },
         {
-          "type": "text_overlay",
-          "text": "AI THAT DREAMS",
-          "style": "glitch",
-          "duration": 4
+          "type": "footage",
+          "query": "news ticker breaking news dramatic screen",
+          "motion": "ken_burns_in",
+          "duration": 3,
+          "relevance_score": 7
         }
       ]
     },
@@ -33,46 +37,70 @@
       "shots": [
         {
           "type": "footage",
-          "query": "agents dreaming ability close up",
-          "motion": "ken_burns_out",
-          "duration": 10,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "anthropic AI company technology office"
-        },
-        {
-          "type": "footage",
-          "query": "agents dreaming ability dark room",
-          "motion": "slow_zoom_in",
-          "duration": 10,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "brain neurons firing synapses"
-        },
-        {
-          "type": "illustration",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\illustrations\\illustration_001.mp4",
-          "duration": 6.0,
-          "motion": "static",
-          "trigger": "flowchart"
-        },
-        {
-          "type": "footage",
-          "query": "agents dreaming ability wide shot",
-          "motion": "pan_left",
-          "duration": 10,
-          "relevance_score": 10,
-          "relevance_score_original": 3,
-          "original_query": "person sleeping peaceful technology"
-        },
-        {
-          "type": "footage",
-          "query": "agents dreaming ability macro detail",
+          "query": "federal courthouse interior wooden bench wide shot",
           "motion": "ken_burns_in",
-          "duration": 15,
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "openai logo close up screen glow",
+          "motion": "pan_right",
+          "duration": 4,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "elon musk speaking podium press conference",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "courtroom judge bench gavel official",
+          "motion": "slow_zoom_in",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "san francisco bay area office tower aerial",
+          "motion": "pan_left",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "altman musk openai office desk",
+          "motion": "ken_burns_in",
+          "duration": 4,
           "relevance_score": 10,
-          "relevance_score_original": 4,
-          "original_query": "AI chatbot interface computer screen"
+          "relevance_score_original": 6,
+          "original_query": "ai research lab dark office monitors"
+        },
+        {
+          "type": "footage",
+          "query": "venture capital money billion dollars exchange",
+          "motion": "static",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "altman musk openai close up",
+          "motion": "pan_right",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "ceo testimony witness stand dramatic"
+        },
+        {
+          "type": "footage",
+          "query": "legal documents files stack office desk",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 7
         }
       ]
     },
@@ -81,43 +109,93 @@
       "shots": [
         {
           "type": "footage",
-          "query": "agents agent every close up",
-          "motion": "slow_zoom_in",
-          "duration": 15,
+          "query": "musk openai altman close up",
+          "motion": "ken_burns_in",
+          "duration": 4,
           "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "confused office worker computer frustrated"
-        },
-        {
-          "type": "stat_card",
-          "stat": "100%",
-          "label": "Memory lost between sessions",
-          "duration": 8
+          "relevance_score_original": 4,
+          "original_query": "2018 timeline calendar flipping pages"
         },
         {
           "type": "footage",
-          "query": "legal documents contract review desk",
+          "query": "openai office workspace startup early days",
           "motion": "pan_right",
-          "duration": 15,
-          "relevance_score": 10
+          "duration": 4,
+          "relevance_score": 9
         },
         {
           "type": "footage",
-          "query": "agents agent every wide shot",
+          "query": "broken handshake split apart conflict",
           "motion": "ken_burns_out",
-          "duration": 15,
-          "relevance_score": 10,
-          "relevance_score_original": 3,
-          "original_query": "server database storage technology"
+          "duration": 4,
+          "relevance_score": 7
         },
         {
           "type": "footage",
-          "query": "agents agent every macro detail",
+          "query": "abandoned office empty desk lights dim",
           "motion": "slow_zoom_in",
-          "duration": 17,
+          "duration": 4,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "elon musk walking away serious dramatic",
+          "motion": "pan_left",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "startup founder concerned looking screen",
+          "motion": "ken_burns_in",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "venture capital pitch boardroom meeting",
+          "motion": "static",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "burning money cash fire close up",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "musk openai altman dark room",
+          "motion": "pan_right",
+          "duration": 4,
           "relevance_score": 10,
-          "relevance_score_original": 3,
-          "original_query": "broken chain link failure concept"
+          "relevance_score_original": 5,
+          "original_query": "ai research lab struggling team late night"
+        },
+        {
+          "type": "footage",
+          "query": "for profit corporate office transition",
+          "motion": "ken_burns_in",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "lawyer cross examination courtroom intense",
+          "motion": "static",
+          "duration": 4,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "musk openai altman macro detail",
+          "motion": "slow_zoom_in",
+          "duration": 4,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "history book pages turning dramatic"
         }
       ]
     },
@@ -125,51 +203,89 @@
       "section_id": "main_point_2",
       "shots": [
         {
+          "type": "hero",
+          "prompt": "Cinematic silhouette of a tech executive standing at a witness stand in a federal courtroom, dark suit, dramatic side lighting from window, blue and amber tones, wooden courtroom background blurred behind, slow camera tilt up from feet to face, 4K cinematic, photographic depth of field",
+          "motion": "slow_zoom_in",
+          "duration": 5,
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\e2feff82c9e8a855.mp4"
+        },
+        {
           "type": "footage",
-          "query": "brain scan MRI neuroscience research",
+          "query": "anthropic claude logo dark blue glow",
+          "motion": "pan_right",
+          "duration": 4,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "dario amodei ceo portrait professional",
           "motion": "ken_burns_in",
-          "duration": 15,
+          "duration": 4,
           "relevance_score": 7
         },
         {
           "type": "footage",
-          "query": "agent dreaming memory dark room",
-          "motion": "slow_zoom_in",
-          "duration": 15,
+          "query": "two ceos rivalry split screen confrontation",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "altman quote there macro detail",
+          "motion": "pan_left",
+          "duration": 4,
           "relevance_score": 10,
           "relevance_score_original": 4,
-          "original_query": "person sleeping REM dream visualization"
+          "original_query": "twitter feed scrolling drama tweets phone"
         },
         {
           "type": "footage",
-          "query": "agent dreaming memory blue lights",
-          "motion": "pan_left",
-          "duration": 15,
-          "relevance_score": 10,
-          "relevance_score_original": 1,
-          "original_query": "data processing algorithm visualization abstract"
-        },
-        {
-          "type": "stat_card",
-          "stat": "3",
-          "label": "Pattern categories scanned",
-          "duration": 8
+          "query": "super bowl commercial advertising big screen",
+          "motion": "static",
+          "duration": 4,
+          "relevance_score": 10
         },
         {
           "type": "footage",
-          "query": "team collaboration meeting approval",
-          "motion": "ken_burns_out",
-          "duration": 15,
-          "relevance_score": 7
-        },
-        {
-          "type": "footage",
-          "query": "agent dreaming memory office desk",
-          "motion": "pan_right",
-          "duration": 22,
+          "query": "altman quote there screen glow",
+          "motion": "ken_burns_in",
+          "duration": 4,
           "relevance_score": 10,
           "relevance_score_original": 6,
-          "original_query": "security checkpoint verification process"
+          "original_query": "pentagon department defense building exterior"
+        },
+        {
+          "type": "footage",
+          "query": "office workers white collar empty desks",
+          "motion": "pan_right",
+          "duration": 4,
+          "relevance_score": 10
+        },
+        {
+          "type": "footage",
+          "query": "altman quote there dark room",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "ceo silent staring camera serious"
+        },
+        {
+          "type": "footage",
+          "query": "altman quote there blue lights",
+          "motion": "slow_zoom_in",
+          "duration": 4,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "newspaper headline opinion column dramatic"
+        },
+        {
+          "type": "footage",
+          "query": "courtroom witness sworn oath right hand",
+          "motion": "static",
+          "duration": 4,
+          "relevance_score": 9
         }
       ]
     },
@@ -177,48 +293,94 @@
       "section_id": "main_point_3",
       "shots": [
         {
-          "type": "stat_card",
-          "stat": "6x",
-          "label": "Harvey task completion improvement",
-          "duration": 10
+          "type": "footage",
+          "query": "corporate org chart diagram board structure",
+          "motion": "ken_burns_in",
+          "duration": 5,
+          "relevance_score": 7
         },
         {
           "type": "footage",
-          "query": "like agent agents dark room",
+          "query": "microsoft logo close up screen blue",
+          "motion": "pan_right",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "investment billion dollar wire transfer screen",
+          "motion": "ken_burns_out",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "openai office modern san francisco workspace",
           "motion": "slow_zoom_in",
-          "duration": 15,
+          "duration": 5,
+          "relevance_score": 8
+        },
+        {
+          "type": "footage",
+          "query": "signing legal papers contract close up",
+          "motion": "pan_left",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "boardroom meeting executives table serious",
+          "motion": "ken_burns_in",
+          "duration": 5,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "argue mission nonprofit screen glow",
+          "motion": "static",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "non profit charity transition for profit"
+        },
+        {
+          "type": "footage",
+          "query": "legal scales balance courtroom symbol",
+          "motion": "ken_burns_out",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "argue mission nonprofit dark room",
+          "motion": "pan_right",
+          "duration": 5,
           "relevance_score": 10,
           "relevance_score_original": 4,
-          "original_query": "law firm office technology modern"
-        },
-        {
-          "type": "stat_card",
-          "stat": "50%",
-          "label": "Wisedocs review time reduction",
-          "duration": 10
+          "original_query": "stock price chart climbing rapidly"
         },
         {
           "type": "footage",
-          "query": "multiple screens data analysis dashboard",
-          "motion": "pan_left",
-          "duration": 15,
-          "relevance_score": 8
-        },
-        {
-          "type": "footage",
-          "query": "Netflix office technology streaming",
+          "query": "puzzle pieces fitting together close up",
           "motion": "ken_burns_in",
-          "duration": 15,
-          "relevance_score": 8
+          "duration": 5,
+          "relevance_score": 7
         },
         {
           "type": "footage",
-          "query": "like agent agents office desk",
-          "motion": "ken_burns_out",
-          "duration": 25,
+          "query": "jury deliberating courtroom diverse panel",
+          "motion": "static",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "argue mission nonprofit macro detail",
+          "motion": "slow_zoom_in",
+          "duration": 5,
           "relevance_score": 10,
-          "relevance_score_original": 5,
-          "original_query": "robot team cooperation artificial intelligence"
+          "relevance_score_original": 6,
+          "original_query": "evolution timeline forward arrow dramatic"
         }
       ]
     },
@@ -227,46 +389,101 @@
       "shots": [
         {
           "type": "footage",
-          "query": "agents agent contract close up",
-          "motion": "pan_right",
-          "duration": 15,
-          "relevance_score": 10,
-          "relevance_score_original": 4,
-          "original_query": "calendar week days timeline planning"
+          "query": "scales of justice tilted courtroom dramatic",
+          "motion": "ken_burns_in",
+          "duration": 5,
+          "relevance_score": 9
         },
         {
           "type": "footage",
-          "query": "legal contract document review closeup",
+          "query": "whether altman playbook dark room",
+          "motion": "pan_right",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "ai research lab founding meeting whiteboard"
+        },
+        {
+          "type": "footage",
+          "query": "whether altman playbook blue lights",
+          "motion": "ken_burns_out",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "venture capital meeting funding round handshake"
+        },
+        {
+          "type": "footage",
+          "query": "whether altman playbook wide shot",
           "motion": "slow_zoom_in",
-          "duration": 15,
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "ceo confident answering questions camera"
+        },
+        {
+          "type": "footage",
+          "query": "jury panel close up faces serious deliberating",
+          "motion": "pan_left",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "whether altman playbook office desk",
+          "motion": "ken_burns_in",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 4,
+          "original_query": "money pile increasing growing fast"
+        },
+        {
+          "type": "footage",
+          "query": "whether altman playbook screen glow",
+          "motion": "static",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "tech industry future founders office"
+        },
+        {
+          "type": "footage",
+          "query": "whether altman playbook close up",
+          "motion": "ken_burns_out",
+          "duration": 5,
+          "relevance_score": 10,
+          "relevance_score_original": 6,
+          "original_query": "ai labs startups multiple offices wide shot"
+        },
+        {
+          "type": "footage",
+          "query": "playbook strategy chess board pieces moving",
+          "motion": "pan_right",
+          "duration": 5,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "public opinion split divided crowd reactions",
+          "motion": "ken_burns_in",
+          "duration": 5,
           "relevance_score": 10
         },
         {
           "type": "footage",
-          "query": "agents agent contract blue lights",
-          "motion": "ken_burns_in",
-          "duration": 10,
+          "query": "whether altman playbook wide shot",
+          "motion": "static",
+          "duration": 5,
           "relevance_score": 10,
-          "relevance_score_original": 4,
-          "original_query": "lightbulb moment discovery eureka"
+          "relevance_score_original": 6,
+          "original_query": "witness testifying stand dramatic lighting"
         },
         {
           "type": "footage",
-          "query": "agents agent contract wide shot",
-          "motion": "pan_left",
-          "duration": 10,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "customer service agent headset computer"
-        },
-        {
-          "type": "footage",
-          "query": "agents agent contract macro detail",
-          "motion": "ken_burns_out",
-          "duration": 20,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "coding programming software development"
+          "query": "trust crumbling cracked surface concept",
+          "motion": "slow_zoom_in",
+          "duration": 5,
+          "relevance_score": 8
         }
       ]
     },
@@ -274,31 +491,58 @@
       "section_id": "summary",
       "shots": [
         {
-          "type": "footage",
-          "query": "dreaming agent agents close up",
+          "type": "hero",
+          "prompt": "Cinematic abstract: two glowing logos floating in dark space \u2014 one labeled OpenAI in cool blue, one labeled Anthropic in warm orange \u2014 facing each other across a void, golden energy bridges arcing between them under tension, slow camera pull-back, subtle particle haze, deep cinematic 4K, dramatic lighting",
           "motion": "slow_zoom_in",
-          "duration": 15,
-          "relevance_score": 10,
-          "relevance_score_original": 6,
-          "original_query": "memory brain concept abstract glowing"
+          "duration": 5,
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\3df62f6423d4597f.mp4"
+        },
+        {
+          "type": "stat_card",
+          "stat": "$950B",
+          "label": "Anthropic reported valuation talks",
+          "duration": 5
         },
         {
           "type": "footage",
-          "query": "dreaming agent agents dark room",
-          "motion": "pan_right",
-          "duration": 15,
-          "relevance_score": 10,
-          "relevance_score_original": 1,
-          "original_query": "team collaboration AI technology future"
-        },
-        {
-          "type": "footage",
-          "query": "dreaming agent agents blue lights",
+          "query": "anthropic logo dark blue dramatic close up",
           "motion": "ken_burns_in",
-          "duration": 25,
-          "relevance_score": 10,
-          "relevance_score_original": 1,
-          "original_query": "futuristic timeline technology evolution"
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "stat_card",
+          "stat": "$9B \u2192 $30B",
+          "label": "Anthropic revenue 12 months",
+          "duration": 5
+        },
+        {
+          "type": "footage",
+          "query": "microsoft headquarters redmond aerial dramatic",
+          "motion": "pan_right",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "ai industry founders boardrooms reading documents",
+          "motion": "ken_burns_out",
+          "duration": 5,
+          "relevance_score": 9
+        },
+        {
+          "type": "footage",
+          "query": "chess pieces strategic move close up",
+          "motion": "static",
+          "duration": 5,
+          "relevance_score": 7
+        },
+        {
+          "type": "footage",
+          "query": "tech ceo press conference watching screen",
+          "motion": "pan_left",
+          "duration": 5,
+          "relevance_score": 9
         }
       ]
     },
@@ -307,12 +551,31 @@
       "shots": [
         {
           "type": "footage",
-          "query": "next week agents close up",
-          "motion": "ken_burns_out",
-          "duration": 20,
+          "query": "subscribe button bell notification screen glow",
+          "motion": "ken_burns_in",
+          "duration": 5,
+          "relevance_score": 10
+        },
+        {
+          "type": "text_overlay",
+          "text": "ANTHROPIC $950B NEXT",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "altman comment argument blue lights",
+          "motion": "pan_right",
+          "duration": 4,
           "relevance_score": 10,
           "relevance_score_original": 6,
-          "original_query": "subscribe bell notification technology"
+          "original_query": "comment section youtube reactions vibrant"
+        },
+        {
+          "type": "footage",
+          "query": "san francisco skyline night warm tones timelapse",
+          "motion": "ken_burns_out",
+          "duration": 4,
+          "relevance_score": 7
         }
       ]
     }
