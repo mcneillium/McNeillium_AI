@@ -181,31 +181,38 @@ def score_caption_legibility(frame_paths):
 
 
 def score_brightness(frame_paths):
-    """Penalise frames that are nearly black or nearly white."""
+    """Penalise frames that are truly broken (uniformly black or white).
+
+    A frame is "broken" only if both:
+      - mean luminance below 12 (or above 245)
+      - AND standard deviation below 15 (i.e. nothing visible on it)
+    A dark Manim illustration has low mean but high std-dev (bright text
+    on dark bg), which is valid content — not a failure.
+    """
     if not frame_paths:
         return 5, "no frames"
-    means = []
+    stats = []
     for p in frame_paths:
         try:
             img = Image.open(p).convert("L").resize((128, 72))
             arr = np.asarray(img, dtype=np.float32)
-            means.append(float(arr.mean()))
+            stats.append((float(arr.mean()), float(arr.std())))
         except Exception:
             continue
-    if not means:
+    if not stats:
         return 5, "no brightness reads"
 
-    black_count = sum(1 for m in means if m < 12)
-    white_count = sum(1 for m in means if m > 245)
-    bad = black_count + white_count
-    bad_frac = bad / len(means)
+    means = [m for m, _ in stats]
+    broken = sum(1 for m, s in stats
+                 if (m < 12 and s < 15) or (m > 245 and s < 15))
+    bad_frac = broken / len(stats)
     avg_mean = mean(means)
 
     if bad_frac > 0.25:
-        return 3, f"{bad_frac:.0%} of frames near-black/white (avg {avg_mean:.1f})"
+        return 3, f"{bad_frac:.0%} of frames truly black/white (avg {avg_mean:.1f})"
     if bad_frac > 0.10:
-        return 6, f"{bad_frac:.0%} of frames near-black/white"
-    return 9, f"brightness healthy (avg {avg_mean:.1f}, bad {bad_frac:.0%})"
+        return 6, f"{bad_frac:.0%} of frames truly black/white"
+    return 9, f"brightness healthy (avg {avg_mean:.1f}, broken {bad_frac:.0%})"
 
 
 def score_loudness(loud_info):
