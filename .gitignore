@@ -9,5 +9,10 @@ output/scripts/
 .DS_Store
 venv/
 .venv/
+venv_manim/
+output/_temp_v4/
+output/_clip_cache/
+output/_ai_images/
+output/_manim_cache/
 client_secrets.json
 .youtube_token.json
