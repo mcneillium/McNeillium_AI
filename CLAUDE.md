@@ -2,11 +2,13 @@
 
 ## What This Project Does
 Autonomous YouTube content pipeline for the McNeillium_AI channel.
-19 AI agents collaborate to produce professional AI/tech educational videos.
+30+ AI agents collaborate to produce professional AI/tech educational videos,
+distribute them to multiple platforms, and learn from analytics over time.
 
 ## The Agents (YOU play each role sequentially)
 
-### When asked to produce a video, follow these 19 stages:
+### When asked to produce a video, follow the 19-stage build pipeline below.
+### After publishing, the Phase 7-9 agents handle distribution, learning, and ops.
 
 **AGENT 1 — Trend Researcher**
 Search the web for the latest AI news. Check knowledge_base/topic_tracker.md
@@ -109,6 +111,40 @@ Git commit and push.
 Run: python utils/community_engage.py VIDEO_ID --script output/scripts/latest.json
 Posts a pinned comment with timestamps + engagement question.
 Replies to the first 30 commenters with personalized responses.
+
+---
+
+## Phase 5 — AI Visuals
+- AGENT 28 — AI Image Generator: utils/ai_image_generator.py (HF SDXL)
+- AGENT 30 — Style-Transfer Director: utils/style_director.py
+
+## Phase 6 — Audio Overhaul
+- AGENT 31 — Voice Director: voice/voice_director.py (multi-voice cues)
+- AGENT 32 — Music Composer: voice/music_composer.py (mood scoring)
+- AGENT 33 — Sound Designer: utils/sound_designer.py (SFX placement)
+- Audio Quality Director gains `--pro` chain (de-esser + warmth + reverb)
+
+## Phase 7 — Multi-Platform Distribution
+- AGENT 34 — Shorts Producer: utils/shorts_producer.py
+- AGENT 37 — Blog Writer: utils/blog_writer.py
+- AGENT 38 — Twitter Thread Generator: utils/twitter_thread.py
+- pipeline.py runs these as STAGE 4 after video assembly.
+- TikTok/Instagram/Medium auto-publish deferred (need per-platform API tokens).
+
+## Phase 8 — Self-Improving Learning Loop
+- AGENT 41 — Analytics Monitor: utils/analytics_monitor.py (daily snapshot)
+- AGENT 43 — Retention Decoder: utils/retention_decoder.py
+- AGENT 45 — Comment Analyzer: utils/comment_analyzer.py
+- Weekly Report: utils/weekly_report.py
+- Requires `yt-analytics.readonly` scope on the OAuth token (re-consent once).
+
+## Phase 9 — Production Maturity
+- AGENT 46 — Pipeline Orchestrator: utils/pipeline_orchestrator.py (checkpointed)
+- AGENT 47 — Error Recovery: utils/error_recovery.py (@recover decorator)
+- AGENT 48 — Resource Monitor: utils/resource_monitor.py (disk + quotas)
+- AGENT 49 — Content Scheduler: utils/content_scheduler.py (Tue/Thu/Sat slots)
+- AGENT 50 — Batch Producer: utils/batch_producer.py (a week in one run)
+- AGENT 51 — Dashboard Builder: utils/dashboard.py → output/dashboard.html
 
 ## Quick Commands
 

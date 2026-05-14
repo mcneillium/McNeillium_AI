@@ -379,6 +379,92 @@ agents:
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
 
+  # ─── AGENT 46: Pipeline Orchestrator ──────────────────────────
+  # Phase 9 — state-machine that resumes from checkpoints.
+  pipeline_orchestrator:
+    role: "Pipeline Orchestrator"
+    goal: "Run the build stages with crash-safe checkpoints"
+    process: |
+      1. Run utils/pipeline_orchestrator.py --topic "..."
+      2. Each build stage (voice, audio_quality, sync_validation,
+         illustration, footage_review, ai_images, music, sfx, video,
+         qc, shorts, blog, twitter) runs as a subprocess
+      3. State persisted to logs/pipeline_state_<run_id>.json after
+         every stage. Re-running with --resume <run_id> picks up at
+         the next un-finished stage.
+      4. Logs to logs/pipeline_YYYY-MM-DD.log
+    output_format: "Per-stage exit codes, state JSON, log file"
+
+  # ─── AGENT 47: Error Recovery Specialist ──────────────────────
+  # Phase 9 — retry wrapper with exponential backoff + cleanup.
+  error_recovery:
+    role: "Error Recovery Specialist"
+    goal: "Make every agent call resilient to transient failures"
+    process: |
+      1. Import from utils.error_recovery: retry() or @recover decorator
+      2. Classifies exceptions: rate limit / network / disk full / file
+         missing / subprocess crash / unknown
+      3. Exponential backoff (4s → 8s → 16s, capped at 60s) up to 3 attempts
+      4. Disk-full → automatic temp + clip cache cleanup before retry
+      5. Final failure → logged to logs/alerts.md as severity=error
+    output_format: "Decorator that other agents wrap their calls in"
+
+  # ─── AGENT 48: Resource Monitor ───────────────────────────────
+  # Phase 9 — pre-flight + housekeeping.
+  resource_monitor:
+    role: "Resource Monitor"
+    goal: "Pre-check disk + quotas; clean stale temp files"
+    process: |
+      1. Run utils/resource_monitor.py before every batch
+      2. Checks disk free (need 5GB), clip cache size (capped at 4GB),
+         today's Pixabay + YouTube quota usage
+      3. Cleans temp files older than 7 days, LRU-prunes the clip cache
+      4. Returns non-zero exit on blocking issues (disk full, quota out)
+    output_format: "logs/resource_report.md + quota usage JSON"
+
+  # ─── AGENT 49: Content Scheduler ──────────────────────────────
+  # Phase 9 — content calendar + YouTube scheduled publish.
+  content_scheduler:
+    role: "Content Calendar Manager"
+    goal: "Schedule uploads at optimal slots"
+    process: |
+      1. utils/content_scheduler.py calendar — render 4-week calendar
+         from upload_queue.json with Tue/Thu 16:00 GMT + Sat 14:00 GMT slots
+      2. utils/content_scheduler.py add --topic "..." — enqueue a topic
+      3. utils/content_scheduler.py schedule <video_id> --when ISO —
+         set status.publishAt on an already-uploaded private video
+      4. Cross-platform stagger recommendation:
+         YouTube → +1h Shorts → +2h Blog → +3h Twitter (manual)
+    output_format: "knowledge_base/calendar.md + queue JSON"
+
+  # ─── AGENT 50: Batch Producer ─────────────────────────────────
+  # Phase 9 — render a week of content in one overnight run.
+  batch_producer:
+    role: "Batch Video Producer"
+    goal: "Render multiple videos sequentially in one run"
+    process: |
+      1. utils/batch_producer.py --topics-file weekly_topics.txt
+      2. For each topic, invokes pipeline_orchestrator
+      3. Single-topic failures logged + skipped (rest of batch continues)
+      4. --hold-uploads collects QC-approved videos for atomic upload
+         after the whole batch completes (avoids half-published channel
+         on mid-batch crash)
+    output_format: "logs/batch_runs.md summary"
+
+  # ─── AGENT 51: Dashboard Builder ──────────────────────────────
+  # Phase 9 — single-page HTML channel-health view.
+  dashboard:
+    role: "Dashboard Builder"
+    goal: "Surface channel health in one open-in-browser page"
+    process: |
+      1. utils/dashboard.py
+      2. Reads performance_data.json, calendar.md, qc_report.md,
+         retention_killers.md, audience_insights.md
+      3. Writes output/dashboard.html — open with `start output/dashboard.html`
+      4. Shows latest QC score, 10 most recent uploads + views, upcoming
+         calendar slots, recent retention killers, audience questions
+    output_format: "Static HTML at output/dashboard.html"
+
   # ─── AGENT 41: YouTube Analytics Monitor ─────────────────────
   # Phase 8 — daily snapshot of per-video performance.
   analytics_monitor:
