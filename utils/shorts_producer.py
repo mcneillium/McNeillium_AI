@@ -157,18 +157,40 @@ def pick_moments(script, total_dur, n=5):
 # Reframe + render
 # ═══════════════════════════════════════════════════════════════
 
+FONT_CANDIDATES = [
+    "C:/Windows/Fonts/arialbd.ttf",
+    "C:/Windows/Fonts/arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+]
+
+
+def _resolve_font():
+    for f in FONT_CANDIDATES:
+        if Path(f).exists():
+            return f
+    return None
+
+
 def render_short(video_path, start, duration, output_path, watermark=WATERMARK):
     """Cut the window, reframe to vertical 1080x1920, burn watermark."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     # The source is 1920x1080. We scale up so height fills 1920 and
     # crop horizontally to 1080 wide.
+    font = _resolve_font()
+    drawtext = ""
+    if font:
+        # FFmpeg needs forward slashes and escaped colons inside drawtext
+        font_esc = font.replace("\\", "/").replace(":", "\\:")
+        drawtext = (
+            f",drawtext=fontfile='{font_esc}':text='{watermark}':"
+            f"fontcolor=white@0.85:fontsize=42:box=1:"
+            f"boxcolor=black@0.4:boxborderw=10:"
+            f"x=(w-text_w)/2:y=h-110"
+        )
     vf = (
         "scale=-2:1920:flags=lanczos,"
-        "crop=1080:1920:(in_w-1080)/2:0,"
-        # Enlarged caption-style label at top + watermark bottom
-        f"drawtext=text='{watermark}':fontcolor=white@0.85:"
-        f"fontsize=42:box=1:boxcolor=black@0.4:boxborderw=10:"
-        f"x=(w-text_w)/2:y=h-110"
+        "crop=1080:1920:(in_w-1080)/2:0"
+        + drawtext
     )
     cmd = [
         FFMPEG, "-y",
