@@ -379,6 +379,61 @@ agents:
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
 
+  # ─── AGENT 41: YouTube Analytics Monitor ─────────────────────
+  # Phase 8 — daily snapshot of per-video performance.
+  analytics_monitor:
+    role: "YouTube Analytics Monitor"
+    goal: "Track per-video performance over time"
+    process: |
+      1. Run utils/analytics_monitor.py (cron daily)
+      2. Lists channel uploads, queries Analytics API for views,
+         average view duration, traffic sources over the last N days
+      3. Appends to knowledge_base/performance_data.json (capped at 30
+         daily snapshots so the file stays small)
+      Requires: yt-analytics.readonly scope on the OAuth token.
+    output_format: "performance_data.json (rolling history)"
+
+  # ─── AGENT 43: Retention Decoder ──────────────────────────────
+  # Phase 8 — translates retention drops into "what was said" moments.
+  retention_decoder:
+    role: "Retention Drop-off Analyst"
+    goal: "Identify why viewers leave at specific moments"
+    process: |
+      1. Run utils/retention_decoder.py <video_id> --title "..." --duration-s N
+      2. Fetches audienceWatchRatio curve, finds top-3 drops
+      3. Cross-references each drop with the section + sentence being
+         spoken; logs to knowledge_base/retention_killers.md
+      4. Script Writer reads this before authoring new scripts
+    output_format: "retention_killers.md (per-video drop notes)"
+
+  # ─── AGENT 45: Comment Sentiment Analyzer ─────────────────────
+  # Phase 8 — categorises comments into questions / confusion / praise / criticism.
+  comment_analyzer:
+    role: "Audience Sentiment Categoriser"
+    goal: "Mine comments for future-video ideas and clarity issues"
+    process: |
+      1. Run utils/comment_analyzer.py <video_id>...
+      2. Fetches up to 100 top-level comments per video via Data API
+      3. Heuristic categories: question (→ topic seed), confusion
+         (→ script clarity), praise (→ reinforce), criticism (→ fix)
+      4. Writes tallies + sample comments to
+         knowledge_base/audience_insights.md
+    output_format: "audience_insights.md (running log)"
+
+  # ─── Weekly Performance Report ────────────────────────────────
+  weekly_report:
+    role: "Weekly Performance Reporter"
+    goal: "Combine analytics + retention + comments into one summary"
+    process: |
+      1. Run utils/weekly_report.py (cron weekly Monday)
+      2. No API calls — reads performance_data.json + retention_killers.md
+         + audience_insights.md
+      3. Picks top video by views, lists this week's retention killers,
+         pulls recent audience questions
+      4. Suggests next topics by reusing top question phrases
+      5. Saves knowledge_base/reports/YYYY-WW.md
+    output_format: "Weekly markdown report"
+
   # ─── AGENT 34: Shorts Producer ────────────────────────────────
   # Phase 7 — extracts 5 best 30-60s moments, reframes to vertical.
   shorts_producer:
