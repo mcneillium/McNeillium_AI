@@ -57,29 +57,42 @@ SFX_TRACK = PROJECT_ROOT / "output" / "audio" / "sfx_track.mp3"
 # ═══════════════════════════════════════════════════════════════
 
 TRIGGERS = [
-    # Transitions
+    # Transitions / pivots — Phase 14: enriched patterns + correct filenames
     (re.compile(r"\b(but|however|here'?s the (twist|catch|thing))\b", re.I),
-     "whoosh.mp3", -8),
-    # Stat reveals
+     "whoosh_transition.mp3", -8),
+    (re.compile(r"\b(actually|wait|hold on|the truth is)\b", re.I),
+     "glitch_short.mp3", -12),
+    # Stat reveals (digits + worded)
     (re.compile(r"\b\d+(\.\d+)?\s*(%|percent|x|times|million|billion|trillion)\b", re.I),
-     "ding.mp3", -10),
+     "ding_reveal.mp3", -10),
+    (re.compile(r"\b(?:ten|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand)\s+(?:billion|million|trillion|percent)\b", re.I),
+     "ding_reveal.mp3", -10),
     # Alerts / warnings
-    (re.compile(r"\b(warning|danger|critical|alarming|shocking)\b", re.I),
-     "alert.mp3", -12),
+    (re.compile(r"\b(warning|danger|critical|alarming|shocking|scary|risky)\b", re.I),
+     "alert_negative.mp3", -12),
     # Reveals
-    (re.compile(r"\b(reveal|imagine|picture this|here'?s the wildest)\b", re.I),
-     "reveal_sweep.mp3", -10),
-    # Quotes
-    (re.compile(r"\b(said|told|tweeted|stated)\b", re.I),
-     "type_keystroke.mp3", -18),
-    # Section transitions (hook→intro, etc.)
-    # handled separately by section_id below
+    (re.compile(r"\b(reveal|imagine|picture this|here'?s the wildest|here'?s the part)\b", re.I),
+     "swoosh_in.mp3", -10),
+    # Quote markers
+    (re.compile(r"\b(said|told|tweeted|stated|quote(?:s|d)?|wrote)\b", re.I),
+     "typewriter.mp3", -18),
+    # Positive / win moments
+    (re.compile(r"\b(winning|brilliant|nailed it|massive win|breakthrough|landed it)\b", re.I),
+     "bell_positive.mp3", -12),
+    # Key point click
+    (re.compile(r"\b(here'?s why|the key is|three things|two reasons|number one|first thing)\b", re.I),
+     "click_emphasis.mp3", -14),
 ]
 
 SECTION_INTRO_SFX = {
     "hook": ("dramatic_riser.mp3", -10),
-    "demo": ("type_keystroke.mp3", -16),
-    "outro": ("warm_swell.mp3", -10),
+    "intro": ("swoosh_in.mp3", -14),
+    "main_point_1": ("click_emphasis.mp3", -14),
+    "main_point_2": ("click_emphasis.mp3", -14),
+    "main_point_3": ("click_emphasis.mp3", -14),
+    "demo": ("typewriter.mp3", -16),
+    "summary": ("dramatic_riser.mp3", -12),
+    "outro": ("swoosh_out.mp3", -10),
 }
 
 
@@ -89,13 +102,16 @@ SECTION_INTRO_SFX = {
 
 PIXABAY_KEY = os.getenv("PIXABAY_API_KEY", "")
 STARTER_QUERIES = {
-    "whoosh.mp3": "whoosh transition",
-    "ding.mp3": "notification ding",
-    "alert.mp3": "alert beep",
-    "reveal_sweep.mp3": "white noise sweep",
-    "type_keystroke.mp3": "keyboard typing",
+    "whoosh_transition.mp3": "whoosh transition",
+    "ding_reveal.mp3": "notification ding",
+    "alert_negative.mp3": "alert beep",
+    "swoosh_in.mp3": "white noise sweep",
+    "swoosh_out.mp3": "white noise sweep out",
+    "typewriter.mp3": "keyboard typing",
+    "click_emphasis.mp3": "ui click",
+    "bell_positive.mp3": "positive chime",
+    "glitch_short.mp3": "digital glitch",
     "dramatic_riser.mp3": "dramatic riser",
-    "warm_swell.mp3": "warm pad swell",
 }
 
 

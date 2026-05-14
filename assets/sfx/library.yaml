@@ -1,0 +1,22 @@
+sfx_library:
+- file: whoosh_transition.mp3
+  use: Section transitions
+- file: ding_reveal.mp3
+  use: Stat/number reveal
+- file: alert_negative.mp3
+  use: Warning / negative
+- file: click_emphasis.mp3
+  use: Key-point click
+- file: typewriter.mp3
+  use: Quote reveal
+- file: swoosh_in.mp3
+  use: Intro swoosh
+- file: swoosh_out.mp3
+  use: Outro swoosh
+- file: glitch_short.mp3
+  use: '''But wait'' moments'
+- file: bell_positive.mp3
+  use: Good news / win
+- file: dramatic_riser.mp3
+  use: Pre-reveal build
+generated_by: utils/sfx_synthesizer.py
