@@ -215,8 +215,20 @@ def score_brightness(frame_paths):
     return 9, f"brightness healthy (avg {avg_mean:.1f}, broken {bad_frac:.0%})"
 
 
+def _loudness_target():
+    """Phase 11.1+: explainer targets -16, others -14."""
+    cfg = PROJECT_ROOT / "output" / "mode_config.json"
+    if not cfg.exists():
+        return -14
+    try:
+        mode = json.loads(cfg.read_text(encoding="utf-8")).get("mode")
+        return -16 if mode == "explainer" else -14
+    except Exception:
+        return -14
+
+
 def score_loudness(loud_info):
-    """Score based on integrated LUFS measurement."""
+    """Score against the mode-specific target."""
     if not loud_info:
         return 6, "could not measure loudness"
     try:
@@ -224,12 +236,16 @@ def score_loudness(loud_info):
     except Exception:
         return 6, "unparseable loudness"
 
-    if -16 <= i <= -13:
-        return 10, f"perfect: input_i = {i:.2f} LUFS"
-    if -18 <= i <= -11:
-        return 7, f"close to target: input_i = {i:.2f} LUFS (target -14)"
+    target = _loudness_target()
+    diff = abs(i - target)
+    if diff <= 0.75:
+        return 10, f"perfect: input_i = {i:.2f} LUFS (target {target})"
+    if diff <= 1.5:
+        return 9, f"on target: input_i = {i:.2f} LUFS (target {target})"
+    if diff <= 3:
+        return 7, f"close to target: input_i = {i:.2f} LUFS (target {target})"
     if i < -25 or i > -5:
-        return 3, f"input_i = {i:.2f} LUFS — way off target"
+        return 3, f"input_i = {i:.2f} LUFS — way off target {target}"
     return 5, f"input_i = {i:.2f} LUFS — needs renormalisation"
 
 

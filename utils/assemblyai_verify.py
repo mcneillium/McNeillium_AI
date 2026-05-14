@@ -91,11 +91,13 @@ def _transcribe(audio_path):
     import assemblyai as aai
 
     aai.settings.api_key = API_KEY
-    config = aai.TranscriptionConfig(
-        speech_model=aai.SpeechModel.universal,
-        punctuate=True,
-        format_text=True,
-    )
+    # SDK 0.64 deprecated `speech_model` (singular) in favour of `speech_models`.
+    cfg_kwargs = {"punctuate": True, "format_text": True}
+    try:
+        cfg_kwargs["speech_models"] = [aai.SpeechModel.universal]
+    except (TypeError, AttributeError):
+        cfg_kwargs["speech_model"] = aai.SpeechModel.universal
+    config = aai.TranscriptionConfig(**cfg_kwargs)
     transcriber = aai.Transcriber(config=config)
     print(f"    🎧 AssemblyAI transcribing {audio_path}...")
     t0 = time.time()
