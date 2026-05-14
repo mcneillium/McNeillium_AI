@@ -1,0 +1,332 @@
+# McNeillium AI — People Database (Phase 13)
+# 50+ AI figures the channel covers. Each entry powers
+# news_asset_collector + entity alias resolver.
+#
+# Schema:
+#   key (lowercased canonical short surface):
+#     name: canonical full name (used for Wikipedia + display)
+#     wiki: optional URL override (defaults to en.wikipedia.org/wiki/<name>)
+#     aliases: lowercase surface forms script writers might use
+#     role: short role descriptor (used on photo cards)
+#     org: primary org slug (matches keys in orgs.yaml)
+#     roles_text: alternate role phrases scripts use casually
+#                 ("the OpenAI CEO", "Anthropic's founder")
+
+# ─── OpenAI / Microsoft orbit ─────────────────────────────────
+sam_altman:
+  name: Sam Altman
+  aliases: [sam altman, altman, sam, openai ceo, ceo of openai]
+  role: "CEO, OpenAI"
+  org: openai
+  roles_text: ["the openai ceo", "openai's ceo", "openai chief executive"]
+
+greg_brockman:
+  name: Greg Brockman
+  aliases: [greg brockman, brockman]
+  role: "President, OpenAI"
+  org: openai
+  roles_text: ["openai president", "openai's president"]
+
+mira_murati:
+  name: Mira Murati
+  aliases: [mira murati, murati]
+  role: "Founder, Thinking Machines Lab"
+  org: thinking_machines
+
+ilya_sutskever:
+  name: Ilya Sutskever
+  aliases: [ilya sutskever, sutskever, ilya]
+  role: "Founder, SSI"
+  org: ssi
+
+andrej_karpathy:
+  name: Andrej Karpathy
+  aliases: [andrej karpathy, karpathy]
+  role: "Eureka Labs"
+  org: eureka_labs
+
+satya_nadella:
+  name: Satya Nadella
+  aliases: [satya nadella, nadella, satya, microsoft ceo]
+  role: "CEO, Microsoft"
+  org: microsoft
+  roles_text: ["microsoft ceo", "microsoft's ceo", "microsoft chief executive"]
+
+kevin_scott:
+  name: Kevin Scott
+  aliases: [kevin scott, scott]
+  role: "CTO, Microsoft"
+  org: microsoft
+
+# ─── Anthropic ────────────────────────────────────────────────
+dario_amodei:
+  name: Dario Amodei
+  aliases: [dario amodei, amodei, dario, anthropic ceo]
+  role: "CEO, Anthropic"
+  org: anthropic
+  roles_text: ["anthropic ceo", "anthropic's ceo", "anthropic's founder",
+               "anthropic chief executive"]
+
+daniela_amodei:
+  name: Daniela Amodei
+  aliases: [daniela amodei, daniela]
+  role: "President, Anthropic"
+  org: anthropic
+
+mike_krieger:
+  name: Mike Krieger
+  aliases: [mike krieger, krieger]
+  role: "CPO, Anthropic"
+  org: anthropic
+
+jared_kaplan:
+  name: Jared Kaplan
+  aliases: [jared kaplan, kaplan]
+  role: "Co-founder, Anthropic"
+  org: anthropic
+
+jack_clark:
+  name: Jack Clark
+  aliases: [jack clark]
+  role: "Co-founder, Anthropic"
+  org: anthropic
+
+# ─── Google / DeepMind ───────────────────────────────────────
+demis_hassabis:
+  name: Demis Hassabis
+  aliases: [demis hassabis, hassabis, demis]
+  role: "CEO, Google DeepMind"
+  org: deepmind
+  roles_text: ["google deepmind ceo", "deepmind ceo", "deepmind chief"]
+
+sundar_pichai:
+  name: Sundar Pichai
+  aliases: [sundar pichai, pichai, sundar]
+  role: "CEO, Google / Alphabet"
+  org: google
+  roles_text: ["google ceo", "alphabet ceo", "google chief executive"]
+
+james_manyika:
+  name: James Manyika
+  aliases: [james manyika, manyika]
+  role: "SVP, Google"
+  org: google
+
+# ─── Meta ─────────────────────────────────────────────────────
+mark_zuckerberg:
+  name: Mark Zuckerberg
+  aliases: [mark zuckerberg, zuckerberg, zuck]
+  role: "CEO, Meta"
+  org: meta
+  roles_text: ["meta ceo", "meta's ceo", "facebook ceo"]
+
+yann_lecun:
+  name: Yann LeCun
+  aliases: [yann lecun, lecun, yann]
+  role: "Chief AI Scientist, Meta"
+  org: meta
+  roles_text: ["meta's chief ai scientist", "meta ai chief scientist"]
+
+# ─── xAI / Tesla / Musk ──────────────────────────────────────
+elon_musk:
+  name: Elon Musk
+  aliases: [elon musk, musk, elon]
+  role: "CEO, xAI / Tesla"
+  org: xai
+  roles_text: ["xai ceo", "tesla ceo", "spacex ceo"]
+
+# ─── Nvidia ───────────────────────────────────────────────────
+jensen_huang:
+  name: Jensen Huang
+  aliases: [jensen huang, huang, jensen]
+  role: "CEO, Nvidia"
+  org: nvidia
+  roles_text: ["nvidia ceo", "nvidia chief executive"]
+
+# ─── Apple ────────────────────────────────────────────────────
+tim_cook:
+  name: Tim Cook
+  aliases: [tim cook, cook]
+  role: "CEO, Apple"
+  org: apple
+  roles_text: ["apple ceo", "apple chief executive"]
+
+john_giannandrea:
+  name: John Giannandrea
+  aliases: [john giannandrea, giannandrea]
+  role: "SVP AI, Apple"
+  org: apple
+
+# ─── Other AI labs / orgs ────────────────────────────────────
+arthur_mensch:
+  name: Arthur Mensch
+  aliases: [arthur mensch, mensch]
+  role: "CEO, Mistral AI"
+  org: mistral
+
+emad_mostaque:
+  name: Emad Mostaque
+  aliases: [emad mostaque, mostaque, emad]
+  role: "Founder (former), Stability AI"
+  org: stability
+
+clement_delangue:
+  name: Clément Delangue
+  aliases: [clement delangue, delangue, clem]
+  role: "CEO, Hugging Face"
+  org: hugging_face
+
+aravind_srinivas:
+  name: Aravind Srinivas
+  aliases: [aravind srinivas, srinivas, aravind]
+  role: "CEO, Perplexity"
+  org: perplexity
+
+liang_wenfeng:
+  name: Liang Wenfeng
+  aliases: [liang wenfeng, wenfeng, liang]
+  role: "Founder, DeepSeek"
+  org: deepseek
+
+richard_socher:
+  name: Richard Socher
+  aliases: [richard socher, socher]
+  role: "CEO, You.com"
+  org: you_com
+
+# ─── Researchers & critics ───────────────────────────────────
+geoffrey_hinton:
+  name: Geoffrey Hinton
+  aliases: [geoffrey hinton, hinton]
+  role: "Turing Award laureate"
+  org: independent
+
+yoshua_bengio:
+  name: Yoshua Bengio
+  aliases: [yoshua bengio, bengio]
+  role: "Mila / U Montréal"
+  org: mila
+
+andrew_ng:
+  name: Andrew Ng
+  aliases: [andrew ng]
+  role: "Founder, DeepLearning.AI"
+  org: deeplearning_ai
+
+fei-fei_li:
+  name: Fei-Fei Li
+  aliases: [fei-fei li, fei fei li, feifei li]
+  role: "Stanford HAI"
+  org: stanford_hai
+
+gary_marcus:
+  name: Gary Marcus
+  aliases: [gary marcus, marcus]
+  role: "AI critic, NYU"
+  org: nyu
+
+eliezer_yudkowsky:
+  name: Eliezer Yudkowsky
+  aliases: [eliezer yudkowsky, yudkowsky]
+  role: "MIRI"
+  org: miri
+
+timnit_gebru:
+  name: Timnit Gebru
+  aliases: [timnit gebru, gebru]
+  role: "Founder, DAIR"
+  org: dair
+
+emily_bender:
+  name: Emily Bender
+  aliases: [emily bender, bender]
+  role: "Linguist, U Washington"
+  org: uw
+
+# ─── Founders, AI tools ──────────────────────────────────────
+michael_truell:
+  name: Michael Truell
+  aliases: [michael truell, truell]
+  role: "CEO, Anysphere (Cursor)"
+  org: cursor
+
+amjad_masad:
+  name: Amjad Masad
+  aliases: [amjad masad, masad]
+  role: "CEO, Replit"
+  org: replit
+
+guillermo_rauch:
+  name: Guillermo Rauch
+  aliases: [guillermo rauch, rauch]
+  role: "CEO, Vercel"
+  org: vercel
+
+scott_wu:
+  name: Scott Wu
+  aliases: [scott wu]
+  role: "CEO, Cognition (Devin)"
+  org: cognition
+
+# ─── Investors / regulators ──────────────────────────────────
+marc_andreessen:
+  name: Marc Andreessen
+  aliases: [marc andreessen, andreessen]
+  role: "GP, a16z"
+  org: a16z
+
+vinod_khosla:
+  name: Vinod Khosla
+  aliases: [vinod khosla, khosla]
+  role: "Founder, Khosla Ventures"
+  org: khosla_ventures
+
+reid_hoffman:
+  name: Reid Hoffman
+  aliases: [reid hoffman, hoffman]
+  role: "Co-founder, Inflection / LinkedIn"
+  org: inflection
+
+lina_khan:
+  name: Lina Khan
+  aliases: [lina khan, khan]
+  role: "Former FTC Chair"
+  org: ftc
+
+# ─── Open source ─────────────────────────────────────────────
+soumith_chintala:
+  name: Soumith Chintala
+  aliases: [soumith chintala, soumith]
+  role: "PyTorch / Meta"
+  org: meta
+
+simon_willison:
+  name: Simon Willison
+  aliases: [simon willison, willison]
+  role: "Co-creator, Django"
+  org: independent
+
+# ─── Bonus: people who keep making headlines ────────────────
+jeff_dean:
+  name: Jeff Dean
+  aliases: [jeff dean]
+  role: "Chief Scientist, Google"
+  org: google
+
+oriol_vinyals:
+  name: Oriol Vinyals
+  aliases: [oriol vinyals]
+  role: "VP Research, Google DeepMind"
+  org: deepmind
+
+noam_shazeer:
+  name: Noam Shazeer
+  aliases: [noam shazeer, shazeer]
+  role: "Co-creator, Transformers / character.ai"
+  org: google
+
+ed_zitron:
+  name: Ed Zitron
+  aliases: [ed zitron, zitron]
+  role: "AI skeptic / Better Offline"
+  org: independent

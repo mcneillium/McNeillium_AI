@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-05-14T20:00:00+01:00",
+  "phases_complete": [],
+  "current_phase": 13,
+  "current_step": "starting",
+  "notes": [
+    "ElevenLabs free-tier quota exhausted at 10,000 chars this month.",
+    "Final test will attempt ElevenLabs; fall back to Edge TTS on 401."
+  ],
+  "skipped": []
+}

@@ -1,0 +1,345 @@
+# McNeillium AI — Organisations Database (Phase 13)
+# 40+ orgs the channel covers. Schema:
+#   key:
+#     name: Canonical name for Wikipedia lookup & display caption
+#     domain: Used for Google s2 favicon fallback
+#     aliases: lowercase surface forms scripts use
+#     kind: ai_lab | cloud | hardware | media | research_org | regulator | other
+
+# ─── Frontier AI labs ────────────────────────────────────────
+openai:
+  name: OpenAI
+  domain: openai.com
+  aliases: [openai]
+  kind: ai_lab
+
+anthropic:
+  name: Anthropic
+  domain: anthropic.com
+  aliases: [anthropic]
+  kind: ai_lab
+
+deepmind:
+  name: Google DeepMind
+  domain: deepmind.google
+  aliases: [google deepmind, deepmind]
+  kind: ai_lab
+
+meta_ai:
+  name: Meta AI
+  domain: ai.meta.com
+  aliases: [meta ai, fair, meta's ai division]
+  kind: ai_lab
+
+xai:
+  name: XAI (company)
+  domain: x.ai
+  aliases: [xai, x.ai, x ai]
+  kind: ai_lab
+
+mistral:
+  name: Mistral AI
+  domain: mistral.ai
+  aliases: [mistral, mistral ai]
+  kind: ai_lab
+
+deepseek:
+  name: DeepSeek
+  domain: deepseek.com
+  aliases: [deepseek]
+  kind: ai_lab
+
+cohere:
+  name: Cohere
+  domain: cohere.com
+  aliases: [cohere]
+  kind: ai_lab
+
+ai21:
+  name: AI21 Labs
+  domain: ai21.com
+  aliases: [ai21, ai21 labs]
+  kind: ai_lab
+
+stability:
+  name: Stability AI
+  domain: stability.ai
+  aliases: [stability ai, stability]
+  kind: ai_lab
+
+hugging_face:
+  name: Hugging Face
+  domain: huggingface.co
+  aliases: [hugging face, huggingface]
+  kind: ai_lab
+
+inflection:
+  name: Inflection AI
+  domain: inflection.ai
+  aliases: [inflection, inflection ai]
+  kind: ai_lab
+
+thinking_machines:
+  name: Thinking Machines Lab
+  domain: thinkingmachines.ai
+  aliases: [thinking machines]
+  kind: ai_lab
+
+ssi:
+  name: Safe Superintelligence
+  domain: ssi.inc
+  aliases: [ssi, safe superintelligence]
+  kind: ai_lab
+
+# ─── Big tech ────────────────────────────────────────────────
+google:
+  name: Google
+  domain: google.com
+  aliases: [google, alphabet]
+  kind: cloud
+
+microsoft:
+  name: Microsoft
+  domain: microsoft.com
+  aliases: [microsoft, msft]
+  kind: cloud
+
+meta:
+  name: Meta Platforms
+  domain: meta.com
+  aliases: [meta, facebook]
+  kind: ai_lab
+
+amazon:
+  name: Amazon (company)
+  domain: amazon.com
+  aliases: [amazon, aws]
+  kind: cloud
+
+apple:
+  name: Apple Inc.
+  domain: apple.com
+  aliases: [apple]
+  kind: cloud
+
+oracle:
+  name: Oracle Corporation
+  domain: oracle.com
+  aliases: [oracle, oracle cloud]
+  kind: cloud
+
+ibm:
+  name: IBM
+  domain: ibm.com
+  aliases: [ibm, watson]
+  kind: cloud
+
+# ─── Hardware ────────────────────────────────────────────────
+nvidia:
+  name: Nvidia
+  domain: nvidia.com
+  aliases: [nvidia]
+  kind: hardware
+
+amd:
+  name: AMD
+  domain: amd.com
+  aliases: [amd]
+  kind: hardware
+
+intel:
+  name: Intel
+  domain: intel.com
+  aliases: [intel]
+  kind: hardware
+
+broadcom:
+  name: Broadcom Inc.
+  domain: broadcom.com
+  aliases: [broadcom]
+  kind: hardware
+
+tesla:
+  name: Tesla, Inc.
+  domain: tesla.com
+  aliases: [tesla]
+  kind: hardware
+
+# ─── AI dev tools / consumer ─────────────────────────────────
+perplexity:
+  name: Perplexity AI
+  domain: perplexity.ai
+  aliases: [perplexity]
+  kind: ai_lab
+
+cursor:
+  name: Cursor (code editor)
+  domain: cursor.com
+  aliases: [cursor]
+  kind: ai_lab
+
+github:
+  name: GitHub
+  domain: github.com
+  aliases: [github, copilot]
+  kind: ai_lab
+
+replit:
+  name: Replit
+  domain: replit.com
+  aliases: [replit]
+  kind: ai_lab
+
+vercel:
+  name: Vercel
+  domain: vercel.com
+  aliases: [vercel, v0]
+  kind: ai_lab
+
+cognition:
+  name: Cognition AI
+  domain: cognition.ai
+  aliases: [cognition, devin]
+  kind: ai_lab
+
+you_com:
+  name: You.com
+  domain: you.com
+  aliases: [you.com, you dot com]
+  kind: ai_lab
+
+# ─── Media outlets ───────────────────────────────────────────
+cnbc:
+  name: CNBC
+  domain: cnbc.com
+  aliases: [cnbc]
+  kind: media
+
+fortune:
+  name: Fortune (magazine)
+  domain: fortune.com
+  aliases: [fortune]
+  kind: media
+
+techcrunch:
+  name: TechCrunch
+  domain: techcrunch.com
+  aliases: [techcrunch]
+  kind: media
+
+reuters:
+  name: Reuters
+  domain: reuters.com
+  aliases: [reuters]
+  kind: media
+
+bloomberg:
+  name: Bloomberg L.P.
+  domain: bloomberg.com
+  aliases: [bloomberg]
+  kind: media
+
+the_verge:
+  name: The Verge
+  domain: theverge.com
+  aliases: [the verge, verge]
+  kind: media
+
+wired:
+  name: Wired (magazine)
+  domain: wired.com
+  aliases: [wired]
+  kind: media
+
+ny_times:
+  name: The New York Times
+  domain: nytimes.com
+  aliases: [new york times, nyt, the times]
+  kind: media
+
+financial_times:
+  name: Financial Times
+  domain: ft.com
+  aliases: [financial times, ft]
+  kind: media
+
+axios:
+  name: Axios
+  domain: axios.com
+  aliases: [axios]
+  kind: media
+
+the_information:
+  name: The Information (website)
+  domain: theinformation.com
+  aliases: [the information]
+  kind: media
+
+# ─── Research / education ────────────────────────────────────
+mila:
+  name: Mila (research institute)
+  domain: mila.quebec
+  aliases: [mila]
+  kind: research_org
+
+stanford_hai:
+  name: Stanford Institute for Human-Centered Artificial Intelligence
+  domain: hai.stanford.edu
+  aliases: [stanford hai, hai]
+  kind: research_org
+
+mit:
+  name: MIT
+  domain: mit.edu
+  aliases: [mit]
+  kind: research_org
+
+eureka_labs:
+  name: Eureka Labs
+  domain: eurekalabs.ai
+  aliases: [eureka labs]
+  kind: ai_lab
+
+deeplearning_ai:
+  name: DeepLearning.AI
+  domain: deeplearning.ai
+  aliases: [deeplearning.ai]
+  kind: education
+
+# ─── Regulators / Government ─────────────────────────────────
+ftc:
+  name: Federal Trade Commission
+  domain: ftc.gov
+  aliases: [ftc, federal trade commission]
+  kind: regulator
+
+doj:
+  name: United States Department of Justice
+  domain: justice.gov
+  aliases: [department of justice, doj]
+  kind: regulator
+
+pentagon:
+  name: The Pentagon
+  domain: defense.gov
+  aliases: [pentagon, department of defense, dod]
+  kind: regulator
+
+eu_ai_office:
+  name: European AI Office
+  domain: digital-strategy.ec.europa.eu
+  aliases: [eu ai office, european ai office]
+  kind: regulator
+
+# ─── Other ───────────────────────────────────────────────────
+a16z:
+  name: Andreessen Horowitz
+  domain: a16z.com
+  aliases: [a16z, andreessen horowitz]
+  kind: other
+
+ftc_chair: # placeholder used only for alias resolution
+  name: Federal Trade Commission
+  domain: ftc.gov
+  aliases: [ftc chair]
+  kind: regulator

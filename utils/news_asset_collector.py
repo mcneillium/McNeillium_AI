@@ -44,6 +44,16 @@ if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8
 
 from PIL import Image, ImageDraw, ImageFont
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
+try:
+    from word2number import w2n
+except ImportError:
+    w2n = None
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT_PATH = PROJECT_ROOT / "output" / "scripts" / "latest.json"
 ASSETS_DIR = PROJECT_ROOT / "output" / "_news_assets"
@@ -51,66 +61,90 @@ PEOPLE_DIR = ASSETS_DIR / "people"
 LOGO_DIR = ASSETS_DIR / "logos"
 ARTICLE_DIR = ASSETS_DIR / "articles"
 CHART_DIR = ASSETS_DIR / "charts"
+TWEETS_DIR = ASSETS_DIR / "tweets"
 MANIFEST_PATH = ASSETS_DIR / "manifest.json"
+ENTITIES_DIR = PROJECT_ROOT / "knowledge_base" / "entities"
+PEOPLE_YAML = ENTITIES_DIR / "people.yaml"
+ORGS_YAML = ENTITIES_DIR / "orgs.yaml"
 
 CACHE_TTL_DAYS = 90
 
 
-# ─── Known entities (keeps us out of spaCy territory) ─────────────────
-# These are people/companies the channel covers regularly. Add as needed.
-KNOWN_PEOPLE = {
-    "sam altman":      "Sam Altman",
-    "altman":          "Sam Altman",
-    "elon musk":       "Elon Musk",
-    "musk":            "Elon Musk",
-    "dario amodei":    "Dario Amodei",
-    "amodei":          "Dario Amodei",
-    "demis hassabis":  "Demis Hassabis",
-    "hassabis":        "Demis Hassabis",
-    "sundar pichai":   "Sundar Pichai",
-    "pichai":          "Sundar Pichai",
-    "mark zuckerberg": "Mark Zuckerberg",
-    "zuckerberg":      "Mark Zuckerberg",
-    "greg brockman":   "Greg Brockman",
-    "ilya sutskever":  "Ilya Sutskever",
-    "yann lecun":      "Yann LeCun",
-    "andrej karpathy": "Andrej Karpathy",
-    "jensen huang":    "Jensen Huang",
-    "satya nadella":   "Satya Nadella",
-}
+# ─── Known entities (Phase 13: loaded from YAML, 100+ entries) ──
+# Backwards-compatible legacy dicts are populated from the YAML files.
 
-KNOWN_COMPANIES = {
-    # Surface form → (wikipedia title, domain for favicon fallback)
-    "openai":     ("OpenAI", "openai.com"),
-    "anthropic":  ("Anthropic", "anthropic.com"),
-    "google":     ("Google",  "google.com"),
-    "google deepmind": ("Google DeepMind", "deepmind.google"),
-    "deepmind":   ("Google DeepMind", "deepmind.google"),
-    "meta":       ("Meta Platforms", "meta.com"),
-    "meta ai":    ("Meta AI", "ai.meta.com"),
-    "microsoft":  ("Microsoft", "microsoft.com"),
-    "nvidia":     ("Nvidia", "nvidia.com"),
-    "apple":      ("Apple Inc.", "apple.com"),
-    "amazon":     ("Amazon (company)", "amazon.com"),
-    "tesla":      ("Tesla, Inc.", "tesla.com"),
-    "xai":        ("XAI (company)", "x.ai"),
-    "x.ai":       ("XAI (company)", "x.ai"),
-    "perplexity": ("Perplexity AI", "perplexity.ai"),
-    "mistral":    ("Mistral AI", "mistral.ai"),
-    "hugging face": ("Hugging Face", "huggingface.co"),
-    "cursor":     ("Cursor (code editor)", "cursor.com"),
-    "github":     ("GitHub", "github.com"),
-    "cnbc":       ("CNBC", "cnbc.com"),
-    "fortune":    ("Fortune (magazine)", "fortune.com"),
-    "techcrunch": ("TechCrunch", "techcrunch.com"),
-    "reuters":    ("Reuters", "reuters.com"),
-    "bloomberg":  ("Bloomberg L.P.", "bloomberg.com"),
-}
+def _load_entities_yaml():
+    """Load knowledge_base/entities/{people,orgs}.yaml. Returns (people, orgs, aliases_people, aliases_orgs, role_lookup).
+
+    aliases_people: lower-case surface form → canonical name (str)
+    aliases_orgs:   lower-case surface form → (canonical name, domain) tuple
+    role_lookup:    lower-case role description → canonical person name
+    """
+    people = {}
+    orgs = {}
+    aliases_p = {}
+    aliases_o = {}
+    role_lookup = {}
+
+    if yaml is None:
+        return people, orgs, aliases_p, aliases_o, role_lookup
+
+    if PEOPLE_YAML.exists():
+        try:
+            data = yaml.safe_load(PEOPLE_YAML.read_text(encoding="utf-8"))
+            for key, entry in (data or {}).items():
+                if not isinstance(entry, dict):
+                    continue
+                people[key] = entry
+                canon = entry.get("name", key)
+                for a in entry.get("aliases", []) or []:
+                    aliases_p[a.lower()] = canon
+                for r in entry.get("roles_text", []) or []:
+                    role_lookup[r.lower()] = canon
+        except Exception as e:
+            print(f"  ⚠️  people.yaml parse failed: {e}")
+    if ORGS_YAML.exists():
+        try:
+            data = yaml.safe_load(ORGS_YAML.read_text(encoding="utf-8"))
+            for key, entry in (data or {}).items():
+                if not isinstance(entry, dict):
+                    continue
+                orgs[key] = entry
+                canon = entry.get("name", key)
+                domain = entry.get("domain", "")
+                for a in entry.get("aliases", []) or []:
+                    aliases_o[a.lower()] = (canon, domain)
+        except Exception as e:
+            print(f"  ⚠️  orgs.yaml parse failed: {e}")
+    return people, orgs, aliases_p, aliases_o, role_lookup
 
 
+# Eager load at import (cached for the run)
+_PEOPLE_DB, _ORGS_DB, KNOWN_PEOPLE, _KNOWN_ORGS, ROLE_LOOKUP = _load_entities_yaml()
+
+# Legacy adapter: existing callers expect KNOWN_COMPANIES as
+#   {surface_lower: (canonical_name, domain)}.
+KNOWN_COMPANIES = dict(_KNOWN_ORGS)
+
+
+# Numeric stat regex — digits form
 STAT_PATTERN = re.compile(
     r"\b\$?\s*(\d+(?:\.\d+)?)\s*"
     r"(billion|million|trillion|percent|%|b\b|m\b|x\b)",
+    re.I,
+)
+
+# Phase 13: worded-number stat patterns. Captures "nine hundred and
+# fifty billion" / "thirty billion" / "twelve percent" etc.
+WORDED_STAT_PATTERN = re.compile(
+    r"\b("
+    r"(?:zero|one|two|three|four|five|six|seven|eight|nine|"
+    r"ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|"
+    r"seventeen|eighteen|nineteen|"
+    r"twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|"
+    r"hundred|thousand|"
+    r"and|-|\s)+"
+    r")\s+(billion|million|trillion|percent)\b",
     re.I,
 )
 
@@ -271,19 +305,36 @@ def fetch_article_screenshot(url, slug_hint=""):
             )
             page = ctx.new_page()
             page.goto(url, wait_until="domcontentloaded", timeout=25000)
-            # Give cookie banners / lazy images a moment to settle
             page.wait_for_timeout(2500)
-            # Try to dismiss obvious cookie banners (best-effort)
-            for sel in [
-                "button:has-text('Accept')", "button:has-text('I agree')",
-                "button:has-text('Got it')", "button:has-text('Allow all')",
-            ]:
+            # Phase 13: wider cookie-banner / popup dismissal patterns
+            COOKIE_SELECTORS = [
+                "button:has-text('Accept all')",
+                "button:has-text('Accept All')",
+                "button:has-text('Accept cookies')",
+                "button:has-text('Accept')",
+                "button:has-text('I agree')",
+                "button:has-text('Got it')",
+                "button:has-text('Allow all')",
+                "button:has-text('Continue')",
+                "button:has-text('OK')",
+                "button:has-text('Dismiss')",
+                "button:has-text('Close')",
+                "[aria-label='Accept all cookies']",
+                "[aria-label='Close']",
+                "[aria-label='close']",
+                "#onetrust-accept-btn-handler",
+                "#truste-consent-button",
+                ".accept-cookies",
+                "[data-testid='accept-all']",
+            ]
+            for sel in COOKIE_SELECTORS:
                 try:
-                    page.locator(sel).first.click(timeout=800)
-                    break
+                    page.locator(sel).first.click(timeout=600)
+                    page.wait_for_timeout(400)
                 except Exception:
                     pass
             page.wait_for_timeout(1200)
+            # Phase 13: capture more of the hero area (800px instead of 600)
             page.screenshot(path=str(target),
                             clip={"x": 0, "y": 0, "width": 1920, "height": 800})
             browser.close()
@@ -408,12 +459,30 @@ def generate_stat_chart(value_str, label, output_path,
 
 # ─── Detection ──────────────────────────────────────────────────
 
+def _normalise_text(s):
+    """Lowercase + normalise curly apostrophes/quotes to ASCII."""
+    return (s.lower()
+            .replace("’", "'")     # right single quote
+            .replace("‘", "'")     # left single quote
+            .replace("“", '"')     # left double
+            .replace("”", '"')     # right double
+            .replace("–", "-")     # en dash
+            .replace("—", "-"))    # em dash
+
+
 def detect_people(text):
+    """Match people via direct surface form OR role-text alias."""
     found = []
-    lower = text.lower()
+    lower = _normalise_text(text)
     seen = set()
+    # 1) direct surface aliases
     for surface, canon in KNOWN_PEOPLE.items():
         if surface in lower and canon not in seen:
+            seen.add(canon)
+            found.append(canon)
+    # 2) role lookup ("the openai ceo", "anthropic's founder")
+    for role_phrase, canon in ROLE_LOOKUP.items():
+        if role_phrase in lower and canon not in seen:
             seen.add(canon)
             found.append(canon)
     return found
@@ -421,32 +490,146 @@ def detect_people(text):
 
 def detect_companies(text):
     found = {}
-    lower = text.lower()
+    lower = _normalise_text(text)
     for surface, info in KNOWN_COMPANIES.items():
         if surface in lower:
-            # key uses the short surface form (openai, anthropic, etc.)
             short = surface.split()[0]
             if short not in found:
                 found[short] = info
     return found
 
 
+def _format_human_number(n):
+    """Convert int → '$950B' / '$30M' / '12%' style."""
+    if n is None:
+        return None
+    n = float(n)
+    if abs(n) >= 1_000_000_000_000:
+        return f"${n / 1_000_000_000_000:g}T"
+    if abs(n) >= 1_000_000_000:
+        return f"${n / 1_000_000_000:g}B"
+    if abs(n) >= 1_000_000:
+        return f"${n / 1_000_000:g}M"
+    if abs(n) >= 1_000:
+        return f"${n / 1_000:g}K"
+    return f"{n:g}"
+
+
 def detect_stats(text, limit=4):
+    """Numeric + worded stat detection (Phase 13)."""
     out = []
     seen = set()
+
+    # Numeric stats first
     for m in STAT_PATTERN.finditer(text):
         value = m.group(0).strip()
-        if value in seen:
+        key = value.lower()
+        if key in seen:
             continue
-        seen.add(value)
-        # Build a label from surrounding context (~6 words after)
+        seen.add(key)
         tail = text[m.end():m.end() + 80]
         label_words = re.findall(r"[A-Za-z][A-Za-z'-]*", tail)[:6]
         label = " ".join(label_words).strip() or "stat"
         out.append({"value": value, "label": label})
         if len(out) >= limit:
-            break
+            return out
+
+    # Worded stats (Phase 13 — uses word2number when available)
+    if w2n is not None:
+        for m in WORDED_STAT_PATTERN.finditer(text):
+            words = m.group(1).strip().lower()
+            unit = m.group(2).lower()
+            try:
+                num = w2n.word_to_num(words)
+            except Exception:
+                continue
+            if unit == "billion":
+                value = _format_human_number(num * 1_000_000_000)
+            elif unit == "million":
+                value = _format_human_number(num * 1_000_000)
+            elif unit == "trillion":
+                value = _format_human_number(num * 1_000_000_000_000)
+            elif unit == "percent":
+                value = f"{num}%"
+            else:
+                value = str(num)
+            key = value.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            tail = text[m.end():m.end() + 80]
+            label_words = re.findall(r"[A-Za-z][A-Za-z'-]*", tail)[:6]
+            label = " ".join(label_words).strip() or "stat"
+            out.append({"value": value, "label": label})
+            if len(out) >= limit:
+                break
     return out
+
+
+# ─── Phase 13: Twitter / X tweet screenshots ────────────────────
+
+def fetch_tweet_screenshot(tweet_url):
+    """Use Playwright to screenshot just the tweet card from an x.com /
+    twitter.com URL. Cached by URL hash."""
+    if not tweet_url:
+        return None
+    if not _playwright_available():
+        return None
+    url_hash = hashlib.sha256(tweet_url.encode("utf-8")).hexdigest()[:12]
+    target = TWEETS_DIR / f"tweet_{url_hash}.png"
+    if _is_fresh(target):
+        return str(target)
+    try:
+        from playwright.sync_api import sync_playwright
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            ctx = browser.new_context(
+                viewport={"width": 1200, "height": 1600},
+                user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/124.0.0.0 Safari/537.36"),
+            )
+            page = ctx.new_page()
+            page.goto(tweet_url, wait_until="domcontentloaded",
+                      timeout=25000)
+            page.wait_for_timeout(2500)
+            # Try to click the tweet article; fallback to full-page
+            # top-area screenshot
+            try:
+                article = page.locator("article").first
+                article.screenshot(path=str(target))
+            except Exception:
+                page.screenshot(path=str(target),
+                                clip={"x": 0, "y": 0,
+                                       "width": 1200, "height": 900})
+            browser.close()
+        return str(target)
+    except Exception as e:
+        print(f"      ⚠️  tweet screenshot failed for {tweet_url}: {e}")
+        return None
+
+
+def detect_tweets(script):
+    """Pull tweet URLs out of script.metadata.tweets and inline mentions."""
+    tweets = []
+    meta = (script.get("metadata") or {})
+    for t in (meta.get("tweets") or []):
+        if isinstance(t, dict) and t.get("url"):
+            tweets.append(t)
+        elif isinstance(t, str) and t.startswith(("http://", "https://")):
+            tweets.append({"url": t, "label": ""})
+    # Inline regex for direct tweet URLs in narration
+    text_blob = " ".join(s.get("narration", "")
+                          for s in script.get("sections", []))
+    for m in re.finditer(
+        r"https?://(?:twitter\.com|x\.com)/[\w/]+/status/\d+",
+        text_blob,
+    ):
+        url = m.group(0)
+        if not any(t.get("url") == url for t in tweets):
+            tweets.append({"url": url, "label": "inline tweet"})
+    return tweets
 
 
 # ─── Main ──────────────────────────────────────────────────────
@@ -458,7 +641,7 @@ def run(script_path, do_screenshots=True):
     with open(script_path, encoding="utf-8") as f:
         script = json.load(f)
 
-    for d in (PEOPLE_DIR, LOGO_DIR, ARTICLE_DIR, CHART_DIR):
+    for d in (PEOPLE_DIR, LOGO_DIR, ARTICLE_DIR, CHART_DIR, TWEETS_DIR):
         d.mkdir(parents=True, exist_ok=True)
 
     full_text = " ".join(
@@ -513,6 +696,22 @@ def run(script_path, do_screenshots=True):
                 }
                 print(f"      ✓ {url[:70]}")
 
+    # Tweets (Phase 13)
+    tweet_specs = detect_tweets(script)
+    tweets = {}
+    if tweet_specs and do_screenshots:
+        print(f"   🐦 Tweets detected: {len(tweet_specs)}")
+        for t in tweet_specs[:5]:
+            tweet_path = fetch_tweet_screenshot(t["url"])
+            if tweet_path:
+                slug = _slug(t.get("label") or t["url"])
+                tweets[slug] = {
+                    "url": t["url"],
+                    "label": t.get("label", ""),
+                    "path": tweet_path,
+                }
+                print(f"      ✓ {t['url'][:60]}")
+
     # Stats / charts
     stats = detect_stats(full_text, limit=4)
     print(f"   📊 Stats detected: {[s['value'] for s in stats]}")
@@ -535,6 +734,7 @@ def run(script_path, do_screenshots=True):
         "people": people,
         "logos": logos,
         "articles": articles,
+        "tweets": tweets,
         "charts": charts,
     }
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
