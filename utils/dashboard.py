@@ -95,8 +95,75 @@ def _qc_snapshot():
     }
 
 
+def _queue_videos():
+    """Phase 18: list locally-rendered videos waiting for approval.
+
+    We treat any output/videos/_*.mp4 that's NOT in
+    output/videos/_uploaded.txt as queued for review.
+    """
+    vdir = PROJECT_ROOT / "output" / "videos"
+    if not vdir.exists():
+        return []
+    uploaded_log = vdir / "_uploaded.txt"
+    uploaded = set()
+    if uploaded_log.exists():
+        uploaded = set(uploaded_log.read_text(encoding="utf-8").splitlines())
+    out = []
+    for p in sorted(vdir.glob("_*.mp4"), key=lambda x: -x.stat().st_mtime):
+        if p.name in uploaded:
+            continue
+        size_mb = p.stat().st_size / (1024 * 1024)
+        # Probe duration via ffprobe
+        try:
+            import subprocess
+            r = subprocess.run(
+                ["ffprobe", "-v", "quiet", "-show_entries", "format=duration",
+                 "-of", "csv=p=0", str(p)],
+                capture_output=True, text=True,
+            )
+            dur_s = float(r.stdout.strip() or 0)
+        except Exception:
+            dur_s = 0
+        out.append({
+            "name": p.name,
+            "path": str(p.resolve()).replace("\\", "/"),
+            "size_mb": round(size_mb, 1),
+            "duration_s": int(dur_s),
+        })
+    return out
+
+
+def _cost_snapshot():
+    """Read this month's cost-tracker CSV and return per-service totals."""
+    today = datetime.datetime.now()
+    p = (PROJECT_ROOT / "knowledge_base" / "costs"
+         / f"{today.year}-{today.month:02d}.csv")
+    if not p.exists():
+        return None
+    import csv
+    totals = {"elevenlabs": 0.0, "fal_kling": 0.0, "assemblyai": 0.0}
+    today_total = 0.0
+    today_iso = today.date().isoformat()
+    with open(p, encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            svc = row.get("service", "")
+            try:
+                c = float(row.get("cost_usd", "0"))
+            except Exception:
+                c = 0
+            if svc in totals:
+                totals[svc] += c
+            if row.get("timestamp", "")[:10] == today_iso:
+                today_total += c
+    return {"by_service": totals,
+            "today": today_total,
+            "month": sum(totals.values())}
+
+
 def build_html():
     videos = _latest_videos()
+    queue = _queue_videos()
+    cost = _cost_snapshot()
     cal = _calendar_entries()
     killers = _retention_killer_blocks()
     questions = _audience_questions()
@@ -128,6 +195,40 @@ def build_html():
     qc_score = qc["score"] if qc["score"] is not None else "—"
     qc_class = ("good" if qc["score"] and qc["score"] >= 8
                 else "warn" if qc["score"] else "")
+
+    # Phase 18: Approval queue HTML — local file:// links so user can
+    # preview right in the browser, plus copy-paste commands for the
+    # approve / reject actions.
+    queue_html = ""
+    for v in queue:
+        dur = f"{v['duration_s'] // 60}m {v['duration_s'] % 60:02d}s"
+        queue_html += f"""
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///{v['path']}"></video>
+          <div class="qv-meta">
+            <strong>{v['name']}</strong>
+            <span class="dim">{v['size_mb']:.1f} MB · {dur}</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "{v['path']}" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "{v['path']}" output/videos/_archive/</pre>
+        </div>"""
+    if not queue:
+        queue_html = "<em>No videos queued for review.</em>"
+
+    # Cost snapshot HTML
+    if cost:
+        cost_html = (
+            f"<div class='score' style='font-size:32px'>"
+            f"${cost['today']:.2f}<small style='font-size:14px;"
+            f"color:var(--muted);'> today</small></div>"
+            f"<div class='dim'>Month: ${cost['month']:.2f}  &nbsp;|&nbsp;  "
+            f"ElevenLabs ${cost['by_service']['elevenlabs']:.2f}, "
+            f"Kling ${cost['by_service']['fal_kling']:.2f}, "
+            f"AssemblyAI ${cost['by_service']['assemblyai']:.2f}</div>"
+        )
+    else:
+        cost_html = "<em>No cost snapshot yet.</em>"
 
     html = f"""<!doctype html>
 <html lang="en">
@@ -166,6 +267,13 @@ def build_html():
   .score {{ font-size: 48px; font-weight: 700; }}
   .score.good {{ color: var(--good); }}
   .score.warn {{ color: var(--warn); }}
+  .dim {{ color: var(--muted); font-size: 12px; }}
+  .qv {{ background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+         border-radius: 10px; padding: 12px; margin-bottom: 14px; }}
+  .qv video {{ max-width: 100%; border-radius: 6px; background: black; }}
+  .qv-meta {{ display: flex; justify-content: space-between;
+              padding: 8px 0; align-items: center; }}
+  .qv-cmd {{ font-size: 11px; user-select: all; cursor: text; }}
   footer {{ color: var(--muted); font-size: 12px;
             padding: 12px 36px; border-top: 1px solid var(--border); }}
 </style>
@@ -179,6 +287,14 @@ def build_html():
     <h2>Latest QC score</h2>
     <div class="score {qc_class}">{qc_score}<small style="font-size:18px;color:var(--muted);">/10</small></div>
     <details><summary>Full QC report</summary><pre>{qc['text']}</pre></details>
+  </section>
+  <section class="panel">
+    <h2>Cost month-to-date</h2>
+    {cost_html}
+  </section>
+  <section class="panel" style="grid-column: 1 / -1;">
+    <h2>Approval queue — local renders awaiting your sign-off</h2>
+    {queue_html}
   </section>
   <section class="panel">
     <h2>Upcoming slots</h2>

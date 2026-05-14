@@ -1,0 +1,7 @@
+# McNeillium AI — Cost Governor limits (Phase 18)
+# Edit these to change the daily/monthly/per-video ceiling.
+# Reload happens on every Governor call — no restart needed.
+
+daily_usd: 20.00
+monthly_usd: 200.00
+per_video_usd: 5.00
