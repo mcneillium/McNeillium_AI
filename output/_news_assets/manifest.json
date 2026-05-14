@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-05-14T19:06:43.195675Z",
-  "title": "Sam Altman Just Testified Under Oath. Here's What He Said.",
+  "generated_at": "2026-05-14T20:27:09.942028Z",
+  "title": "Anthropic Is Worth $950 Billion. Read That Again.",
   "people": {
     "sam-altman": {
       "name": "Sam Altman",
       "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\sam-altman.jpg"
     },
-    "elon-musk": {
-      "name": "Elon Musk",
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\elon-musk.jpg"
-    },
     "dario-amodei": {
       "name": "Dario Amodei",
       "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\dario-amodei.jpg"
+    },
+    "elon-musk": {
+      "name": "Elon Musk",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\people\\elon-musk.jpg"
     }
   },
   "logos": {
@@ -26,28 +26,74 @@
       "domain": "anthropic.com",
       "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\anthropic.png"
     },
+    "mistral": {
+      "name": "Mistral AI",
+      "domain": "mistral.ai",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\mistral.png"
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "domain": "deepseek.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\deepseek.png"
+    },
+    "ssi": {
+      "name": "Safe Superintelligence",
+      "domain": "ssi.inc",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\ssi.png"
+    },
+    "google": {
+      "name": "Google",
+      "domain": "google.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\google.png"
+    },
     "microsoft": {
       "name": "Microsoft",
       "domain": "microsoft.com",
       "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\microsoft.png"
+    },
+    "aws": {
+      "name": "Amazon (company)",
+      "domain": "amazon.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\aws.png"
+    },
+    "oracle": {
+      "name": "Oracle Corporation",
+      "domain": "oracle.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\oracle.png"
+    },
+    "nvidia": {
+      "name": "Nvidia",
+      "domain": "nvidia.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\nvidia.png"
+    },
+    "ft": {
+      "name": "Financial Times",
+      "domain": "ft.com",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\logos\\ft.png"
     }
   },
-  "articles": {
-    "cnbc-altman-testimony": {
-      "url": "https://www.cnbc.com/2026/05/13/altman-musk-trial-testimony-takeaways.html",
-      "label": "CNBC Altman testimony",
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\cnbc-altman-testimony-8aff23169b82.png"
+  "articles": {},
+  "tweets": {},
+  "charts": [
+    {
+      "value": "$950B",
+      "label": "dollar valuation in private funding talks",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\charts\\950b-dollar-valuation-in-private-funding-talks.mp4"
     },
-    "cnbc-trial-updates": {
-      "url": "https://www.cnbc.com/2026/05/12/openai-trial-updates-sam-altman-set-to-testify-in-musk-suit.html",
-      "label": "CNBC trial updates",
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\cnbc-trial-updates-203f1e93437c.png"
+    {
+      "value": "$9B",
+      "label": "dollars at the end of twenty",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\charts\\9b-dollars-at-the-end-of-twenty.mp4"
     },
-    "fortune-googlebook-anthropic-valuation": {
-      "url": "https://fortune.com/2026/05/13/behold-the-googlebook/",
-      "label": "Fortune Googlebook Anthropic valuation",
-      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\articles\\fortune-googlebook-anthropic-valuation-2e809e90f6ad.png"
+    {
+      "value": "$30B",
+      "label": "dollars today Twelve months Three times",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\charts\\30b-dollars-today-twelve-months-three-times.mp4"
+    },
+    {
+      "value": "6%",
+      "label": "on SWE-bench Verified versus GPT five",
+      "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\charts\\6-on-swe-bench-verified-versus-gpt-five.mp4"
     }
-  },
-  "charts": []
+  ]
 }

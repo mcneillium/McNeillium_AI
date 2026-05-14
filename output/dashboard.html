@@ -35,6 +35,13 @@
   .score { font-size: 48px; font-weight: 700; }
   .score.good { color: var(--good); }
   .score.warn { color: var(--warn); }
+  .dim { color: var(--muted); font-size: 12px; }
+  .qv { background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+         border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .qv video { max-width: 100%; border-radius: 6px; background: black; }
+  .qv-meta { display: flex; justify-content: space-between;
+              padding: 8px 0; align-items: center; }
+  .qv-cmd { font-size: 11px; user-select: all; cursor: text; }
   footer { color: var(--muted); font-size: 12px;
             padding: 12px 36px; border-top: 1px solid var(--border); }
 </style>
@@ -46,31 +53,129 @@
 <main>
   <section class="panel">
     <h2>Latest QC score</h2>
-    <div class="score good">8.6<small style="font-size:18px;color:var(--muted);">/10</small></div>
+    <div class="score good">9.3<small style="font-size:18px;color:var(--muted);">/10</small></div>
     <details><summary>Full QC report</summary><pre># QC Report: latest.mp4
 
-- Duration: 420.0s
-- Overall score: **8.6/10**  (threshold 8.0)
+- Duration: 364.1s
+- Overall score: **9.3/10**  (threshold 8.0)
 
 ## Dimensions
 
-- **visual_variety**: 10/10 — high variety (avg diff 90.93)
-- **caption_legibility**: 9/10 — bottom region high contrast (41.5) — captions clearly visible
-- **brightness**: 9/10 — brightness healthy (avg 97.6, bad 10%)
-- **loudness**: 7/10 — close to target: input_i = -12.50 LUFS (target -14)
-- **duration**: 8/10 — 420s — within acceptable range
+- **visual_variety**: 10/10 — high variety (avg diff 92.02)
+- **caption_legibility**: 9/10 — bottom region high contrast (37.7) — captions clearly visible
+- **brightness**: 9/10 — brightness healthy (avg 85.8, broken 0%)
+- **loudness**: 10/10 — perfect: input_i = -14.04 LUFS (target -14)
+- **duration**: 8/10 — 364s — within acceptable range
 
 ## Loudness Measurement
-- `input_i` = `-12.50`
-- `input_tp` = `-1.28`
-- `input_lra` = `4.50`
-- `input_thresh` = `-22.98`
-- `output_i` = `-13.28`
+- `input_i` = `-14.04`
+- `input_tp` = `-1.57`
+- `input_lra` = `3.70`
+- `input_thresh` = `-24.44`
+- `output_i` = `-13.27`
 - `output_tp` = `-1.50`
-- `output_lra` = `3.80`
-- `output_thresh` = `-23.75`
+- `output_lra` = `3.20`
+- `output_thresh` = `-23.67`
 - `normalization_type` = `dynamic`
-- `target_offset` = `-0.72`</pre></details>
+- `target_offset` = `-0.73`</pre></details>
+  </section>
+  <section class="panel">
+    <h2>Cost month-to-date</h2>
+    <div class='score' style='font-size:32px'>$7.83<small style='font-size:14px;color:var(--muted);'> today</small></div><div class='dim'>Month: $7.83  &nbsp;|&nbsp;  ElevenLabs $3.56, Kling $4.20, AssemblyAI $0.07</div>
+  </section>
+  <section class="panel" style="grid-column: 1 / -1;">
+    <h2>Approval queue — local renders awaiting your sign-off</h2>
+    
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v18_anthropic_950b.mp4"></video>
+          <div class="qv-meta">
+            <strong>_v18_anthropic_950b.mp4</strong>
+            <span class="dim">79.2 MB · 5m 32s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v18_anthropic_950b.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v18_anthropic_950b.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v4_real_assets.mp4"></video>
+          <div class="qv-meta">
+            <strong>_altman_trial_v4_real_assets.mp4</strong>
+            <span class="dim">97.7 MB · 6m 04s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v4_real_assets.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v4_real_assets.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v3_no_captions.mp4"></video>
+          <div class="qv-meta">
+            <strong>_altman_trial_v3_no_captions.mp4</strong>
+            <span class="dim">134.3 MB · 6m 04s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v3_no_captions.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v3_no_captions.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v2.mp4"></video>
+          <div class="qv-meta">
+            <strong>_altman_trial_v2.mp4</strong>
+            <span class="dim">138.4 MB · 6m 04s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v2.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial_v2.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial.mp4"></video>
+          <div class="qv-meta">
+            <strong>_altman_trial.mp4</strong>
+            <span class="dim">131.7 MB · 6m 04s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_altman_trial.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v11_attention.mp4"></video>
+          <div class="qv-meta">
+            <strong>_v11_attention.mp4</strong>
+            <span class="dim">97.5 MB · 5m 34s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v11_attention.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_v11_attention.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v2.mp4"></video>
+          <div class="qv-meta">
+            <strong>_reaction_v2.mp4</strong>
+            <span class="dim">127.6 MB · 5m 26s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v2.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v2.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v1.mp4"></video>
+          <div class="qv-meta">
+            <strong>_reaction_v1.mp4</strong>
+            <span class="dim">127.6 MB · 5m 26s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v1.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_reaction_v1.mp4" output/videos/_archive/</pre>
+        </div>
+        <div class="qv">
+          <video controls preload="metadata" width="100%"
+                 src="file:///C:/Users/McNei/Documents/McNeillium_AI/output/videos/_attention_v2.mp4"></video>
+          <div class="qv-meta">
+            <strong>_attention_v2.mp4</strong>
+            <span class="dim">84.0 MB · 6m 14s</span>
+          </div>
+          <pre class="qv-cmd">python utils/youtube_upload.py --video "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_attention_v2.mp4" --script output/scripts/latest.json --privacy unlisted
+# or reject:  move "C:/Users/McNei/Documents/McNeillium_AI/output/videos/_attention_v2.mp4" output/videos/_archive/</pre>
+        </div>
   </section>
   <section class="panel">
     <h2>Upcoming slots</h2>
@@ -92,6 +197,6 @@
     <ul><li><em>no audience questions yet</em></li></ul>
   </section>
 </main>
-<footer>Generated 2026-05-14 01:45:04 — refresh by re-running <code>python utils/dashboard.py</code></footer>
+<footer>Generated 2026-05-14 21:44:05 — refresh by re-running <code>python utils/dashboard.py</code></footer>
 </body>
 </html>

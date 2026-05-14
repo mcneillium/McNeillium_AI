@@ -1,0 +1,32 @@
+{
+  "palette": {
+    "primary": "#5BA3F5",
+    "secondary": "#7EE787",
+    "tertiary": "#FFA657",
+    "quaternary": "#BC8CFF",
+    "quinary": "#FFDC6E",
+    "warning": "#FF7B72",
+    "neutral": "#E6EDF3"
+  },
+  "term_colours": {
+    "anthropic": "#5BA3F5",
+    "openai": "#7EE787",
+    "claude": "#FFA657",
+    "model": "#BC8CFF",
+    "company": "#FFDC6E",
+    "warning": "#FF7B72",
+    "danger": "#FF7B72",
+    "error": "#FF7B72",
+    "critical": "#FF7B72"
+  },
+  "top_nouns": [
+    "anthropic",
+    "openai",
+    "claude",
+    "model",
+    "company",
+    "billion",
+    "number",
+    "nine"
+  ]
+}

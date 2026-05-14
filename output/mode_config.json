@@ -1,0 +1,15 @@
+{
+  "mode": "reaction",
+  "reason": "news pillar='breaking_news'",
+  "title": "Anthropic Is Worth $950 Billion. Read That Again.",
+  "beat_hold_seconds": [
+    3,
+    5
+  ],
+  "footage_to_illustration": 80,
+  "caption_style": "none",
+  "music_style": "dramatic",
+  "illustration_density_per_minute": 0.25,
+  "stat_card_emphasis": "high",
+  "color_palette_intensity": "default"
+}

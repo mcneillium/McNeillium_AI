@@ -1,0 +1,94 @@
+{
+  "average_wpm": 152.4,
+  "pacing_score": 6.0,
+  "sections": [
+    {
+      "section_id": "hook",
+      "duration_s": 23.4,
+      "words": 62,
+      "wpm": 159.0,
+      "visual_gap_s": 5.0,
+      "hooks": 0,
+      "issues": [],
+      "ok": true
+    },
+    {
+      "section_id": "intro",
+      "duration_s": 34.3,
+      "words": 86,
+      "wpm": 150.0,
+      "visual_gap_s": 4.0,
+      "hooks": 0,
+      "issues": [],
+      "ok": true
+    },
+    {
+      "section_id": "main_point_1",
+      "duration_s": 43.3,
+      "words": 104,
+      "wpm": 144.0,
+      "visual_gap_s": 4.0,
+      "hooks": 0,
+      "issues": [
+        "too slow (144 wpm)"
+      ],
+      "ok": false
+    },
+    {
+      "section_id": "main_point_2",
+      "duration_s": 55.1,
+      "words": 135,
+      "wpm": 147.0,
+      "visual_gap_s": 5.0,
+      "hooks": 0,
+      "issues": [
+        "too slow (147 wpm)"
+      ],
+      "ok": false
+    },
+    {
+      "section_id": "main_point_3",
+      "duration_s": 49.6,
+      "words": 122,
+      "wpm": 148.0,
+      "visual_gap_s": 4.0,
+      "hooks": 0,
+      "issues": [
+        "too slow (148 wpm)"
+      ],
+      "ok": false
+    },
+    {
+      "section_id": "demo",
+      "duration_s": 58.4,
+      "words": 147,
+      "wpm": 151.0,
+      "visual_gap_s": 5.0,
+      "hooks": 0,
+      "issues": [],
+      "ok": true
+    },
+    {
+      "section_id": "summary",
+      "duration_s": 36.0,
+      "words": 88,
+      "wpm": 147.0,
+      "visual_gap_s": 4.0,
+      "hooks": 0,
+      "issues": [
+        "too slow (147 wpm)"
+      ],
+      "ok": false
+    },
+    {
+      "section_id": "outro",
+      "duration_s": 19.8,
+      "words": 57,
+      "wpm": 173.0,
+      "visual_gap_s": 4.0,
+      "hooks": 0,
+      "issues": [],
+      "ok": true
+    }
+  ]
+}

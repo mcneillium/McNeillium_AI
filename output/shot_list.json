@@ -1,21 +1,26 @@
 {
-  "video_title": "Sam Altman Just Testified Under Oath. Here's What He Said.",
+  "video_title": "Anthropic Is Worth $950 Billion. Read That Again.",
   "sections": [
     {
       "section_id": "hook",
       "shots": [
         {
           "type": "hero",
-          "prompt": "Cinematic establishing shot of a federal courthouse exterior at dusk, imposing marble columns lit dramatically by warm interior light, slow camera dolly forward, deep blue sky, courtroom drama atmosphere, photographic 4K, shallow depth of field",
+          "prompt": "Cinematic close-up of a glowing money counter rapidly scrolling upward toward a massive $950,000,000,000 number, golden particles, deep blue background, dramatic side lighting, slow camera pull-back, photographic 4K, financial-thriller atmosphere",
           "motion": "slow_zoom_in",
           "duration": 5,
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\d106b35fe6e52710.mp4"
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\3af54160cae87ea2.mp4"
         },
         {
           "type": "footage",
-          "query": "person raising right hand swearing oath court",
-          "motion": "pan_left",
+          "query": "stock exchange screen flashing numbers blue",
+          "motion": "pan_right",
           "duration": 3
+        },
+        {
+          "type": "text_overlay",
+          "text": "$950 BILLION",
+          "duration": 4
         },
         {
           "type": "person_photo",
@@ -26,12 +31,42 @@
           "role": "CEO, OpenAI"
         },
         {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Anthropic"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_nvidia.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Nvidia"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_financial-times.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Financial Times"
+        }
+      ]
+    },
+    {
+      "section_id": "intro",
+      "shots": [
+        {
+          "type": "footage",
+          "query": "year 2021 calendar startup founding office",
           "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "ai research lab whiteboard blue equations",
+          "motion": "pan_right",
+          "duration": 4
         },
         {
           "type": "person_photo",
@@ -47,68 +82,31 @@
           "duration": 3.5,
           "motion": "static",
           "company": "OpenAI"
-        }
-      ]
-    },
-    {
-      "section_id": "intro",
-      "shots": [
-        {
-          "type": "footage",
-          "query": "federal courthouse oakland california exterior",
-          "motion": "ken_burns_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "empty witness stand wooden chair courtroom",
-          "motion": "pan_right",
-          "duration": 4
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_sam-altman.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Sam Altman",
-          "role": "CEO, OpenAI"
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
         },
         {
           "type": "company_logo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
           "duration": 3.5,
           "motion": "static",
-          "company": "OpenAI"
+          "company": "Anthropic"
         },
         {
-          "type": "footage",
-          "query": "robot hand human hand handshake collaboration",
-          "motion": "ken_burns_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "money dollar sign rising chart upward",
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_safe-superintelligence.png",
+          "duration": 3.5,
           "motion": "static",
-          "duration": 4
+          "company": "Safe Superintelligence"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_financial-times.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Financial Times"
         },
         {
           "type": "footage",
-          "query": "boardroom executives serious meeting suit",
-          "motion": "pan_right",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "law book leather gavel old wooden",
+          "query": "data center rows blue lights wide aerial",
           "motion": "ken_burns_out",
           "duration": 4
         }
@@ -118,40 +116,16 @@
       "section_id": "main_point_1",
       "shots": [
         {
-          "type": "hero",
-          "prompt": "Cinematic shot of an empty AI research lab at twilight: abandoned whiteboards covered in faded equations, scattered papers on empty desks, single monitor glowing in the dark, dust motes drifting in beams of light from window, slow dolly forward through the room, melancholy mood, photographic 4K, deep shadows, shallow depth of field",
-          "motion": "slow_zoom_in",
-          "duration": 5,
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\1f989adc4c19c46b.mp4"
-        },
-        {
           "type": "footage",
-          "query": "year 2018 calendar pages flipping past",
-          "motion": "pan_right",
+          "query": "stock chart growing exponentially green arrows",
+          "motion": "ken_burns_in",
           "duration": 4
         },
         {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_sam-altman.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Sam Altman",
-          "role": "CEO, OpenAI"
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
-        },
-        {
-          "type": "article_screenshot",
-          "path": "output\\_news_assets\\rendered\\article_cnbc-altman-testimony.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "source": "cnbc altman testimony"
+          "type": "footage",
+          "query": "wall street traders shocked screens display",
+          "motion": "pan_right",
+          "duration": 4
         },
         {
           "type": "company_logo",
@@ -161,45 +135,54 @@
           "company": "OpenAI"
         },
         {
-          "type": "footage",
-          "query": "founder concerned worried laptop late night",
-          "motion": "ken_burns_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "burning twenty dollar bill flame fire",
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
+          "duration": 3.5,
           "motion": "static",
-          "duration": 4
+          "company": "Anthropic"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_microsoft.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Microsoft"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_financial-times.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Financial Times"
         },
         {
           "type": "footage",
-          "query": "tech startup pitch deck slides projector",
+          "query": "azure microsoft data center server farm",
           "motion": "ken_burns_out",
           "duration": 4
         },
         {
           "type": "footage",
-          "query": "researcher whiteboard erasing concept reset",
-          "motion": "pan_right",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "corporate office sign transition new logo",
-          "motion": "ken_burns_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "lawyer pointing aggressive cross examination",
+          "query": "enterprise board meeting executives signing",
           "motion": "static",
           "duration": 4
         },
         {
           "type": "footage",
-          "query": "judge gavel hand close up courtroom",
-          "motion": "slow_zoom_in",
+          "query": "law firm office big city skyline windows",
+          "motion": "pan_right",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "healthcare hospital corporate executive boardroom",
+          "motion": "ken_burns_in",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "claude ai screen close up scrolling text",
+          "motion": "static",
           "duration": 4
         }
       ]
@@ -209,15 +192,15 @@
       "shots": [
         {
           "type": "hero",
-          "prompt": "Cinematic silhouette of a tech executive standing at a witness stand in a federal courtroom, dark suit, dramatic side lighting from window, blue and amber tones, wooden courtroom background blurred behind, slow camera tilt up from feet to face, 4K cinematic, photographic depth of field",
+          "prompt": "Cinematic split screen: left side shows clean Claude logo in purple radiating order, right side shows chaotic ChatGPT logo with sparks around it. Dark background with gold accents between them, slow camera pull-back, photographic 4K, judgment day aesthetic",
           "motion": "slow_zoom_in",
           "duration": 5,
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\e2feff82c9e8a855.mp4"
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\a243d1ba3b564565.mp4"
         },
         {
           "type": "footage",
-          "query": "claude anthropic logo dark blue purple",
-          "motion": "pan_right",
+          "query": "programmer typing code success laptop close up",
+          "motion": "ken_burns_in",
           "duration": 4
         },
         {
@@ -237,18 +220,12 @@
           "role": "CEO, Anthropic"
         },
         {
-          "type": "article_screenshot",
-          "path": "output\\_news_assets\\rendered\\article_cnbc-trial-updates.png",
+          "type": "person_photo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
           "duration": 4.5,
           "motion": "ken_burns_in",
-          "source": "cnbc trial updates"
-        },
-        {
-          "type": "company_logo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
-          "duration": 3.5,
-          "motion": "static",
-          "company": "OpenAI"
+          "name": "Elon Musk",
+          "role": "CEO, xAI / Tesla"
         },
         {
           "type": "company_logo",
@@ -259,32 +236,20 @@
         },
         {
           "type": "footage",
-          "query": "pentagon building washington dc aerial",
-          "motion": "ken_burns_in",
+          "query": "drama news headlines newspaper folding scandal",
+          "motion": "static",
           "duration": 4
         },
         {
           "type": "footage",
-          "query": "office workers cubicles desks rows wide",
+          "query": "enterprise it security audit serious office",
           "motion": "pan_right",
           "duration": 4
         },
         {
           "type": "footage",
-          "query": "person silent thinking serious portrait",
+          "query": "ten million dollar contract signing pen close up",
           "motion": "ken_burns_out",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "news front page headline newspaper folding",
-          "motion": "slow_zoom_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "right hand raised swearing oath bible court",
-          "motion": "static",
           "duration": 4
         }
       ]
@@ -293,40 +258,16 @@
       "section_id": "main_point_3",
       "shots": [
         {
-          "type": "hero",
-          "prompt": "Cinematic transformation visualization: a stack of legal documents on a wooden desk slowly morphs \u2014 top page reading NONPROFIT in faded gold ink dissolves into a corporate quarterly report with CAPPED PROFIT printed in sharp black ink, slow camera pull-back from extreme close-up, dramatic light shift from warm gold to cool corporate blue, paper texture detail, 4K photographic, deep depth of field",
-          "motion": "slow_zoom_in",
-          "duration": 5,
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\6902ecf2cb9c575c.mp4"
-        },
-        {
           "type": "footage",
-          "query": "year 2019 calendar marked highlighted",
-          "motion": "pan_right",
+          "query": "safety report document scientist office desk",
+          "motion": "ken_burns_in",
           "duration": 4
         },
         {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_sam-altman.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Sam Altman",
-          "role": "CEO, OpenAI"
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
-        },
-        {
-          "type": "article_screenshot",
-          "path": "output\\_news_assets\\rendered\\article_fortune-googlebook-anthropic-valuation.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "source": "fortune googlebook anthropic valuation"
+          "type": "footage",
+          "query": "anthropic ai safety policy report close up",
+          "motion": "pan_right",
+          "duration": 4
         },
         {
           "type": "company_logo",
@@ -334,162 +275,6 @@
           "duration": 3.5,
           "motion": "static",
           "company": "OpenAI"
-        },
-        {
-          "type": "company_logo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_microsoft.png",
-          "duration": 3.5,
-          "motion": "static",
-          "company": "Microsoft"
-        },
-        {
-          "type": "footage",
-          "query": "boardroom executives shaking hands deal",
-          "motion": "static",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "nonprofit charity sign building exterior",
-          "motion": "ken_burns_out",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "marketing slogan billboard advertising bright",
-          "motion": "pan_right",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "restructure document highlighted yellow marker",
-          "motion": "ken_burns_in",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "diverse jury panel deliberating seated",
-          "motion": "static",
-          "duration": 4
-        },
-        {
-          "type": "footage",
-          "query": "evolution forward arrow corporate growth",
-          "motion": "slow_zoom_in",
-          "duration": 4
-        }
-      ]
-    },
-    {
-      "section_id": "demo",
-      "shots": [
-        {
-          "type": "footage",
-          "query": "scales of justice tipping balance brass",
-          "motion": "ken_burns_in",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "ai research lab founding meeting team",
-          "motion": "pan_right",
-          "duration": 5
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_sam-altman.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Sam Altman",
-          "role": "CEO, OpenAI"
-        },
-        {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
-          "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
-        },
-        {
-          "type": "company_logo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
-          "duration": 3.5,
-          "motion": "static",
-          "company": "OpenAI"
-        },
-        {
-          "type": "footage",
-          "query": "stacks of money cash growing pile",
-          "motion": "ken_burns_in",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "tech founders meeting boardroom future",
-          "motion": "static",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "ai company sign exterior modern office",
-          "motion": "ken_burns_out",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "chess game pieces moving strategy hand",
-          "motion": "pan_right",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "crowd divided opinion split protest",
-          "motion": "ken_burns_in",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "witness testifying microphone serious",
-          "motion": "static",
-          "duration": 5
-        },
-        {
-          "type": "footage",
-          "query": "cracked glass surface broken trust concept",
-          "motion": "slow_zoom_in",
-          "duration": 5
-        }
-      ]
-    },
-    {
-      "section_id": "summary",
-      "shots": [
-        {
-          "type": "hero",
-          "prompt": "Cinematic abstract: two glowing logos floating in dark space \u2014 one labeled OpenAI in cool blue, one labeled Anthropic in warm orange \u2014 facing each other across a void, golden energy bridges arcing between them under tension, slow camera pull-back, subtle particle haze, deep cinematic 4K, dramatic lighting",
-          "motion": "slow_zoom_in",
-          "duration": 5,
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\3df62f6423d4597f.mp4"
-        },
-        {
-          "type": "stat_card",
-          "stat": "$950B",
-          "label": "Anthropic reported valuation talks",
-          "duration": 5
-        },
-        {
-          "type": "company_logo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
-          "duration": 3.5,
-          "motion": "static",
-          "company": "OpenAI"
-        },
-        {
-          "type": "stat_card",
-          "stat": "$9B \u2192 $30B",
-          "label": "Anthropic revenue 12 months",
-          "duration": 5
         },
         {
           "type": "company_logo",
@@ -500,37 +285,116 @@
         },
         {
           "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_safe-superintelligence.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Safe Superintelligence"
+        },
+        {
+          "type": "footage",
+          "query": "courtroom judge bench oath legal serious",
+          "motion": "ken_burns_in",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "bank cto boardroom serious meeting big office",
+          "motion": "static",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "production line factory automation big industry",
+          "motion": "pan_right",
+          "duration": 4
+        },
+        {
+          "type": "footage",
+          "query": "valuation report financial document desk close",
+          "motion": "ken_burns_out",
+          "duration": 4
+        }
+      ]
+    },
+    {
+      "section_id": "demo",
+      "shots": [
+        {
+          "type": "hero",
+          "prompt": "Cinematic stock market trading floor at peak hour, dramatic side lighting, traders frozen mid-action with the number 950 billion dominating the ticker board above them, slow camera dolly down through the floor, deep blue and gold tones, photographic 4K, financial thriller aesthetic",
+          "motion": "slow_zoom_in",
+          "duration": 5,
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_kling_cache\\c85aae5890f45848.mp4"
+        },
+        {
+          "type": "footage",
+          "query": "trading floor pension fund analyst monitor",
+          "motion": "ken_burns_in",
+          "duration": 4
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Anthropic"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_google.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Google"
+        },
+        {
+          "type": "company_logo",
           "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_microsoft.png",
           "duration": 3.5,
           "motion": "static",
           "company": "Microsoft"
         },
         {
-          "type": "footage",
-          "query": "chess strategic move hand piece close",
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_amazon-company.png",
+          "duration": 3.5,
           "motion": "static",
-          "duration": 5
+          "company": "Amazon (company)"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_oracle-corporation.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Oracle Corporation"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_financial-times.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Financial Times"
         },
         {
           "type": "footage",
-          "query": "tech ceo press conference podium watching",
-          "motion": "pan_left",
-          "duration": 5
+          "query": "future ai vision skyline data flow abstract",
+          "motion": "ken_burns_out",
+          "duration": 4
         }
       ]
     },
     {
-      "section_id": "outro",
+      "section_id": "summary",
       "shots": [
         {
           "type": "footage",
-          "query": "subscribe button bell notification glow",
+          "query": "wire transfer bank screen big money close up",
           "motion": "ken_burns_in",
-          "duration": 5
+          "duration": 4
         },
         {
-          "type": "text_overlay",
-          "text": "ANTHROPIC $950B NEXT",
+          "type": "footage",
+          "query": "openai logo glowing reaction screen close up",
+          "motion": "pan_right",
           "duration": 4
         },
         {
@@ -542,12 +406,69 @@
           "role": "CEO, OpenAI"
         },
         {
-          "type": "person_photo",
-          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\person_elon-musk.png",
-          "duration": 4.5,
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "OpenAI"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Anthropic"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_mistral-ai.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Mistral AI"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_deepseek.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "DeepSeek"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_financial-times.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Financial Times"
+        }
+      ]
+    },
+    {
+      "section_id": "outro",
+      "shots": [
+        {
+          "type": "footage",
+          "query": "openai logo dramatic close up dark room",
           "motion": "ken_burns_in",
-          "name": "Elon Musk",
-          "role": "CEO, xAI / Tesla"
+          "duration": 4
+        },
+        {
+          "type": "text_overlay",
+          "text": "OPENAI FIRES BACK NEXT",
+          "duration": 4
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_openai.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "OpenAI"
+        },
+        {
+          "type": "company_logo",
+          "path": "C:\\Users\\McNei\\Documents\\McNeillium_AI\\output\\_news_assets\\rendered\\logo_anthropic.png",
+          "duration": 3.5,
+          "motion": "static",
+          "company": "Anthropic"
         }
       ]
     }
