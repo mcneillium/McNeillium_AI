@@ -1378,6 +1378,48 @@ def generate_video(script_path, audio_path, config):
             print(f"        {cap_result.stderr[-300:]}")
             captioned_file.unlink(missing_ok=True)
 
+    # ════════════════════════════════════════════
+    # STEP 7: 2-pass loudnorm — single-pass leaves up to ~2 dB error
+    # ════════════════════════════════════════════
+    print(f"\n    🎚  STEP 7: 2-pass loudnorm targeting {target_lufs} LUFS...")
+    measure_cmd = [
+        FFMPEG, "-hide_banner", "-nostats",
+        "-i", str(output_file),
+        "-af", f"loudnorm=I={target_lufs}:TP=-1.5:LRA=11:print_format=json",
+        "-f", "null", "-",
+    ]
+    mres = subprocess.run(measure_cmd, capture_output=True, text=True)
+    m = re.search(r"\{[^{}]*\"input_i\"[^{}]*\}", mres.stderr, re.S)
+    if m:
+        try:
+            stats = json.loads(m.group(0))
+            normalized = output_file.with_name(output_file.stem + "_norm.mp4")
+            apply_cmd = [
+                FFMPEG, "-hide_banner", "-y", "-i", str(output_file),
+                "-af",
+                f"loudnorm=I={target_lufs}:TP=-1.5:LRA=11:linear=true:"
+                f"measured_I={stats['input_i']}:"
+                f"measured_TP={stats['input_tp']}:"
+                f"measured_LRA={stats['input_lra']}:"
+                f"measured_thresh={stats['input_thresh']}:"
+                f"offset={stats['target_offset']}",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                "-movflags", "+faststart",
+                str(normalized),
+            ]
+            ar = subprocess.run(apply_cmd, capture_output=True, text=True)
+            if ar.returncode == 0 and normalized.exists():
+                output_file.unlink()
+                normalized.rename(output_file)
+                print(f"        ✅ measured {stats['input_i']} → corrected")
+            else:
+                normalized.unlink(missing_ok=True)
+                print(f"        ⚠️  2-pass apply failed: {ar.stderr[-200:]}")
+        except Exception as e:
+            print(f"        ⚠️  2-pass parse failed: {e}")
+    else:
+        print(f"        ⚠️  Could not measure loudness — keeping single-pass result")
+
     shutil.copy2(output_file, latest)
 
     # Save chapters
