@@ -14,5 +14,10 @@ output/_temp_v4/
 output/_clip_cache/
 output/_ai_images/
 output/_manim_cache/
+output/_kling_cache/
+output/_news_assets/
+output/_qc_frames*/
+output/upload_results_*.json
+_run_uploads.py
 client_secrets.json
 .youtube_token.json
