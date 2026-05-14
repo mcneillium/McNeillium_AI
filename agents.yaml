@@ -103,6 +103,8 @@ agents:
          A 90-second section gets ~12-15 beats. A 30-second section gets ~5.
       3. Each beat has:
          - type: footage | stat_card | comparison | text_overlay | illustration
+                 | ai_image (Phase 5: portraits, products, abstract concepts)
+                 | ai_image_animated (Phase 5: AI image with Ken Burns)
          - query: very specific Pixabay/Pexels search (concrete nouns + visual concepts)
          - duration: seconds this beat should run (5-8s typical)
          - motion: ken_burns_in | ken_burns_out | pan_left | pan_right | static
@@ -376,6 +378,43 @@ agents:
          file via captions.load_verified_words() — no other change needed
       8. Save sync score + drift events to knowledge_base/reviews/sync_validation.md
     output_format: "Verified word timestamps JSON + sync report"
+
+  # ─── AGENT 28: AI Image Generator ─────────────────────────────
+  # Phase 5 — generates custom images for what stock can't show
+  # (portraits of AI figures, product mockups, abstract concepts) via
+  # Hugging Face SDXL Inference API. Caches at output/_ai_images/.
+  ai_image_generator:
+    role: "AI Image Generator"
+    goal: "Generate custom imagery for moments stock footage can't communicate"
+    process: |
+      1. Run utils/ai_image_generator.py
+      2. Scans script for triggers: known AI figures (Sam Altman, Dario, etc.),
+         product names (GPT-5, Claude 4, etc.), abstract concepts (AGI,
+         alignment, consciousness)
+      3. For each trigger, builds an SDXL prompt with the style suffix
+         "cinematic, dark moody, blue accents, high detail, 4k"
+      4. Calls Hugging Face Inference API (free tier, 30 req/min); falls
+         back to local diffusers if available; otherwise scaffolds only
+      5. Caches by prompt hash at output/_ai_images/
+      6. Injects "ai_image" beats into the shot list
+      Requires HF_API_TOKEN in .env (from huggingface.co/settings/tokens)
+    output_format: "PNG images + updated shot list with ai_image beats"
+
+  # ─── AGENT 30: Style-Transfer Director ────────────────────────
+  # Phase 5 — applies the same teal-orange grade + grain + vignette to
+  # every clip so stock / AI image / illustration / stat-card sources all
+  # feel like ONE video.
+  style_director:
+    role: "Style-Transfer Director"
+    goal: "Unify the visual look across all four source types"
+    process: |
+      1. The Video Producer imports utils/style_director.style_grade_filter
+         and bakes the chain into every beat's prepare_clip_segment call
+      2. style_grade_filter(intensity, with_grain, with_vignette) returns
+         the FFmpeg vf chain: eq + curves + noise + vignette
+      3. apply_grade(input, output) re-encodes a single MP4 in place
+         (useful for AI image clips that didn't pass through preparation)
+    output_format: "Consistent visual grade applied to every clip"
 
   # ─── AGENT 27: Quality Control Director ───────────────────────
   # Phase 4 — final gate before upload. Samples frames + runs deterministic

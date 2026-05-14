@@ -640,6 +640,18 @@ def build_section_background(section_idx, section_dur, shots,
                     darken=0.0, blur_strength="0:0", kb_effect=0,
                 )
             print(f"          beat {bi+1}: illustration ", end="")
+        elif shot_type in ("ai_image", "ai_image_animated"):
+            img_path = shot.get("path") or shot.get("image_path")
+            print(f"          beat {bi+1}: ai_image ", end="")
+            if img_path and Path(img_path).exists():
+                try:
+                    image = Image.open(img_path).convert("RGB")
+                    ok = create_static_clip(image, beat_dur, beat_path,
+                                            w, h, kb_effect=kb_idx)
+                except Exception as e:
+                    print(f"(load failed: {e}) ", end="")
+                    ok = create_static_clip(None, beat_dur, beat_path,
+                                            w, h, kb_effect=kb_idx)
         elif shot_type == "stat_card":
             overlay = shot.get("overlay_data", {})
             stat = shot.get("stat") or overlay.get("stat", "")
