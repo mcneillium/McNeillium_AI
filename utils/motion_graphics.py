@@ -268,18 +268,31 @@ def logo_reveal(channel="McNeillium_AI", tagline="AI & Emerging Tech",
 # ─────────────────────────── compositing helper ───────────────────────
 
 def composite(base_video, overlay, output, x=0, y=0, t_start=0.0):
-    """Overlay an alpha clip onto a base video starting at t_start."""
+    """Overlay an alpha clip onto a base video starting at t_start.
+
+    Phase 19b: ends in format=yuv420p so the alpha overlay can't leave
+    us in yuv444p. Same Windows-compatible encode args as the rest of
+    the render (main profile, BT.709, faststart)."""
     fc = (
         f"[1:v]setpts=PTS-STARTPTS+{t_start}/TB[ov];"
-        f"[0:v][ov]overlay=x={x}:y={y}:enable='gte(t,{t_start})'[v]"
+        f"[0:v][ov]overlay=x={x}:y={y}:enable='gte(t,{t_start})',"
+        f"format=yuv420p[v]"
     )
     cmd = [
         _ffmpeg(), "-y",
         "-i", str(base_video), "-i", str(overlay),
         "-filter_complex", fc,
         "-map", "[v]", "-map", "0:a?",
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+        "-c:v", "libx264",
+        "-profile:v", "main",
+        "-pix_fmt", "yuv420p",
+        "-colorspace", "bt709",
+        "-color_primaries", "bt709",
+        "-color_trc", "bt709",
+        "-preset", "medium",
+        "-crf", "20",
         "-c:a", "copy",
+        "-movflags", "+faststart",
         str(output),
     ]
     r = subprocess.run(cmd, capture_output=True)

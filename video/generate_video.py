@@ -184,8 +184,12 @@ def fetch_stock_video(query, min_duration=8, target_w=1920):
     queries all three in parallel and picks the best-scoring result.
     Falls back to legacy Pixabay-only path if the new fetcher fails.
     """
-    # Phase 19: try the multi-source fetcher first
+    # Phase 19: try the multi-source fetcher first.
+    # Ensure PROJECT_ROOT is on sys.path so the import resolves when
+    # this module is invoked as `python video/generate_video.py`.
     try:
+        if str(PROJECT_ROOT) not in sys.path:
+            sys.path.insert(0, str(PROJECT_ROOT))
         from utils.stock_fetcher import fetch_video as _multi_fetch
         path = _multi_fetch(query, min_duration=min_duration)
         if path:
@@ -420,19 +424,23 @@ def _draw_stat_card(draw, w, h, fp, accent, overlay_data):
 # ═══════════════════════════════════════════════════════════════
 
 def _kb_crop(effect_idx, duration, w=1920, h=1080):
-    """Return FFmpeg crop expression for a Ken Burns pan/zoom effect."""
+    """Phase 19b: Ken Burns disabled per aesthetic preference.
+
+    Returns a STATIC centered crop. The KB_SCALE oversize is preserved
+    upstream (so the source frame still has headroom for the centered
+    crop to land cleanly), but the cursor never moves — the image holds
+    still for the full beat duration. This gives a news-anchor feel,
+    no zoom or pan.
+
+    The (effect_idx, duration) args are kept in the signature so callers
+    don't break, but ignored.
+    """
     sw = int(w * KB_SCALE) + int(w * KB_SCALE) % 2
     sh = int(h * KB_SCALE) + int(h * KB_SCALE) % 2
     dx, dy = sw - w, sh - h
-    d = max(0.1, duration)
-    effects = [
-        f"crop={w}:{h}:{dx}/2*(1-t/{d}):{dy}/2*(1-t/{d})",
-        f"crop={w}:{h}:{dx}/2*t/{d}:{dy}/2*t/{d}",
-        f"crop={w}:{h}:{dx}*t/{d}:{dy}/2",
-        f"crop={w}:{h}:{dx}*(1-t/{d}):{dy}/2",
-        f"crop={w}:{h}:{dx}*t/{d}:{dy}*t/{d}",
-    ]
-    return effects[effect_idx % len(effects)]
+    # Centered static crop — Python integer division evaluated here,
+    # not in the FFmpeg expression (FFmpeg has no // operator).
+    return f"crop={w}:{h}:{dx // 2}:{dy // 2}"
 
 
 def prepare_clip_segment(clip_path, duration, output_path, w=1920, h=1080,
@@ -653,7 +661,7 @@ def build_section_background(section_idx, section_dur, shots,
         if shot_type in ("person_photo", "company_logo",
                           "article_screenshot"):
             # These are pre-rendered PNGs (styled cards). Use as static
-            # clip with Ken Burns motion already baked into kb_idx.
+            # clip — Ken Burns is no-op'd in _kb_crop() per Phase 19b.
             asset_path = shot.get("path")
             if asset_path and Path(asset_path).exists():
                 try:
@@ -669,6 +677,32 @@ def build_section_background(section_idx, section_dur, shots,
             }
             print(f"          beat {bi+1}: {shot_type} "
                   f"({label_map[shot_type]}) ", end="")
+
+            # Phase 19b: lower-third name card on person_photo beats.
+            # Composites a slide-in label over the static photo. If the
+            # overlay step fails, the unmodified beat survives — no
+            # render-blocking risk.
+            if ok and shot_type == "person_photo" and beat_dur >= 1.5:
+                try:
+                    sys.path.insert(0, str(PROJECT_ROOT))
+                    from utils.motion_graphics import (lower_third as _lt,
+                                                       composite as _cmp)
+                    name = shot.get("name", "")
+                    title = (shot.get("title") or shot.get("role")
+                             or shot.get("company") or "")
+                    if name:
+                        lt_dur = min(4.0, max(2.0, beat_dur - 0.3))
+                        lt_path = beat_path.parent / f"{beat_path.stem}_lt.mov"
+                        comp_path = beat_path.parent / f"{beat_path.stem}_comp.mp4"
+                        _lt(name, title, lt_path, duration=lt_dur)
+                        _cmp(beat_path, lt_path, comp_path,
+                             x=0, y=0, t_start=0.3)
+                        beat_path.unlink()
+                        comp_path.rename(beat_path)
+                        lt_path.unlink(missing_ok=True)
+                        print("[+lt] ", end="")
+                except Exception as e:
+                    print(f"\n        ⚠️  lower-third failed (kept plain): {e}")
         elif shot_type == "chart":
             # Animated chart MP4 produced by news_asset_collector
             chart_path = shot.get("path")
@@ -1454,15 +1488,25 @@ def generate_video(script_path, audio_path, config):
             vf_filters.append(f"ass='{es_escaped}'")
 
     if vf_filters:
-        vf_chain = ",".join(vf_filters)
+        # Phase 19b: force a fully Windows-compatible final encode.
+        # 8-bit yuv420p, BT.709 colorspace tags, main profile, faststart.
+        # `format=yuv420p` is appended to the filter chain so any
+        # upstream filter that promotes to yuv444p (color grade, lut3d)
+        # is forced back down before encoding.
+        vf_chain = ",".join(vf_filters) + ",format=yuv420p"
         captioned_file = output_file.parent / f"{output_file.stem}_captioned.mp4"
         cap_cmd = [
             FFMPEG, "-y",
             "-i", str(output_file),
             "-vf", vf_chain,
             "-c:v", "libx264",
-            "-preset", "fast",
-            "-crf", "22",
+            "-profile:v", "main",
+            "-pix_fmt", "yuv420p",
+            "-colorspace", "bt709",
+            "-color_primaries", "bt709",
+            "-color_trc", "bt709",
+            "-preset", "medium",
+            "-crf", "20",
             "-c:a", "copy",
             "-movflags", "+faststart",
             str(captioned_file),

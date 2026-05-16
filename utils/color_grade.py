@@ -86,15 +86,31 @@ def grade_filter(name=DEFAULT_LOOK):
     return LOOKS[name]
 
 
+def _safe_encode_args():
+    """Phase 19b: shared Windows-compatible encode args. Pair with
+    a filter chain that ends in `,format=yuv420p`."""
+    return [
+        "-c:v", "libx264",
+        "-profile:v", "main",
+        "-pix_fmt", "yuv420p",
+        "-colorspace", "bt709",
+        "-color_primaries", "bt709",
+        "-color_trc", "bt709",
+        "-preset", "medium",
+        "-crf", "20",
+        "-c:a", "copy",
+        "-movflags", "+faststart",
+    ]
+
+
 def grade_video(input_video, output, name=DEFAULT_LOOK):
     """One-shot: re-encode input with the named grade applied."""
-    chain = grade_filter(name)
+    chain = grade_filter(name) + ",format=yuv420p"
     cmd = [
         _ffmpeg(), "-y",
         "-i", str(input_video),
         "-vf", chain,
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-        "-c:a", "copy",
+        *_safe_encode_args(),
         str(output),
     ]
     subprocess.run(cmd, check=True, capture_output=True)
@@ -111,9 +127,8 @@ def apply_lut3d(input_video, output, lut_cube_path):
     cmd = [
         _ffmpeg(), "-y",
         "-i", str(input_video),
-        "-vf", f"lut3d=file='{lut_str}'",
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-        "-c:a", "copy",
+        "-vf", f"lut3d=file='{lut_str}',format=yuv420p",
+        *_safe_encode_args(),
         str(output),
     ]
     subprocess.run(cmd, check=True, capture_output=True)

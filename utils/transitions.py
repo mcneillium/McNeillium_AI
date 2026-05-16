@@ -57,11 +57,40 @@ ALL_XFADE = [
 ]
 
 TRANSITION_PROFILES = {
-    "news":      ["slideleft", "slideright", "fade", "dissolve"],
+    # Phase 19b: aesthetic preference is news-anchor static — slides,
+    # circles, and pixelize all introduce motion that the channel
+    # voice doesn't want. Profiles below are limited to cut / fade /
+    # dissolve. The xfade engine has no literal "cut" — for a hard
+    # cut, callers should skip xfade entirely; pick_transition will
+    # never return "cut" because xfade can't render it. See
+    # transition_picker_with_cuts() if you need a cut-aware picker.
+    "news":      ["fade", "dissolve"],
     "explainer": ["fade", "dissolve", "fadegrays"],
-    "reaction":  ["slideup", "slidedown", "circleopen", "pixelize",
-                  "fade", "dissolve", "wipeleft", "wiperight"],
+    "reaction":  ["fade", "dissolve"],
 }
+
+# Brief calls for 70% cut, 20% fade, 10% dissolve. xfade can't do a
+# "cut" (it's not a transition, just no transition). The helper below
+# returns either a fake "cut" sentinel — in which case the caller
+# should hard-concat — or one of the transition names above.
+CUT_BIASED_DISTRIBUTION = [
+    ("cut",      0.70),
+    ("fade",     0.20),
+    ("dissolve", 0.10),
+]
+
+
+def pick_transition_with_cuts(rng=None):
+    """Return one of: 'cut', 'fade', 'dissolve'. 70 / 20 / 10 split.
+    Callers handle 'cut' as a hard concat (no xfade)."""
+    rng = rng or random
+    r = rng.random()
+    cum = 0.0
+    for name, weight in CUT_BIASED_DISTRIBUTION:
+        cum += weight
+        if r < cum:
+            return name
+    return "cut"
 
 
 def _find_ffmpeg():

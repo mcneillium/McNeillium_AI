@@ -37,14 +37,29 @@ def _ffmpeg():
 
 
 def apply_grade_only(input_video, output, look=DEFAULT_LOOK):
-    """Color grade an input video, preserving audio."""
-    chain = grade_filter(look)
+    """Color grade an input video, preserving audio.
+
+    Phase 19b — encoding compatibility fix:
+      - format=yuv420p forced at end of chain so eq/curves/lut3d can't
+        leave us in yuv444p (which Windows Media Player rejects with
+        0x80004005)
+      - 8-bit main profile, BT.709 tags, faststart for web/streaming
+    """
+    chain = grade_filter(look) + ",format=yuv420p"
     cmd = [
         _ffmpeg(), "-y",
         "-i", str(input_video),
         "-vf", chain,
-        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+        "-c:v", "libx264",
+        "-profile:v", "main",
+        "-pix_fmt", "yuv420p",
+        "-colorspace", "bt709",
+        "-color_primaries", "bt709",
+        "-color_trc", "bt709",
+        "-preset", "medium",
+        "-crf", "20",
         "-c:a", "copy",
+        "-movflags", "+faststart",
         str(output),
     ]
     r = subprocess.run(cmd, capture_output=True)
