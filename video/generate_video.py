@@ -700,32 +700,50 @@ def build_section_background(section_idx, section_dur, shots,
                 if str(PROJECT_ROOT) not in sys.path:
                     sys.path.insert(0, str(PROJECT_ROOT))
 
-                # Try 1: Simple Icons (3,294 brand SVGs)
+                # Try 1: Simple Icons + Lobe (3,294 + 850 brand SVGs)
+                logo_src = None
                 try:
                     from utils.logo_indexer import render_logo_png
-                    logo_png = render_logo_png(
-                        shot["company"], size=512, accent_bg=True)
-                    if logo_png and logo_png.exists():
-                        image = Image.open(logo_png).convert("RGB")
-                        ok = create_static_clip(image, beat_dur, beat_path,
-                                                w, h, kb_effect=0)
+                    logo_src = render_logo_png(
+                        shot["company"], size=512, accent_bg=False)
+                    if logo_src:
                         print("[+SI] ", end="")
                 except Exception as e:
-                    print(f"\n        ⚠️  Simple Icons fallback failed: {e}")
+                    print(f"\n        ⚠️  Simple Icons/Lobe lookup failed: {e}")
 
                 # Try 2: Brandfetch (covers Microsoft, OpenAI, AWS, ...)
-                if not ok:
+                if not logo_src:
                     try:
                         from utils.brandfetch_client import fetch_logo_png
-                        bf_png = fetch_logo_png(shot["company"], size=512)
-                        if bf_png and bf_png.exists():
-                            image = Image.open(bf_png).convert("RGB")
-                            ok = create_static_clip(image, beat_dur,
-                                                    beat_path, w, h,
-                                                    kb_effect=0)
+                        logo_src = fetch_logo_png(shot["company"], size=512)
+                        if logo_src:
                             print("[+BF] ", end="")
                     except Exception as e:
                         print(f"\n        ⚠️  Brandfetch fallback failed: {e}")
+
+                # Phase 21.6: wrap the logo in the logo_hero layout
+                # rather than pasting a small PNG into a dark frame.
+                # This is the visible visual upgrade per the user's
+                # "more creative compositions" complaint.
+                if logo_src:
+                    try:
+                        from utils.composite_layouts import render_layout
+                        hero_png = (TEMP_DIR /
+                                    f"hero_{section_idx:02d}_{bi:02d}.png")
+                        render_layout(
+                            "logo_hero", hero_png,
+                            logo_path=str(logo_src),
+                            label=shot["company"].upper(),
+                        )
+                        image = Image.open(hero_png).convert("RGB")
+                        ok = create_static_clip(image, beat_dur, beat_path,
+                                                w, h, kb_effect=0)
+                    except Exception as e:
+                        print(f"\n        ⚠️  hero layout failed; "
+                              f"falling back to plain logo: {e}")
+                        image = Image.open(logo_src).convert("RGB")
+                        ok = create_static_clip(image, beat_dur, beat_path,
+                                                w, h, kb_effect=0)
 
                 # Last resort: stock footage with brand name as query
                 if not ok:
