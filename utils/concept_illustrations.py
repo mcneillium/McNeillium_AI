@@ -57,7 +57,79 @@ if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 ASSETS_DIR = PROJECT_ROOT / "assets" / "illustrations"
+LUCIDE_DIR = ASSETS_DIR / "lucide"
 CACHE_DIR = PROJECT_ROOT / "output" / "_concept_cache"
+
+# Phase 21.4: real-SVG renderer using Lucide icons.
+# Map each concept slug to a Lucide icon filename. The Lucide library
+# has clean line-art metaphors that look professional at scale —
+# replaces the PIL-drawn shapes from Phase 20.
+LUCIDE_FOR_CONCEPT = {
+    # Power / leverage / control
+    "lost_leverage":         "scale-3d",
+    "leverage":              "scale-3d",
+    "scale_tipping":         "scale-3d",
+    "control_shift":         "git-branch",
+    "narrative_control":     "shield",
+    # Locks / exclusivity
+    "exclusivity_lost":      "lock-open",
+    "exclusive_access":      "lock",
+    "monopoly_ends":         "unlink-2",
+    "monopoly_broken":       "unlink-2",
+    "gatekeeper":            "shield-alert",
+    # Growth + decline
+    "growth":                "trending-up",
+    "rise":                  "trending-up",
+    "first_mover_advantage": "trending-up",
+    "race":                  "flag",
+    "decline":               "trending-down",
+    "collapse":              "trending-down",
+    "pricing_power_collapse":"trending-down",
+    "aggressive_discounting":"badge-percent",
+    "pricing_pressure":      "trending-down",
+    # Relationships / partnerships
+    "partnership":           "handshake",
+    "negotiation":           "handshake",
+    "seamless_integration":  "puzzle",
+    "engagement":            "users-round",
+    # Defense / castles
+    "moat_drained":          "castle",
+    "moat":                  "castle",
+    "defense":               "shield",
+    "defensive":             "shield",
+    # Networks / ecosystems
+    "multi_cloud":           "network",
+    "omnichannel_distribution":"network",
+    "multi_model_choice":    "split",
+    "ecosystem":             "network",
+    "autonomous_agent":      "bot",
+    "context_awareness":     "eye",
+    "agent_routing":         "git-fork",
+    # Movement / shifts
+    "customer_attrition":    "log-out",
+    "exodus":                "log-out",
+    "strategic_shift":       "git-branch",
+    "ground_shifting":       "git-branch",
+    "tectonic_shift":        "git-branch",
+    "fork":                  "git-fork",
+    "pivot":                 "rotate-3d",
+    "transformation":        "rotate-3d",
+    "following_not_leading": "users-round",
+    # Commoditization / mass
+    "commoditization":       "boxes",
+    "commoditized":          "boxes",
+    "apps_as_functions":     "boxes",
+    "old_model_apps":        "grid-3x3",
+}
+
+
+def lucide_path(concept_slug):
+    """Return Lucide SVG path for concept, or None if no mapping."""
+    icon_name = LUCIDE_FOR_CONCEPT.get(concept_slug)
+    if not icon_name:
+        return None
+    p = LUCIDE_DIR / f"{icon_name}.svg"
+    return p if p.exists() else None
 
 # Channel palette (matches niche_profile.yaml)
 PALETTE = {
@@ -504,12 +576,72 @@ def _ffmpeg():
     return shutil.which("ffmpeg") or "ffmpeg"
 
 
+def _lucide_png_for_concept(concept_slug, w, h):
+    """Phase 21.4: render the Lucide SVG for this concept on a dark
+    panel with the channel-style label underneath. Static — no motion
+    per the user's v19b/Phase 20 preference."""
+    svg_p = lucide_path(concept_slug)
+    if not svg_p:
+        return None
+    try:
+        import resvg_py
+    except ImportError:
+        return None
+    label = CONCEPT_REGISTRY.get(concept_slug,
+                                  (None, concept_slug.replace("_", " ").upper()))[1]
+
+    # Tint Lucide icon with channel teal accent. Lucide icons use
+    # `currentColor` for stroke; we add stroke= and remove the
+    # currentColor reference so resvg renders correctly.
+    svg_text = svg_p.read_text(encoding="utf-8")
+    accent_hex = "#%02x%02x%02x" % PALETTE["primary"]
+    # Lucide stroke is set per-element; replace any stroke="currentColor"
+    svg_text = svg_text.replace('stroke="currentColor"',
+                                f'stroke="{accent_hex}"')
+    # If no stroke was set, add it to the root <svg ...>
+    if 'stroke="' not in svg_text:
+        svg_text = svg_text.replace("<svg ",
+                                    f'<svg stroke="{accent_hex}" ', 1)
+
+    # Render at a large size, then composite at center of (w, h)
+    icon_size = min(int(min(w, h) * 0.42), 700)
+    try:
+        png_bytes = resvg_py.svg_to_bytes(
+            svg_string=svg_text, width=icon_size, height=icon_size,
+        )
+    except Exception:
+        return None
+
+    icon_img = Image.open(io.BytesIO(bytes(png_bytes))).convert("RGBA")
+
+    # Build the canvas (dark gradient background, same as PIL renders)
+    canvas = _new_canvas(w, h)
+    # Center the icon in the upper portion
+    cx = w // 2
+    cy = int(h * 0.42)
+    canvas.paste(icon_img, (cx - icon_size // 2, cy - icon_size // 2),
+                 icon_img)
+    # Caption underneath
+    _label(canvas, label, anchor_y=int(h * 0.78))
+
+    key = hashlib.sha1(f"{concept_slug}_lucide_{w}x{h}".encode()).hexdigest()[:12]
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    png_path = CACHE_DIR / f"{concept_slug}_lucide_{key}.png"
+    canvas.save(png_path, "PNG")
+    return png_path
+
+
 def _png_for_concept(concept_slug, w, h):
+    """Phase 21.4: prefer Lucide SVG; fall back to PIL drawing."""
+    lucide_png = _lucide_png_for_concept(concept_slug, w, h)
+    if lucide_png and lucide_png.exists():
+        return lucide_png
+    # Fallback: PIL-drawn (the Phase 20 path)
     fn, label = CONCEPT_REGISTRY[concept_slug]
     img = fn(w, h, label)
-    key = hashlib.sha1(f"{concept_slug}_{w}x{h}".encode()).hexdigest()[:12]
+    key = hashlib.sha1(f"{concept_slug}_pil_{w}x{h}".encode()).hexdigest()[:12]
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    png_path = CACHE_DIR / f"{concept_slug}_{key}.png"
+    png_path = CACHE_DIR / f"{concept_slug}_pil_{key}.png"
     img.save(png_path, "PNG")
     return png_path
 
