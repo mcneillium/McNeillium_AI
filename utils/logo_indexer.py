@@ -52,6 +52,12 @@ META_PATH = PROJECT_ROOT / "assets" / "logos" / "simple-icons-meta.json"
 INDEX_PATH = PROJECT_ROOT / "knowledge_base" / "logo_index.json"
 RENDER_CACHE = PROJECT_ROOT / "output" / "_logo_render_cache"
 
+# Lobe AI Icons — 850 SVGs covering the AI brands Simple Icons removed
+# (Microsoft, OpenAI, AWS, Azure, Copilot, IBM, Mistral, Cohere, ...).
+# Files often come in 3 variants: <name>.svg, <name>-color.svg,
+# <name>-text.svg. We prefer -color (most polished), then bare name.
+LOBE_DIR = PROJECT_ROOT / "assets" / "illustrations" / "lobe_ai"
+
 _index_cache = None
 
 
@@ -140,6 +146,30 @@ def load_index():
     return _index_cache
 
 
+def lookup_lobe(name):
+    """Find an SVG in the Lobe AI Icons set. Prefers -color variant."""
+    if not name or not LOBE_DIR.exists():
+        return None
+    slug = re.sub(r"[^a-z0-9]", "", name.lower())
+    if not slug:
+        return None
+    # Try exact slug, then -color, -text variants
+    for suffix in ("-color", "", "-brand-color", "-text"):
+        candidate = LOBE_DIR / f"{slug}{suffix}.svg"
+        if candidate.exists():
+            return str(candidate.resolve()).replace("\\", "/")
+    # Token-by-token fallback for multi-word names ("Google Gemini" → gemini)
+    parts = re.findall(r"[a-z0-9]+", name.lower())
+    for p in parts:
+        if len(p) < 3:
+            continue
+        for suffix in ("-color", "", "-brand-color", "-text"):
+            candidate = LOBE_DIR / f"{p}{suffix}.svg"
+            if candidate.exists():
+                return str(candidate.resolve()).replace("\\", "/")
+    return None
+
+
 def render_logo_png(name, *, size=512, accent_bg=False):
     """Render a Simple Icons SVG to a PNG file (cached). Returns Path | None.
 
@@ -149,14 +179,20 @@ def render_logo_png(name, *, size=512, accent_bg=False):
     behind the icon so monochrome SVGs don't disappear on dark
     video backgrounds — matches the channel news-card style.
     """
+    # Try Simple Icons first; fall through to Lobe AI for the AI-brand
+    # gap (Microsoft, OpenAI, AWS, Azure, Copilot, IBM, Mistral, Cohere)
     svg_path = lookup(name)
+    source = "simple_icons"
+    if not svg_path:
+        svg_path = lookup_lobe(name)
+        source = "lobe"
     if not svg_path:
         return None
 
     RENDER_CACHE.mkdir(parents=True, exist_ok=True)
     cache_key = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")[:60]
     bg_tag = "card" if accent_bg else "plain"
-    out_path = RENDER_CACHE / f"{cache_key}_{size}_{bg_tag}.png"
+    out_path = RENDER_CACHE / f"{source}_{cache_key}_{size}_{bg_tag}.png"
     if out_path.exists() and out_path.stat().st_size > 200:
         return out_path
 
@@ -174,9 +210,11 @@ def render_logo_png(name, *, size=512, accent_bg=False):
 
     # Simple Icons defaults to a single-color path matching
     # `currentColor` or black. We tint to the accent so it pops on
-    # dark backgrounds.
-    svg_text = svg_text.replace("<svg ",
-                                '<svg fill="#58a6ff" ', 1)
+    # dark backgrounds. Lobe icons usually carry their own brand
+    # colors via the -color variant — don't overwrite those.
+    if source == "simple_icons":
+        svg_text = svg_text.replace("<svg ",
+                                    '<svg fill="#58a6ff" ', 1)
 
     try:
         png_bytes = resvg_py.svg_to_bytes(
