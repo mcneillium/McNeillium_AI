@@ -8,6 +8,21 @@ reduced fidelity. Format:
 - **Reason**: ...
 - **Followup**: what would be needed to fully ship
 
+## Step 4: Lottie pipeline — partial (pivot)
+- **Status**: partial
+- **Reason**: Python `lottie` 0.7.2 only exports JSON / SVG / HTML / TGS;
+  no direct MP4 or PNG-sequence exporter. Building a full Lottie render
+  loop would require cairosvg + custom keyframe-aware text substitution
+  + FFmpeg-side image2-sequence assembly — bigger than one step.
+- **What ships instead**: utils/motion_graphics.py with FFmpeg-native
+  `lower_third()`, `title_card()`, `logo_reveal()`, `composite()`. Same
+  visible outcome (animated overlays) without the Lottie dependency. All
+  three render to MOV-with-alpha (qtrle/argb) and composite cleanly.
+- **Followup**: If brand-specific Lottie templates from LottieFiles are
+  needed, add cairosvg + render-loop in a follow-up. Also: Visual
+  Director integration (auto-call lower_third when person photo cards
+  appear) deferred to Step 10.
+
 ## Step 3: Coverr — skipped
 - **Status**: skipped
 - **Reason**: Coverr has no public API; the integration would require HTML

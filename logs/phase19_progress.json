@@ -6,7 +6,7 @@
     "1_transitions":         {"status": "completed", "notes": "11 transitions rendered to output/_transition_test/, all 3 mode profiles working"},
     "2_real_footage":        {"status": "partial", "notes": "module + CSV log shipped; verified-channel allowlist; 15s cap; live download not test-run; Visual Director integration deferred"},
     "3_expanded_stock":      {"status": "completed", "notes": "utils/stock_fetcher.py wraps Pexels + Pixabay + Pixabay-AI parallel; video/generate_video.py delegates with legacy fallback. Coverr deferred (HTML scrape, brittle)"},
-    "4_lottie_motion_gfx":   {"status": "pending", "notes": ""},
+    "4_lottie_motion_gfx":   {"status": "partial", "notes": "Pivoted to FFmpeg-native motion graphics — lottie pkg has no MP4/PNG-seq exporter. Ships lower_third / title_card / logo_reveal as MOV-with-alpha; composite() helper for overlay onto base video. Visual Director integration deferred to Step 10."},
     "5_l_j_cuts":            {"status": "pending", "notes": ""},
     "6_beat_sync":           {"status": "pending", "notes": ""},
     "7_lut_color_grading":   {"status": "pending", "notes": ""},
