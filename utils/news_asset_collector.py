@@ -225,11 +225,23 @@ def _generate_text_logo(company_name, output_path):
 
 
 def fetch_company_logo(key, canonical_name, domain):
-    """Try Wikipedia thumbnail, then Google s2 favicon, then text card."""
+    """Phase 21.1 chain: Simple Icons → Wikipedia → favicon → text card."""
     slug = _slug(key)
     target = LOGO_DIR / f"{slug}.png"
     if _is_fresh(target):
         return str(target)
+
+    # Try 0: Simple Icons (3,294 brand SVGs at assets/logos/simple_icons/)
+    try:
+        from utils.logo_indexer import render_logo_png
+        rendered = render_logo_png(canonical_name, size=512, accent_bg=True)
+        if rendered and rendered.exists():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            # Copy to the manifest path under the canonical slug
+            target.write_bytes(rendered.read_bytes())
+            return str(target)
+    except Exception as e:
+        print(f"      ⚠️  Simple Icons lookup failed for {canonical_name}: {e}")
 
     # Try 1: Wikipedia page-summary thumbnail (often the logo for companies)
     title = urllib.parse.quote(canonical_name.replace(" ", "_"))

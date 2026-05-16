@@ -696,15 +696,34 @@ def build_section_background(section_idx, section_dur, shots,
                     print(f"\n        ⚠️  pack fallback failed: {e}")
 
             if not ok and shot_type == "company_logo" and shot.get("company"):
-                # Falls through to stock_fetcher — typically returns
-                # cinematic b-roll referencing the brand
-                query = f"{shot['company']} logo"
-                clip = fetch_stock_video(query, min_duration=beat_dur)
-                if clip:
-                    ok = prepare_clip_segment(
-                        clip, beat_dur, beat_path, w, h,
-                        darken=0.0, blur_strength="0:0", kb_effect=0,
-                    )
+                # Phase 21.1: Simple Icons lookup before stock fallback.
+                # 3,294 brand SVGs cover most named companies; for the
+                # ~6 commonly-cited brands they exclude (Microsoft,
+                # OpenAI, ChatGPT, AWS, Amazon, Cohere) we still fall
+                # through to stock_fetcher.
+                try:
+                    if str(PROJECT_ROOT) not in sys.path:
+                        sys.path.insert(0, str(PROJECT_ROOT))
+                    from utils.logo_indexer import render_logo_png
+                    logo_png = render_logo_png(
+                        shot["company"], size=512, accent_bg=True)
+                    if logo_png and logo_png.exists():
+                        image = Image.open(logo_png).convert("RGB")
+                        ok = create_static_clip(image, beat_dur, beat_path,
+                                                w, h, kb_effect=0)
+                        print("[+SI] ", end="")
+                except Exception as e:
+                    print(f"\n        ⚠️  Simple Icons fallback failed: {e}")
+
+                # Last resort: stock footage with brand name as query
+                if not ok:
+                    query = f"{shot['company']} logo"
+                    clip = fetch_stock_video(query, min_duration=beat_dur)
+                    if clip:
+                        ok = prepare_clip_segment(
+                            clip, beat_dur, beat_path, w, h,
+                            darken=0.0, blur_strength="0:0", kb_effect=0,
+                        )
 
             label_map = {
                 "person_photo": shot.get("name", "person"),
