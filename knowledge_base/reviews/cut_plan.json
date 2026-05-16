@@ -1,0 +1,58 @@
+[
+  {
+    "section_id": "hook",
+    "audio_start_s": 0.0,
+    "cut_type": "straight",
+    "visual_offset_s": 0.0,
+    "visual_start_s": 0.0
+  },
+  {
+    "section_id": "intro",
+    "audio_start_s": 21.362,
+    "cut_type": "straight",
+    "visual_offset_s": 0.0,
+    "visual_start_s": 21.362
+  },
+  {
+    "section_id": "main_point_1",
+    "audio_start_s": 55.30999799999999,
+    "cut_type": "L",
+    "visual_offset_s": -0.283,
+    "visual_start_s": 55.027
+  },
+  {
+    "section_id": "main_point_2",
+    "audio_start_s": 97.33869200000001,
+    "cut_type": "L",
+    "visual_offset_s": -0.421,
+    "visual_start_s": 96.918
+  },
+  {
+    "section_id": "main_point_3",
+    "audio_start_s": 154.92281,
+    "cut_type": "straight",
+    "visual_offset_s": 0.0,
+    "visual_start_s": 154.923
+  },
+  {
+    "section_id": "demo",
+    "audio_start_s": 200.029177,
+    "cut_type": "straight",
+    "visual_offset_s": 0.0,
+    "visual_start_s": 200.029
+  },
+  {
+    "section_id": "summary",
+    "audio_start_s": 252.029449,
+    "cut_type": "L",
+    "visual_offset_s": -0.327,
+    "visual_start_s": 251.703
+  },
+  {
+    "section_id": "outro",
+    "audio_start_s": 286.337027,
+    "cut_type": "L",
+    "visual_offset_s": -0.266,
+    "visual_start_s": 286.071
+  }
+]

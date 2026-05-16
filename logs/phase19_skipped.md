@@ -8,6 +8,20 @@ reduced fidelity. Format:
 - **Reason**: ...
 - **Followup**: what would be needed to fully ship
 
+## Step 5: L/J cuts — partial
+- **Status**: partial
+- **Reason**: Pipeline architecture has continuous narration audio + beat
+  visuals — there's no parallel diegetic audio to L/J-cut against. Helper
+  ships (utils/editorial_cuts.py) and produces a per-boundary cut plan,
+  but `generate_video.py`'s 1500-line beat assembler isn't refactored to
+  apply visual offsets at section boundaries.
+- **What ships**: choose_cut_type(), apply_section_cut_offsets(),
+  shift_video_only(). CLI generates a plan to knowledge_base/reviews/cut_plan.json.
+- **Followup**: Step needs to land inside `generate_video.py`'s section-clip
+  builder — when joining clip[i] to clip[i+1], shift the cut point by
+  `plan[i+1].visual_offset_s`. Risk: changes to the central assembly path
+  can break the entire render. Recommend a feature flag.
+
 ## Step 4: Lottie pipeline — partial (pivot)
 - **Status**: partial
 - **Reason**: Python `lottie` 0.7.2 only exports JSON / SVG / HTML / TGS;
