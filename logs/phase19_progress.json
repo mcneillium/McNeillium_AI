@@ -8,8 +8,8 @@
     "3_expanded_stock":      {"status": "completed", "notes": "utils/stock_fetcher.py wraps Pexels + Pixabay + Pixabay-AI parallel; video/generate_video.py delegates with legacy fallback. Coverr deferred (HTML scrape, brittle)"},
     "4_lottie_motion_gfx":   {"status": "partial", "notes": "Pivoted to FFmpeg-native motion graphics — lottie pkg has no MP4/PNG-seq exporter. Ships lower_third / title_card / logo_reveal as MOV-with-alpha; composite() helper for overlay onto base video. Visual Director integration deferred to Step 10."},
     "5_l_j_cuts":            {"status": "partial", "notes": "Planner ships (utils/editorial_cuts.py); generates per-boundary cut_type + visual_offset. 60% L-cuts as brief specifies. Deep generate_video.py integration deferred to keep working pipeline intact."},
-    "6_beat_sync":           {"status": "pending", "notes": ""},
-    "7_lut_color_grading":   {"status": "pending", "notes": ""},
+    "6_beat_sync":           {"status": "completed", "notes": "librosa beat detection + snap_to_nearest_beat with max_drift_s. Tested on ambient_tech.mp3 (117.5 BPM, 245 beats); 2/4 sample cuts snapped within 0.4s drift, others left alone."},
+    "7_lut_color_grading":   {"status": "completed", "notes": "3 looks (cinema_standard / news_network / documentary) as FFmpeg eq+curves chains. apply_lut3d() supports user-supplied .cube files. 3 preview MP4s rendered to output/_grade_test/."},
     "8_speed_ramping":       {"status": "pending", "notes": ""},
     "9_picture_in_picture":  {"status": "pending", "notes": ""},
     "10_full_test_render":   {"status": "pending", "notes": "topic=Microsoft loses OpenAI lock-in (per user choice)"}
