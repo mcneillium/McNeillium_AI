@@ -45,6 +45,7 @@ from utils.news_asset_collector import (  # noqa: E402
 from utils.asset_renderers import (  # noqa: E402
     render_person_card_png, render_logo_card_png, render_article_card_png,
 )
+from utils.entity_pack_builder import pick_pack_image  # noqa: E402
 
 SCRIPT_PATH = PROJECT_ROOT / "output" / "scripts" / "latest.json"
 SHOT_LIST_PATH = PROJECT_ROOT / "output" / "shot_list.json"
@@ -93,9 +94,14 @@ def detect_section_assets(narration, manifest):
             if not asset:
                 continue
             role = PERSON_ROLES.get(canon, "")
+            # Phase 20.4: prefer a random image from the entity pack so
+            # the same person doesn't appear identically across videos.
+            # Falls back to the single manifest photo if no pack exists.
+            pack_pick = pick_pack_image(_slug(canon))
+            source_image = str(pack_pick) if pack_pick else asset["path"]
             png_path = RENDERED_DIR / f"person_{_slug(canon)}.png"
             ok = render_person_card_png(
-                asset["path"], canon, role, png_path,
+                source_image, canon, role, png_path,
             )
             if ok:
                 beats.append({

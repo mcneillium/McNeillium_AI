@@ -1,0 +1,31 @@
+{
+  "entity": "Sam Altman",
+  "slug": "sam-altman",
+  "images": [
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/sam-altman/portrait_01.jpg",
+      "filename": "portrait_01.jpg",
+      "source_title": "File:The Prime Minister meets with AI developers.jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/The_Prime_Minister_meets_with_AI_developers.jpg",
+      "width": 6000,
+      "height": 4000
+    },
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/sam-altman/portrait_02.jpg",
+      "filename": "portrait_02.jpg",
+      "source_title": "File:SlavaBlazerPhotography-31.jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/SlavaBlazerPhotography-31.jpg",
+      "width": 4638,
+      "height": 3092
+    },
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/sam-altman/portrait_04.jpg",
+      "filename": "portrait_04.jpg",
+      "source_title": "File:Sam Altman TechCrunch SF 2019 Day 2 Oct 3 (cropped 3).jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Sam_Altman_TechCrunch_SF_2019_Day_2_Oct_3_%28cropped_3%29.jpg",
+      "width": 1648,
+      "height": 2181
+    }
+  ],
+  "built_at": "2026-05-16T02:36:42"
+}

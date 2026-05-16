@@ -1,0 +1,23 @@
+{
+  "entity": "Satya Nadella",
+  "slug": "satya-nadella",
+  "images": [
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/satya-nadella/portrait_01.jpg",
+      "filename": "portrait_01.jpg",
+      "source_title": "File:MS-Exec-Nadella-Satya-2017-08-31-22 (cropped).jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg/1280px-MS-Exec-Nadella-Satya-2017-08-31-22_%28cropped%29.jpg",
+      "width": 1200,
+      "height": 1534
+    },
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/satya-nadella/portrait_02.jpg",
+      "filename": "portrait_02.jpg",
+      "source_title": "File:Satya Nadella, CEO of Microsoft, with former CEOs Bill Gates, and Steve Ballmer.jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Satya_Nadella%2C_CEO_of_Microsoft%2C_with_former_CEOs_Bill_Gates%2C_and_Steve_Ballmer.jpg/1280px-Satya_Nadella%2C_CEO_of_Microsoft%2C_with_former_CEOs_Bill_Gates%2C_and_Steve_Ballmer.jpg",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "built_at": "2026-05-16T02:37:56"
+}
