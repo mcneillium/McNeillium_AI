@@ -260,6 +260,135 @@ def plan_section(section, n_beats=DEFAULT_BEATS_PER_SECTION,
     return beats_out
 
 
+def plan_phrases_batch(phrases, *, client=None, _verbose=True):
+    """Phase 22.1+2: plan one shot PER PHRASE.
+
+    `phrases` is a list of phrase dicts with text/start_s/end_s/section_id.
+    Phrases from the same section are grouped into one LLM call (saves
+    ~10x the API cost vs one call per phrase).
+
+    Returns the same list with each phrase enriched with:
+      shot_type, query, concept, name, company, layout
+    """
+    client = client or _get_client()
+
+    # Group by section
+    by_section = {}
+    for p in phrases:
+        by_section.setdefault(p["section_id"], []).append(p)
+
+    out_phrases = list(phrases)  # we'll mutate copies inline
+    by_idx = {p["phrase_idx"]: i for i, p in enumerate(out_phrases)}
+
+    total_in = total_out = 0
+    for section_id, sec_phrases in by_section.items():
+        # Cache: hash of all phrase texts in this section
+        cache_key = hashlib.sha256(
+            ("|".join(p["text"] for p in sec_phrases)).encode("utf-8")
+        ).hexdigest()[:16] + "_phrases"
+        cached = _cached(cache_key)
+        if cached:
+            mapping = cached.get("mapping", {})
+            for p in sec_phrases:
+                got = mapping.get(str(p["phrase_idx"]))
+                if got:
+                    out_phrases[by_idx[p["phrase_idx"]]].update(got)
+            if _verbose:
+                print(f"   [cache] {section_id:14s}  "
+                      f"{len(sec_phrases)} phrases")
+            continue
+
+        # Build the prompt
+        phrase_lines = "\n".join(
+            f"  P{p['phrase_idx']}: \"{p['text']}\"  ({p['duration_s']}s)"
+            for p in sec_phrases
+        )
+        user_prompt = (
+            f"Section: {section_id}\n"
+            f"You're planning one visual per phrase below. Each phrase "
+            f"is a short span (~3-5s) and gets ONE shot. Phrases are "
+            f"numbered P0, P1, ... — output keys must match.\n\n"
+            f"Phrases:\n{phrase_lines}\n\n"
+            f"For each phrase, choose the most relevant asset from the "
+            f"library and (NEW) the best layout to compose it:\n"
+            f"  layout options: solo | logo_hero | logo_photo | "
+            f"vs_battle | news_anchor | stat_card | illo_caption\n\n"
+            f"  - vs_battle:    two entities mentioned in the phrase\n"
+            f"  - logo_photo:   person + their company in same phrase\n"
+            f"  - news_anchor:  introducing a person\n"
+            f"  - stat_card:    statistic ($, %, big number)\n"
+            f"  - illo_caption: abstract concept worth captioning\n"
+            f"  - logo_hero:    single company alone\n"
+            f"  - solo:         a single asset, no special composition\n\n"
+            f"Output JSON exactly like:\n"
+            f'{{"P0":{{"shot_type":"...","query":"...","concept":"...",'
+            f'"name":"...","company":"...","secondary_company":"...",'
+            f'"caption_text":"...","layout":"..."}}, "P1":{{...}}}}\n\n'
+            f"Use null for irrelevant fields. The REGISTERED CONCEPT "
+            f"SLUGS list still applies for `concept`."
+        )
+
+        try:
+            msg = client.messages.create(
+                model=MODEL, max_tokens=2500,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": user_prompt}],
+            )
+        except Exception as e:
+            print(f"   ⚠️  {section_id}: LLM call failed: {e}")
+            continue
+        raw = msg.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```", 2)[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip("` \n")
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            print(f"   ⚠️  {section_id}: JSON parse failed; "
+                  f"raw[-150]={raw[-150:]!r}")
+            continue
+
+        mapping = {}
+        for p in sec_phrases:
+            key = f"P{p['phrase_idx']}"
+            got = data.get(key)
+            if not got:
+                continue
+            shot_type = got.get("shot_type") or "stock_footage"
+            renderer_type = "footage" if shot_type == "stock_footage" else shot_type
+            entry = {
+                "shot_type": renderer_type,
+                "query": got.get("query") or "",
+                "layout": got.get("layout") or "solo",
+            }
+            for k in ("concept", "name", "company",
+                      "secondary_company", "caption_text"):
+                v = got.get(k)
+                if v:
+                    entry[k] = v
+            mapping[str(p["phrase_idx"])] = entry
+            out_phrases[by_idx[p["phrase_idx"]]].update(entry)
+
+        ti = getattr(msg.usage, "input_tokens", 0) or 0
+        to = getattr(msg.usage, "output_tokens", 0) or 0
+        total_in += ti
+        total_out += to
+        _save_cache(cache_key, {"mapping": mapping,
+                                 "tokens_in": ti, "tokens_out": to})
+        if _verbose:
+            print(f"   [llm  ] {section_id:14s}  "
+                  f"{len(sec_phrases)} phrases  "
+                  f"in={ti} out={to}")
+
+    if _verbose:
+        cost = (total_in / 1_000_000) * 1.0 + (total_out / 1_000_000) * 5.0
+        print(f"   tokens (this run): in={total_in} out={total_out}  "
+              f"~${cost:.4f}")
+    return out_phrases
+
+
 def plan_script(script_path, *, n_beats=DEFAULT_BEATS_PER_SECTION,
                 client=None):
     """Plan an entire script. Returns shot_list.json structure."""

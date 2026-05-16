@@ -1,0 +1,554 @@
+[
+  {
+    "phrase_idx": 0,
+    "section_id": "hook",
+    "start_s": 0.16,
+    "end_s": 3.704,
+    "duration_s": 3.544,
+    "text": "Microsoft just lost the only thing that made it matter in AI."
+  },
+  {
+    "phrase_idx": 1,
+    "section_id": "hook",
+    "start_s": 4.307,
+    "end_s": 7.895,
+    "duration_s": 3.588,
+    "text": "Last week, Microsoft and OpenAI quietly amended the partnership"
+  },
+  {
+    "phrase_idx": 2,
+    "section_id": "hook",
+    "start_s": 8.173,
+    "end_s": 10.867,
+    "duration_s": 2.694,
+    "text": "that built the entire generative AI cloud market."
+  },
+  {
+    "phrase_idx": 3,
+    "section_id": "hook",
+    "start_s": 11.2,
+    "end_s": 16.08,
+    "duration_s": 4.88,
+    "text": "The amendment did one thing. It made Microsoft's license to OpenAI's IP"
+  },
+  {
+    "phrase_idx": 4,
+    "section_id": "hook",
+    "start_s": 16.591,
+    "end_s": 19.47,
+    "duration_s": 2.879,
+    "text": "non-exclusive. Read that line again. Non-exclusive."
+  },
+  {
+    "phrase_idx": 5,
+    "section_id": "intro",
+    "start_s": 19.68,
+    "end_s": 22.651,
+    "duration_s": 2.971,
+    "text": "For seven years Microsoft has had a privileged position"
+  },
+  {
+    "phrase_idx": 6,
+    "section_id": "intro",
+    "start_s": 23.034,
+    "end_s": 24.613,
+    "duration_s": 1.579,
+    "text": "no other cloud provider could touch."
+  },
+  {
+    "phrase_idx": 7,
+    "section_id": "intro",
+    "start_s": 24.88,
+    "end_s": 29.733,
+    "duration_s": 4.853,
+    "text": "If you wanted GPT-3, GPT-4, GPT-5, you went through Azure."
+  },
+  {
+    "phrase_idx": 8,
+    "section_id": "intro",
+    "start_s": 30.31,
+    "end_s": 33.704,
+    "duration_s": 3.394,
+    "text": "Period. AWS could not host it. Google Cloud"
+  },
+  {
+    "phrase_idx": 9,
+    "section_id": "intro",
+    "start_s": 33.75,
+    "end_s": 38.092,
+    "duration_s": 4.342,
+    "text": "could not host it. Oracle, IBM, the whole rest of the market, locked out."
+  },
+  {
+    "phrase_idx": 10,
+    "section_id": "intro",
+    "start_s": 38.31,
+    "end_s": 43.909,
+    "duration_s": 5.599,
+    "text": "That arrangement just ended. Under the new terms, OpenAI can serve its models on any cloud."
+  },
+  {
+    "phrase_idx": 11,
+    "section_id": "intro",
+    "start_s": 44.15,
+    "end_s": 47.51,
+    "duration_s": 3.36,
+    "text": "Microsoft remains a partner, but no longer the only door."
+  },
+  {
+    "phrase_idx": 12,
+    "section_id": "main_point_1",
+    "start_s": 47.75,
+    "end_s": 51.386,
+    "duration_s": 3.636,
+    "text": "Why is this happening now, and not in 2027 or 2028?"
+  },
+  {
+    "phrase_idx": 13,
+    "section_id": "main_point_1",
+    "start_s": 51.827,
+    "end_s": 52.593,
+    "duration_s": 0.766,
+    "text": "Three reasons."
+  },
+  {
+    "phrase_idx": 14,
+    "section_id": "main_point_1",
+    "start_s": 53.034,
+    "end_s": 55.612,
+    "duration_s": 2.578,
+    "text": "First, OpenAI is preparing for the next chapter,"
+  },
+  {
+    "phrase_idx": 15,
+    "section_id": "main_point_1",
+    "start_s": 55.821,
+    "end_s": 60.59,
+    "duration_s": 4.769,
+    "text": "and a non-exclusive license is what every public-company governance team will require before"
+  },
+  {
+    "phrase_idx": 16,
+    "section_id": "main_point_1",
+    "start_s": 60.767,
+    "end_s": 62.148,
+    "duration_s": 1.381,
+    "text": "signing off on an IPO."
+  },
+  {
+    "phrase_idx": 17,
+    "section_id": "main_point_1",
+    "start_s": 62.752,
+    "end_s": 69.183,
+    "duration_s": 6.431,
+    "text": "Second, Anthropic just hit a 950 billion dollar valuation by being everywhere all at once."
+  },
+  {
+    "phrase_idx": 18,
+    "section_id": "main_point_1",
+    "start_s": 69.625,
+    "end_s": 71.47,
+    "duration_s": 1.845,
+    "text": "Sitting on AWS Bedrock,"
+  },
+  {
+    "phrase_idx": 19,
+    "section_id": "main_point_1",
+    "start_s": 71.796,
+    "end_s": 76.602,
+    "duration_s": 4.806,
+    "text": "on Google Vertex, on Oracle, on every customer's preferred stack."
+  },
+  {
+    "phrase_idx": 20,
+    "section_id": "main_point_1",
+    "start_s": 76.99,
+    "end_s": 81.316,
+    "duration_s": 4.326,
+    "text": "OpenAI was watching and learning. Third, customers were leaving."
+  },
+  {
+    "phrase_idx": 21,
+    "section_id": "main_point_1",
+    "start_s": 81.88,
+    "end_s": 84.254,
+    "duration_s": 2.374,
+    "text": "Specifically, the largest enterprise customers,"
+  },
+  {
+    "phrase_idx": 22,
+    "section_id": "main_point_1",
+    "start_s": 84.52,
+    "end_s": 86.529,
+    "duration_s": 2.009,
+    "text": "the ones who write nine-figure cheques,"
+  },
+  {
+    "phrase_idx": 23,
+    "section_id": "main_point_1",
+    "start_s": 86.68,
+    "end_s": 90.569,
+    "duration_s": 3.889,
+    "text": "were telling OpenAI they would not commit to a single-cloud strategy."
+  },
+  {
+    "phrase_idx": 24,
+    "section_id": "main_point_1",
+    "start_s": 90.895,
+    "end_s": 92.265,
+    "duration_s": 1.37,
+    "text": "So OpenAI listened."
+  },
+  {
+    "phrase_idx": 25,
+    "section_id": "main_point_2",
+    "start_s": 92.44,
+    "end_s": 96.258,
+    "duration_s": 3.818,
+    "text": "For AWS, this is a gift. Bedrock has Claude,"
+  },
+  {
+    "phrase_idx": 26,
+    "section_id": "main_point_2",
+    "start_s": 96.537,
+    "end_s": 101.413,
+    "duration_s": 4.876,
+    "text": "Titan, Llama, and a long tail of other models, but no GPT-5."
+  },
+  {
+    "phrase_idx": 27,
+    "section_id": "main_point_2",
+    "start_s": 101.924,
+    "end_s": 106.092,
+    "duration_s": 4.168,
+    "text": "Now they can pitch GPT-5 alongside Claude and let the customer choose."
+  },
+  {
+    "phrase_idx": 28,
+    "section_id": "main_point_2",
+    "start_s": 106.44,
+    "end_s": 110.898,
+    "duration_s": 4.458,
+    "text": "AWS just doubled the value of Bedrock without writing a single line of code."
+  },
+  {
+    "phrase_idx": 29,
+    "section_id": "main_point_2",
+    "start_s": 111.339,
+    "end_s": 117.156,
+    "duration_s": 5.817,
+    "text": "For Google Cloud, similar story. Vertex now becomes a one-stop AI shop."
+  },
+  {
+    "phrase_idx": 30,
+    "section_id": "main_point_2",
+    "start_s": 117.76,
+    "end_s": 119.19,
+    "duration_s": 1.43,
+    "text": "Gemini, Claude,"
+  },
+  {
+    "phrase_idx": 31,
+    "section_id": "main_point_2",
+    "start_s": 119.594,
+    "end_s": 123.913,
+    "duration_s": 4.319,
+    "text": "GPT, PaLM, all served by the same control plane."
+  },
+  {
+    "phrase_idx": 32,
+    "section_id": "main_point_2",
+    "start_s": 124.47,
+    "end_s": 127.094,
+    "duration_s": 2.624,
+    "text": "Google has been pushing this multi-model story"
+  },
+  {
+    "phrase_idx": 33,
+    "section_id": "main_point_2",
+    "start_s": 127.03,
+    "end_s": 130.891,
+    "duration_s": 3.861,
+    "text": "for two years and OpenAI just gave them the missing piece."
+  },
+  {
+    "phrase_idx": 34,
+    "section_id": "main_point_2",
+    "start_s": 131.274,
+    "end_s": 133.515,
+    "duration_s": 2.241,
+    "text": "For Oracle, it's existential."
+  },
+  {
+    "phrase_idx": 35,
+    "section_id": "main_point_2",
+    "start_s": 134.07,
+    "end_s": 138.031,
+    "duration_s": 3.961,
+    "text": "Larry Ellison has been spending tens of billions on AI infrastructure"
+  },
+  {
+    "phrase_idx": 36,
+    "section_id": "main_point_2",
+    "start_s": 138.356,
+    "end_s": 141.653,
+    "duration_s": 3.297,
+    "text": "betting on this exact outcome. He just won the bet."
+  },
+  {
+    "phrase_idx": 37,
+    "section_id": "main_point_2",
+    "start_s": 142.35,
+    "end_s": 145.38,
+    "duration_s": 3.03,
+    "text": "Oracle Cloud finally has a story that competes."
+  },
+  {
+    "phrase_idx": 38,
+    "section_id": "main_point_3",
+    "start_s": 145.46,
+    "end_s": 149.757,
+    "duration_s": 4.297,
+    "text": "If you are an Azure-only shop today, nothing changes immediately."
+  },
+  {
+    "phrase_idx": 39,
+    "section_id": "main_point_3",
+    "start_s": 149.94,
+    "end_s": 152.648,
+    "duration_s": 2.708,
+    "text": "Your GPT-5 instance keeps working."
+  },
+  {
+    "phrase_idx": 40,
+    "section_id": "main_point_3",
+    "start_s": 152.9,
+    "end_s": 156.409,
+    "duration_s": 3.509,
+    "text": "Your fine-tunes keep working. Your data stays where it is."
+  },
+  {
+    "phrase_idx": 41,
+    "section_id": "main_point_3",
+    "start_s": 156.5,
+    "end_s": 159.695,
+    "duration_s": 3.195,
+    "text": "But the strategic landscape just shifted under your feet."
+  },
+  {
+    "phrase_idx": 42,
+    "section_id": "main_point_3",
+    "start_s": 160.392,
+    "end_s": 162.377,
+    "duration_s": 1.985,
+    "text": "Six months from now, when your CTO"
+  },
+  {
+    "phrase_idx": 43,
+    "section_id": "main_point_3",
+    "start_s": 162.459,
+    "end_s": 167.544,
+    "duration_s": 5.085,
+    "text": "asks why you are paying Azure premium pricing for a service that runs identically on AWS for less,"
+  },
+  {
+    "phrase_idx": 44,
+    "section_id": "main_point_3",
+    "start_s": 168.055,
+    "end_s": 173.419,
+    "duration_s": 5.364,
+    "text": "you will not have a great answer. Microsoft's pricing power on OpenAI workloads just collapsed."
+  },
+  {
+    "phrase_idx": 45,
+    "section_id": "main_point_3",
+    "start_s": 173.929,
+    "end_s": 179.119,
+    "duration_s": 5.19,
+    "text": "Expect Azure to start discounting aggressively in the next two quarters to keep customers from migrating."
+  },
+  {
+    "phrase_idx": 46,
+    "section_id": "demo",
+    "start_s": 179.455,
+    "end_s": 184.981,
+    "duration_s": 5.526,
+    "text": "The thing nobody is saying out loud is that this is the biggest re-shaping of the AI cloud market since the original"
+  },
+  {
+    "phrase_idx": 47,
+    "section_id": "demo",
+    "start_s": 185.365,
+    "end_s": 188.0,
+    "duration_s": 2.635,
+    "text": "Microsoft OpenAI deal in 2019."
+  },
+  {
+    "phrase_idx": 48,
+    "section_id": "demo",
+    "start_s": 188.697,
+    "end_s": 193.12,
+    "duration_s": 4.423,
+    "text": "Microsoft spent thirteen billion dollars to lock down that exclusivity."
+  },
+  {
+    "phrase_idx": 49,
+    "section_id": "demo",
+    "start_s": 193.66,
+    "end_s": 197.834,
+    "duration_s": 4.174,
+    "text": "Today that thirteen billion dollars bought them a non-exclusive seat at the table."
+  },
+  {
+    "phrase_idx": 50,
+    "section_id": "demo",
+    "start_s": 198.275,
+    "end_s": 202.315,
+    "duration_s": 4.04,
+    "text": "Look, Microsoft still has Azure, still has Copilot, still has Office."
+  },
+  {
+    "phrase_idx": 51,
+    "section_id": "demo",
+    "start_s": 202.54,
+    "end_s": 206.855,
+    "duration_s": 4.315,
+    "text": "They are not going to die. But the moat they thought they had spent six years building,"
+  },
+  {
+    "phrase_idx": 52,
+    "section_id": "demo",
+    "start_s": 207.02,
+    "end_s": 212.126,
+    "duration_s": 5.106,
+    "text": "the moat that justified every Azure win since 2023, that moat just got drained."
+  },
+  {
+    "phrase_idx": 53,
+    "section_id": "summary",
+    "start_s": 212.22,
+    "end_s": 213.252,
+    "duration_s": 1.032,
+    "text": "Here is my take."
+  },
+  {
+    "phrase_idx": 54,
+    "section_id": "summary",
+    "start_s": 213.635,
+    "end_s": 219.115,
+    "duration_s": 5.48,
+    "text": "Two years ago Microsoft was the most strategically positioned company in the entire AI industry."
+  },
+  {
+    "phrase_idx": 55,
+    "section_id": "summary",
+    "start_s": 219.626,
+    "end_s": 222.389,
+    "duration_s": 2.763,
+    "text": "They had the exclusive on the most important model family,"
+  },
+  {
+    "phrase_idx": 56,
+    "section_id": "summary",
+    "start_s": 222.52,
+    "end_s": 226.719,
+    "duration_s": 4.199,
+    "text": "they had the distribution through Office, and they had the cloud through Azure."
+  },
+  {
+    "phrase_idx": 57,
+    "section_id": "summary",
+    "start_s": 227.16,
+    "end_s": 231.63,
+    "duration_s": 4.47,
+    "text": "Today they have one and a half of those three. The exclusive is gone."
+  },
+  {
+    "phrase_idx": 58,
+    "section_id": "summary",
+    "start_s": 231.88,
+    "end_s": 237.516,
+    "duration_s": 5.636,
+    "text": "The distribution and the cloud remain, but they are now competing on price like everyone else."
+  },
+  {
+    "phrase_idx": 59,
+    "section_id": "summary",
+    "start_s": 237.958,
+    "end_s": 240.396,
+    "duration_s": 2.438,
+    "text": "That is a worse business than they had a week ago."
+  },
+  {
+    "phrase_idx": 60,
+    "section_id": "outro",
+    "start_s": 240.651,
+    "end_s": 243.449,
+    "duration_s": 2.798,
+    "text": "What comes next? Watch AWS over the next"
+  },
+  {
+    "phrase_idx": 61,
+    "section_id": "outro",
+    "start_s": 243.519,
+    "end_s": 244.367,
+    "duration_s": 0.848,
+    "text": "thirty days."
+  },
+  {
+    "phrase_idx": 62,
+    "section_id": "outro",
+    "start_s": 244.692,
+    "end_s": 250.334,
+    "duration_s": 5.642,
+    "text": "They will announce GPT-5 on Bedrock with discounted pricing aimed straight at Azure customers."
+  },
+  {
+    "phrase_idx": 63,
+    "section_id": "outro",
+    "start_s": 250.775,
+    "end_s": 255.025,
+    "duration_s": 4.25,
+    "text": "Watch Oracle. Larry Ellison is going to go on stage somewhere and gloat."
+  },
+  {
+    "phrase_idx": 64,
+    "section_id": "outro",
+    "start_s": 255.09,
+    "end_s": 258.833,
+    "duration_s": 3.743,
+    "text": "And watch Microsoft. They are going to announce something big,"
+  },
+  {
+    "phrase_idx": 65,
+    "section_id": "outro",
+    "start_s": 259.112,
+    "end_s": 263.245,
+    "duration_s": 4.133,
+    "text": "something defensive, probably involving Copilot or in-house models,"
+  },
+  {
+    "phrase_idx": 66,
+    "section_id": "outro",
+    "start_s": 263.65,
+    "end_s": 267.355,
+    "duration_s": 3.705,
+    "text": "to convince the market they still matter. If you found this useful,"
+  },
+  {
+    "phrase_idx": 67,
+    "section_id": "outro",
+    "start_s": 267.529,
+    "end_s": 272.893,
+    "duration_s": 5.364,
+    "text": "smash the like, subscribe, and tomorrow we cover how AWS is preparing to respond."
+  },
+  {
+    "phrase_idx": 68,
+    "section_id": "outro",
+    "start_s": 273.496,
+    "end_s": 274.158,
+    "duration_s": 0.662,
+    "text": "See you then."
+  }
+]
