@@ -49,7 +49,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CLIP_CACHE = PROJECT_ROOT / "output" / "_clip_cache"
 USER_AGENT = "Mozilla/5.0 (McNeillium_AI Phase19 stock fetcher)"
 
-DEFAULT_SOURCES = ("pexels", "pixabay", "pixabay_ai")
+DEFAULT_SOURCES = ("pexels", "pixabay", "pixabay_ai", "wikimedia",
+                   "internet_archive")
 
 
 def _safe(s, n=50):
@@ -142,6 +143,113 @@ def _fetch_pexels(query):
     return out
 
 
+def _fetch_wikimedia(query):
+    """Wikimedia Commons video search. No API key required.
+
+    Returns up to 5 candidates as {source, url, width, height,
+    duration_s} dicts. Wikimedia tends to have lower-quality but
+    legitimately public-domain footage — we score it lower than
+    Pexels but higher than nothing."""
+    enc = urllib.parse.quote(query)
+    # mediasearch returns mixed results; we filter to files with
+    # a video mime type.
+    api_url = (f"https://commons.wikimedia.org/w/api.php?"
+               f"action=query&format=json&list=search&srnamespace=6&"
+               f"srsearch={enc}+filetype:video&srlimit=10")
+    try:
+        req = urllib.request.Request(api_url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode())
+    except Exception:
+        return []
+    out = []
+    titles = [r["title"] for r in data.get("query", {}).get("search", [])][:5]
+    if not titles:
+        return []
+    # Bulk imageinfo query for the URLs and metadata
+    titles_param = urllib.parse.quote("|".join(titles))
+    info_url = (f"https://commons.wikimedia.org/w/api.php?"
+                f"action=query&format=json&prop=imageinfo&"
+                f"iiprop=url|size|mime|mediatype&"
+                f"titles={titles_param}")
+    try:
+        req = urllib.request.Request(info_url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            info = json.loads(resp.read().decode())
+    except Exception:
+        return []
+    pages = info.get("query", {}).get("pages", {})
+    for page in pages.values():
+        ii = (page.get("imageinfo") or [{}])[0]
+        mime = ii.get("mime", "")
+        if not mime.startswith("video/"):
+            continue
+        url = ii.get("url")
+        if not url:
+            continue
+        out.append({
+            "source": "wikimedia",
+            "url": url,
+            "width": ii.get("width", 0),
+            "height": ii.get("height", 0),
+            # duration not in imageinfo; treat as unknown (fits scorer)
+            "duration_s": 10.0,
+        })
+    return out
+
+
+def _fetch_internet_archive(query):
+    """Internet Archive video search via their advancedsearch JSON API.
+
+    Filters to mediatype=movies. Pulls thumbnail-quality is often
+    grainy but the catalog is huge."""
+    enc = urllib.parse.quote(f"{query} AND mediatype:movies")
+    api = (f"https://archive.org/advancedsearch.php?"
+           f"q={enc}&fl[]=identifier&fl[]=title&"
+           f"sort[]=downloads+desc&rows=5&page=1&output=json")
+    try:
+        req = urllib.request.Request(api, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode())
+    except Exception:
+        return []
+    docs = data.get("response", {}).get("docs", [])
+    out = []
+    for d in docs[:5]:
+        ident = d.get("identifier")
+        if not ident:
+            continue
+        # Look up the metadata to find an actual mp4 file
+        try:
+            meta_url = f"https://archive.org/metadata/{ident}"
+            req = urllib.request.Request(meta_url,
+                                         headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                meta = json.loads(resp.read().decode())
+        except Exception:
+            continue
+        # Pick the first mp4 file
+        mp4 = next((f for f in meta.get("files", [])
+                    if f.get("format", "").lower() in
+                    ("h.264", "mpeg4", "ipod", "mp4", "h.264 hd")
+                    and f.get("name", "").lower().endswith(".mp4")), None)
+        if not mp4:
+            continue
+        # Filenames in IA can contain spaces and special chars — encode.
+        download_url = (f"https://archive.org/download/{ident}/"
+                        f"{urllib.parse.quote(mp4['name'])}")
+        out.append({
+            "source": "internet_archive",
+            "url": download_url,
+            "width": int(mp4.get("width", 0) or 0),
+            "height": int(mp4.get("height", 0) or 0),
+            "duration_s": float(mp4.get("length", 0) or 0)
+                          if str(mp4.get("length", "0")).replace(".", "").isdigit()
+                          else 10.0,
+        })
+    return out
+
+
 def _score(c, min_duration):
     s = 0
     d = c.get("duration_s", 0)
@@ -170,9 +278,11 @@ def fetch_video(query, min_duration=8, sources=DEFAULT_SOURCES,
 
     # Parallel API calls
     fetchers = {
-        "pixabay":    lambda: _fetch_pixabay(query, ai=False),
-        "pixabay_ai": lambda: _fetch_pixabay(query, ai=True),
-        "pexels":     lambda: _fetch_pexels(query),
+        "pixabay":         lambda: _fetch_pixabay(query, ai=False),
+        "pixabay_ai":      lambda: _fetch_pixabay(query, ai=True),
+        "pexels":          lambda: _fetch_pexels(query),
+        "wikimedia":       lambda: _fetch_wikimedia(query),
+        "internet_archive":lambda: _fetch_internet_archive(query),
     }
     candidates = []
     with ThreadPoolExecutor(max_workers=len(sources)) as ex:
@@ -216,7 +326,8 @@ def main():
     p.add_argument("query")
     p.add_argument("--min-duration", type=int, default=8)
     p.add_argument("--sources", nargs="+", default=list(DEFAULT_SOURCES),
-                   choices=["pixabay", "pixabay_ai", "pexels"])
+                   choices=["pixabay", "pixabay_ai", "pexels",
+                            "wikimedia", "internet_archive"])
     args = p.parse_args()
     path = fetch_video(args.query, min_duration=args.min_duration,
                        sources=tuple(args.sources))
