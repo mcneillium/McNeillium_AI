@@ -756,6 +756,40 @@ def build_section_background(section_idx, section_dur, shots,
                     print(f"(load failed: {e}) ", end="")
                     ok = create_static_clip(None, beat_dur, beat_path,
                                             w, h, kb_effect=kb_idx)
+        elif shot_type == "concept_illustration":
+            # Phase 20.2: render a static concept illustration from
+            # utils.concept_illustrations. The LLM Visual Director (Step 1)
+            # tags abstract narration moments with concept_illustration +
+            # a concept slug. We map slug → drawing → static MP4.
+            concept = (shot.get("concept") or shot.get("query") or "").strip()
+            try:
+                if str(PROJECT_ROOT) not in sys.path:
+                    sys.path.insert(0, str(PROJECT_ROOT))
+                from utils.concept_illustrations import (render_concept,
+                                                          match_concept)
+                slug = match_concept(concept)
+                if slug:
+                    out = render_concept(concept, beat_dur, beat_path,
+                                         w=w, h=h)
+                    ok = out is not None
+                    print(f"          beat {bi+1}: concept ('{slug}') ", end="")
+                else:
+                    print(f"          beat {bi+1}: concept "
+                          f"(no match for '{concept[:30]}', "
+                          f"falling back to footage) ", end="")
+                    ok = False
+            except Exception as e:
+                print(f"\n        ⚠️  concept render failed: {e}")
+                ok = False
+            # Fall back to stock footage if no concept match
+            if not ok:
+                query = shot.get("query") or concept or "abstract technology"
+                clip = fetch_stock_video(query, min_duration=beat_dur)
+                if clip:
+                    ok = prepare_clip_segment(
+                        clip, beat_dur, beat_path, w, h,
+                        darken=0.0, blur_strength="0:0", kb_effect=0,
+                    )
         elif shot_type == "stat_card":
             overlay = shot.get("overlay_data", {})
             stat = shot.get("stat") or overlay.get("stat", "")
