@@ -8,6 +8,15 @@ reduced fidelity. Format:
 - **Reason**: ...
 - **Followup**: what would be needed to fully ship
 
+## Step 3: Coverr — skipped
+- **Status**: skipped
+- **Reason**: Coverr has no public API; the integration would require HTML
+  scraping which breaks the moment they redesign. Pexels + Pixabay + Pixabay-AI
+  cover the same use case with stable APIs. Diversity bonus in the scorer
+  already biases toward non-Pixabay results.
+- **Followup**: If Coverr is materially better for hero shots, add a small
+  Selenium/Playwright fetcher behind a feature flag.
+
 ## Step 2: yt-dlp real footage — partial
 - **Status**: partial — module ships, no live download verified
 - **Reason**: yt-dlp + automated YouTube downloading is in tension with

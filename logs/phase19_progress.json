@@ -5,7 +5,7 @@
   "steps": {
     "1_transitions":         {"status": "completed", "notes": "11 transitions rendered to output/_transition_test/, all 3 mode profiles working"},
     "2_real_footage":        {"status": "partial", "notes": "module + CSV log shipped; verified-channel allowlist; 15s cap; live download not test-run; Visual Director integration deferred"},
-    "3_expanded_stock":      {"status": "pending", "notes": ""},
+    "3_expanded_stock":      {"status": "completed", "notes": "utils/stock_fetcher.py wraps Pexels + Pixabay + Pixabay-AI parallel; video/generate_video.py delegates with legacy fallback. Coverr deferred (HTML scrape, brittle)"},
     "4_lottie_motion_gfx":   {"status": "pending", "notes": ""},
     "5_l_j_cuts":            {"status": "pending", "notes": ""},
     "6_beat_sync":           {"status": "pending", "notes": ""},

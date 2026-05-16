@@ -179,10 +179,22 @@ COLOUR_GRADE = (
 
 def fetch_stock_video(query, min_duration=8, target_w=1920):
     """
-    Fetch a stock video clip from Pixabay (free, no attribution required).
-    API docs: https://pixabay.com/api/docs/#videos
-    Returns path to downloaded MP4 or None.
+    Fetch a stock video clip from any of: Pexels, Pixabay, Pixabay AI.
+    Phase 19 Step 3: delegates to utils.stock_fetcher.fetch_video which
+    queries all three in parallel and picks the best-scoring result.
+    Falls back to legacy Pixabay-only path if the new fetcher fails.
     """
+    # Phase 19: try the multi-source fetcher first
+    try:
+        from utils.stock_fetcher import fetch_video as _multi_fetch
+        path = _multi_fetch(query, min_duration=min_duration)
+        if path:
+            return path
+    except Exception as e:
+        print(f"        ⚠️  multi-source fetcher errored ({e}); "
+              f"falling back to Pixabay-only path")
+
+    # Legacy Pixabay-only path (preserved as fallback)
     api_key = os.getenv("PIXABAY_API_KEY", "")
     if not api_key:
         print(f"        ⚠️  No PIXABAY_API_KEY — skipping video fetch")
