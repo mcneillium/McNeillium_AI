@@ -1,24 +1,24 @@
-# QC Report: 20260514_214056_Anthropic_Is_Worth_950_Billion_Read_That_Again.mp4
+# QC Report: latest.mp4
 
-- Duration: 332.5s
+- Duration: 269.9s
 - Overall score: **9.3/10**  (threshold 8.0)
 
 ## Dimensions
 
-- **visual_variety**: 10/10 — high variety (avg diff 46.38)
-- **caption_legibility**: 9/10 — bottom region high contrast (43.3) — captions clearly visible
-- **brightness**: 9/10 — brightness healthy (avg 35.6, broken 5%)
-- **loudness**: 10/10 — perfect: input_i = -14.02 LUFS (target -14)
-- **duration**: 8/10 — 333s — within acceptable range
+- **visual_variety**: 10/10 — high variety (avg diff 70.43)
+- **caption_legibility**: 9/10 — bottom region high contrast (46.7) — captions clearly visible
+- **brightness**: 9/10 — brightness healthy (avg 48.4, broken 5%)
+- **loudness**: 10/10 — perfect: input_i = -14.05 LUFS (target -14)
+- **duration**: 8/10 — 270s — within acceptable range
 
 ## Loudness Measurement
-- `input_i` = `-14.02`
-- `input_tp` = `-2.53`
-- `input_lra` = `5.20`
-- `input_thresh` = `-24.62`
+- `input_i` = `-14.05`
+- `input_tp` = `-1.54`
+- `input_lra` = `4.20`
+- `input_thresh` = `-24.44`
 - `output_i` = `-13.11`
 - `output_tp` = `-1.50`
-- `output_lra` = `4.30`
-- `output_thresh` = `-23.70`
+- `output_lra` = `3.30`
+- `output_thresh` = `-23.48`
 - `normalization_type` = `dynamic`
 - `target_offset` = `-0.89`

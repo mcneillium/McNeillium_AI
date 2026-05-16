@@ -12,7 +12,7 @@
     "7_lut_color_grading":   {"status": "completed", "notes": "3 looks (cinema_standard / news_network / documentary) as FFmpeg eq+curves chains. apply_lut3d() supports user-supplied .cube files. 3 preview MP4s rendered to output/_grade_test/."},
     "8_speed_ramping":       {"status": "partial", "notes": "Punch detector + ramp_segment() helper. Video-only (audio is narration, can't ramp). Found 'Read that again' hook in current latest.json. Demo render OK."},
     "9_picture_in_picture":  {"status": "completed", "notes": "Comparison detector (X vs Y, before/after) + side_by_side() with 50/50, 60/40, 40/60 layouts. Found 'Musk versus Altman' in latest.json. 60/40 sample render OK."},
-    "10_full_test_render":   {"status": "pending", "notes": "topic=Microsoft loses OpenAI lock-in (per user choice)"}
+    "10_full_test_render":   {"status": "completed", "notes": "Microsoft/OpenAI script written + rendered + color-graded. _v19_microsoft_openai_full_upgrade.mp4 = 66.5MB, 270s (4m30s), QC 9.3/10 APPROVED. Cost $0.94. Phase 19 features ACTIVELY USED: Step 3 (3 new clips from Pexels/Pixabay-AI) + Step 7 (cinema_standard color grade). NOT exercised in this render: transitions/motion graphics/L-cuts/beat sync/speed ramps/PiP — those are utility-shaped and deep generate_video.py integration is deferred. 6 sample frames in output/_v19_frames/."}
   },
   "decisions": [
     "Brian re-render rejected by user — will be superseded by Phase 19 test render",

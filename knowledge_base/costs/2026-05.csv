@@ -18,3 +18,7 @@ timestamp,video_title,service,units,unit_label,cost_usd
 2026-05-14T21:30:24,Anthropic Is Worth 50 Billion. Read That Again.,fal_kling,1,clips (Cinematic close-up of a glowing money counter rapidly scroll),0.3000
 2026-05-14T21:33:36,Anthropic Is Worth 50 Billion. Read That Again.,fal_kling,1,clips (Cinematic split screen: left side shows clean Claude logo in),0.3000
 2026-05-14T21:36:45,Anthropic Is Worth 50 Billion. Read That Again.,fal_kling,1,"clips (Cinematic stock market trading floor at peak hour, dramatic )",0.3000
+2026-05-15T23:51:59,Anthropic Is Worth $950 Billion. Read That Again.,elevenlabs,4817,chars,1.0597
+2026-05-15T23:52:36,Anthropic Is Worth $950 Billion. Read That Again.,assemblyai,304.0,seconds,0.0312
+2026-05-16T01:28:22,Microsoft Just Lost Its OpenAI Monopoly,elevenlabs,4146,chars,0.9121
+2026-05-16T01:28:53,Microsoft Just Lost Its OpenAI Monopoly,assemblyai,269.8,seconds,0.0277
