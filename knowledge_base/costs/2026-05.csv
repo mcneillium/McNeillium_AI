@@ -24,3 +24,5 @@ timestamp,video_title,service,units,unit_label,cost_usd
 2026-05-16T01:28:53,Microsoft Just Lost Its OpenAI Monopoly,assemblyai,269.8,seconds,0.0277
 2026-05-16T02:41:44,Google Just Admitted Android Isn't an Operating System Anymore,elevenlabs,3713,chars,0.8169
 2026-05-16T02:42:19,Google Just Admitted Android Isn't an Operating System Anymore,assemblyai,231.4,seconds,0.0238
+2026-05-16T03:38:29,Microsoft Just Lost Its OpenAI Monopoly,elevenlabs,4146,chars,0.9121
+2026-05-16T03:38:44,Microsoft Just Lost Its OpenAI Monopoly,assemblyai,274.4,seconds,0.0282
