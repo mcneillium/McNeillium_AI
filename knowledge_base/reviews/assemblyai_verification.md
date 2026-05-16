@@ -1,14 +1,14 @@
 # AssemblyAI Sync Verification
 
-Total TTS words: 692 | Drift events: 100 | Replaced: 100 | Sync score: 9/10
+Total TTS words: 651 | Drift events: 71 | Replaced: 71 | Sync score: 9/10
 
-- drift 114ms on `Microsoft` (eleven 46 → asr 160)
-- drift 126ms on `thing` (eleven 1846 → asr 1720)
-- drift 101ms on `in` (eleven 2821 → asr 2720)
-- drift 190ms on `The` (eleven 9950 → asr 9760)
-- drift 147ms on `It` (eleven 11587 → asr 11440)
-- drift 124ms on `Read` (eleven 15244 → asr 15120)
-- drift 125ms on `For` (eleven 17485 → asr 17360)
-- drift 145ms on `Microsoft` (eleven 18425 → asr 18280)
-- drift 128ms on `no` (eleven 20608 → asr 20480)
-- drift 116ms on `If` (eleven 22756 → asr 22640)
+- drift 114ms on `Google` (eleven 46 → asr 160)
+- drift 114ms on `no` (eleven 5074 → asr 4960)
+- drift 142ms on `Google` (eleven 6142 → asr 6000)
+- drift 118ms on `Android` (eleven 7918 → asr 7800)
+- drift 112ms on `single` (eleven 11552 → asr 11440)
+- drift 170ms on `Sameer` (eleven 13770 → asr 13600)
+- drift 115ms on `We` (eleven 16115 → asr 16000)
+- drift 110ms on `to` (eleven 18390 → asr 18280)
+- drift 153ms on `Here` (eleven 19993 → asr 19840)
+- drift 139ms on `Gemini` (eleven 22779 → asr 22640)

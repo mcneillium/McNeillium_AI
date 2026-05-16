@@ -1,0 +1,15 @@
+{
+  "entity": "Tim Cook",
+  "slug": "tim-cook",
+  "images": [
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/tim-cook/portrait_01.jpg",
+      "filename": "portrait_01.jpg",
+      "source_title": "File:Tim Cook WWDC 2012.jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Tim_Cook_WWDC_2012.jpg/1280px-Tim_Cook_WWDC_2012.jpg",
+      "width": 1200,
+      "height": 960
+    }
+  ],
+  "built_at": "2026-05-16T02:40:24"
+}

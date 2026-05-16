@@ -1,0 +1,23 @@
+{
+  "entity": "Sundar Pichai",
+  "slug": "sundar-pichai",
+  "images": [
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/sundar-pichai/portrait_01.jpg",
+      "filename": "portrait_01.jpg",
+      "source_title": "File:Sundar Pichai - 2023 (cropped).jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Sundar_Pichai_-_2023_%28cropped%29.jpg",
+      "width": 959,
+      "height": 1439
+    },
+    {
+      "path": "C:/Users/McNei/Documents/McNeillium_AI/knowledge_base/entity_packs/sundar-pichai/portrait_02.jpg",
+      "filename": "portrait_02.jpg",
+      "source_title": "File:Sundar Pichai - SVP, Android, Chrome and Apps, Google.jpg",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Sundar_Pichai_-_SVP%2C_Android%2C_Chrome_and_Apps%2C_Google.jpg/1280px-Sundar_Pichai_-_SVP%2C_Android%2C_Chrome_and_Apps%2C_Google.jpg",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "built_at": "2026-05-16T02:40:22"
+}

@@ -448,6 +448,22 @@ CONCEPT_REGISTRY = {
     "defensive":             (_draw_shield,           "DEFENSIVE PLAY"),
     "commoditization":       (_draw_commodity_grid,   "COMMODITIZED"),
     "commoditized":          (_draw_commodity_grid,   "COMMODITIZED"),
+    # Phase 20 additions — observed from real LLM Visual Director output
+    "transformation":        (_draw_path_branching,   "TRANSFORMATION"),
+    "control_shift":         (_draw_path_branching,   "CONTROL SHIFT"),
+    "seamless_integration":  (_draw_overlap_circles,  "INTEGRATION"),
+    "autonomous_agent":      (_draw_network_nodes,    "AGENT"),
+    "first_mover_advantage": (_draw_arrow_up,         "FIRST MOVER"),
+    "race":                  (_draw_arrow_up,         "RACE"),
+    "context_awareness":     (_draw_network_nodes,    "CONTEXT AWARE"),
+    "agent_routing":         (_draw_network_nodes,    "AGENT ROUTING"),
+    "apps_as_functions":     (_draw_commodity_grid,   "APPS AS FUNCTIONS"),
+    "old_model_apps":        (_draw_commodity_grid,   "APP GRID"),
+    "narrative_control":     (_draw_shield,           "NARRATIVE CONTROL"),
+    "gatekeeper":            (_draw_shield,           "GATEKEEPER"),
+    "collapse":              (_draw_arrow_down,       "COLLAPSE"),
+    "following_not_leading": (_draw_path_branching,   "FOLLOWING"),
+    "engagement":            (_draw_overlap_circles,  "ENGAGEMENT"),
 }
 
 
