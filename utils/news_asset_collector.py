@@ -237,11 +237,22 @@ def fetch_company_logo(key, canonical_name, domain):
         rendered = render_logo_png(canonical_name, size=512, accent_bg=True)
         if rendered and rendered.exists():
             target.parent.mkdir(parents=True, exist_ok=True)
-            # Copy to the manifest path under the canonical slug
             target.write_bytes(rendered.read_bytes())
             return str(target)
     except Exception as e:
         print(f"      ⚠️  Simple Icons lookup failed for {canonical_name}: {e}")
+
+    # Try 0.5: Brandfetch CDN (covers brands Simple Icons removed:
+    # Microsoft, OpenAI, ChatGPT, AWS, Amazon, Oracle, IBM, Azure, ...)
+    try:
+        from utils.brandfetch_client import fetch_logo_png as _bf_fetch
+        bf = _bf_fetch(canonical_name, domain=domain, size=512)
+        if bf and bf.exists():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(bf.read_bytes())
+            return str(target)
+    except Exception as e:
+        print(f"      ⚠️  Brandfetch lookup failed for {canonical_name}: {e}")
 
     # Try 1: Wikipedia page-summary thumbnail (often the logo for companies)
     title = urllib.parse.quote(canonical_name.replace(" ", "_"))

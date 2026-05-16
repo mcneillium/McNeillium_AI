@@ -696,14 +696,12 @@ def build_section_background(section_idx, section_dur, shots,
                     print(f"\n        ⚠️  pack fallback failed: {e}")
 
             if not ok and shot_type == "company_logo" and shot.get("company"):
-                # Phase 21.1: Simple Icons lookup before stock fallback.
-                # 3,294 brand SVGs cover most named companies; for the
-                # ~6 commonly-cited brands they exclude (Microsoft,
-                # OpenAI, ChatGPT, AWS, Amazon, Cohere) we still fall
-                # through to stock_fetcher.
+                # Phase 21 logo chain: Simple Icons → Brandfetch → stock.
+                if str(PROJECT_ROOT) not in sys.path:
+                    sys.path.insert(0, str(PROJECT_ROOT))
+
+                # Try 1: Simple Icons (3,294 brand SVGs)
                 try:
-                    if str(PROJECT_ROOT) not in sys.path:
-                        sys.path.insert(0, str(PROJECT_ROOT))
                     from utils.logo_indexer import render_logo_png
                     logo_png = render_logo_png(
                         shot["company"], size=512, accent_bg=True)
@@ -714,6 +712,20 @@ def build_section_background(section_idx, section_dur, shots,
                         print("[+SI] ", end="")
                 except Exception as e:
                     print(f"\n        ⚠️  Simple Icons fallback failed: {e}")
+
+                # Try 2: Brandfetch (covers Microsoft, OpenAI, AWS, ...)
+                if not ok:
+                    try:
+                        from utils.brandfetch_client import fetch_logo_png
+                        bf_png = fetch_logo_png(shot["company"], size=512)
+                        if bf_png and bf_png.exists():
+                            image = Image.open(bf_png).convert("RGB")
+                            ok = create_static_clip(image, beat_dur,
+                                                    beat_path, w, h,
+                                                    kb_effect=0)
+                            print("[+BF] ", end="")
+                    except Exception as e:
+                        print(f"\n        ⚠️  Brandfetch fallback failed: {e}")
 
                 # Last resort: stock footage with brand name as query
                 if not ok:
