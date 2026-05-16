@@ -59,6 +59,56 @@ MAX_PHRASE_S = 6.0
 MIN_PHRASE_S = 2.5
 MIN_SILENCE_MS = 250  # cut anything longer than this
 
+# Anticipation buffer: visual appears N ms before the entity word is
+# spoken so it's already on screen when Brian says it.
+ENTITY_ANTICIPATION_MS = 100
+
+# Entity vocabulary for word-level sync. The phrase-splitter snaps
+# beat boundaries to the offset_ms of any of these words.
+KNOWN_ENTITIES = {
+    # Companies — keys are lowercase tokens, values are the canonical
+    # display name the Director will use as `company`.
+    "openai":      ("company", "OpenAI"),
+    "microsoft":   ("company", "Microsoft"),
+    "anthropic":   ("company", "Anthropic"),
+    "google":      ("company", "Google"),
+    "apple":       ("company", "Apple"),
+    "meta":        ("company", "Meta"),
+    "nvidia":      ("company", "Nvidia"),
+    "amazon":      ("company", "Amazon"),
+    "aws":         ("company", "AWS"),
+    "azure":       ("company", "Azure"),
+    "oracle":      ("company", "Oracle"),
+    "ibm":         ("company", "IBM"),
+    "tesla":       ("company", "Tesla"),
+    "spacex":      ("company", "SpaceX"),
+    "claude":      ("product", "Claude"),
+    "chatgpt":     ("product", "ChatGPT"),
+    "gpt":         ("product", "GPT"),
+    "gemini":      ("product", "Gemini"),
+    "copilot":     ("product", "Copilot"),
+    "bedrock":     ("product", "Bedrock"),
+    "vertex":      ("product", "Vertex"),
+    # People — surname triggers the snap (typical pattern in narration)
+    "altman":      ("person", "Sam Altman"),
+    "musk":        ("person", "Elon Musk"),
+    "amodei":      ("person", "Dario Amodei"),
+    "pichai":      ("person", "Sundar Pichai"),
+    "nadella":     ("person", "Satya Nadella"),
+    "ellison":     ("person", "Larry Ellison"),
+    "huang":       ("person", "Jensen Huang"),
+    "zuckerberg":  ("person", "Mark Zuckerberg"),
+    "hassabis":    ("person", "Demis Hassabis"),
+    "sutskever":   ("person", "Ilya Sutskever"),
+    "samat":       ("person", "Sameer Samat"),
+}
+
+
+def _word_clean(word_text):
+    """Strip punctuation, lowercase. AssemblyAI words come without
+    most punct already, but defensive."""
+    return re.sub(r"[^a-z0-9]", "", word_text.lower())
+
 
 def _is_sentence_end(text):
     return text.endswith(".") or text.endswith("!") or text.endswith("?")
@@ -166,7 +216,57 @@ def _split_long(phrases):
     return out
 
 
-def plan_phrases(words_path=None, script_path=None):
+def _entity_split(phrases):
+    """FINAL FIX 1: walk each phrase, split it at entity word boundaries
+    so the beat for that entity STARTS exactly when Brian says it
+    (minus a 100ms anticipation buffer).
+
+    Each split fragment carries a `pinned_entity` field the Visual
+    Director uses to lock the visual to that exact word."""
+    out = []
+    for phrase in phrases:
+        if len(phrase) <= 1:
+            out.append(phrase)
+            continue
+
+        # Find entity hits inside this phrase, indexed by position
+        hits = []
+        for i, w in enumerate(phrase):
+            clean = _word_clean(w["text"])
+            if clean in KNOWN_ENTITIES:
+                hits.append((i, KNOWN_ENTITIES[clean]))
+
+        if not hits:
+            out.append(phrase)
+            continue
+
+        # Split: each entity word starts a new fragment. The fragment
+        # before the first entity is its own piece (if non-empty).
+        cursor = 0
+        for hit_idx, entity_info in hits:
+            if hit_idx > cursor:
+                pre = phrase[cursor:hit_idx]
+                if pre:
+                    out.append(pre)
+            # Build the entity-anchored fragment up to (but not
+            # including) the next entity, or to the end.
+            next_hit = next((h[0] for h in hits if h[0] > hit_idx),
+                            len(phrase))
+            entity_frag = phrase[hit_idx:next_hit]
+            # Tag with the pinned entity for the Director to consume.
+            for w in entity_frag:
+                w["_pinned"] = entity_info
+            out.append(entity_frag)
+            cursor = next_hit
+        if cursor < len(phrase):
+            tail = phrase[cursor:]
+            if tail:
+                out.append(tail)
+    return out
+
+
+def plan_phrases(words_path=None, script_path=None,
+                 *, entity_sync=True):
     words_path = Path(words_path or DEFAULT_WORDS)
     script_path = Path(script_path or DEFAULT_SCRIPT)
     if not words_path.exists():
@@ -181,20 +281,61 @@ def plan_phrases(words_path=None, script_path=None):
     phrases_raw = _initial_split(words, ends_lookup)
     phrases_raw = _merge_short(phrases_raw)
     phrases_raw = _split_long(phrases_raw)
+    if entity_sync:
+        phrases_raw = _entity_split(phrases_raw)
 
+    # Build the basic out list first (entity-pinned + plain).
     out = []
+    prev_end_s = 0.0
+    for i, phrase_words in enumerate(phrases_raw):
+        pass  # placeholder so original loop below works
+    out = []
+    prev_end_s = 0.0
     for i, phrase_words in enumerate(phrases_raw):
         if not phrase_words:
             continue
+        # Anticipation buffer: shift start back by 100ms IF the first
+        # word is a pinned entity, but never overlap the previous beat.
+        first_offset_s = float(phrase_words[0]["offset_ms"]) / 1000.0
+        pinned = phrase_words[0].get("_pinned")
+        if pinned:
+            anticipated = first_offset_s - (ENTITY_ANTICIPATION_MS / 1000.0)
+            start_s = max(prev_end_s, anticipated)
+        else:
+            start_s = first_offset_s
+        end_s = _word_end_ms(phrase_words[-1]) / 1000.0
         text = " ".join(w["text"] for w in phrase_words)
-        out.append({
+        entry = {
             "phrase_idx": i,
             "section_id": phrase_words[0].get("section_id", ""),
-            "start_s": round(float(phrase_words[0]["offset_ms"]) / 1000.0, 3),
-            "end_s": round(_word_end_ms(phrase_words[-1]) / 1000.0, 3),
-            "duration_s": round(_phrase_duration(phrase_words), 3),
+            "start_s": round(start_s, 3),
+            "end_s": round(end_s, 3),
+            "duration_s": round(end_s - start_s, 3),
             "text": text,
-        })
+        }
+        if pinned:
+            entry["pinned_entity_kind"] = pinned[0]   # company|person|product
+            entry["pinned_entity_name"] = pinned[1]
+        out.append(entry)
+        prev_end_s = end_s
+
+    # FINAL FIX 1: extend short entity beats to >= 1.5s by stealing
+    # from the next phrase. Keeps the entity visual on screen long
+    # enough to register, while preserving the snap-to-word start.
+    MIN_ENTITY_DUR = 1.5
+    MAX_STEAL = 1.2
+    for i in range(len(out) - 1):
+        cur, nxt = out[i], out[i + 1]
+        if cur.get("pinned_entity_name") and cur["duration_s"] < MIN_ENTITY_DUR:
+            shortfall = MIN_ENTITY_DUR - cur["duration_s"]
+            steal = min(shortfall, MAX_STEAL,
+                        max(0.0, nxt["duration_s"] - 0.6))
+            if steal <= 0:
+                continue
+            cur["end_s"] = round(cur["end_s"] + steal, 3)
+            cur["duration_s"] = round(cur["end_s"] - cur["start_s"], 3)
+            nxt["start_s"] = cur["end_s"]
+            nxt["duration_s"] = round(nxt["end_s"] - nxt["start_s"], 3)
     return out
 
 

@@ -121,6 +121,25 @@ def _build_concept_png(concept, w=W, h=H):
     return None
 
 
+def _build_unsplash_path(query):
+    """Resolve an Unsplash atmospheric photo for a query."""
+    try:
+        from utils.unsplash_client import fetch_photo
+        return fetch_photo(query, orientation="landscape")
+    except Exception:
+        return None
+
+
+def _build_stock_video_path(query, min_duration=3.0):
+    """Resolve a real video clip via the multi-source stock fetcher."""
+    try:
+        from utils.stock_fetcher import fetch_video
+        p = fetch_video(query, min_duration=min_duration)
+        return Path(p) if p else None
+    except Exception:
+        return None
+
+
 def _build_layout_png(phrase, beat_idx, beat_dir):
     """Compose the visual for one phrase using its layout. Returns
     a PIL Image.RGB at (W, H) or None on miss."""
@@ -134,6 +153,24 @@ def _build_layout_png(phrase, beat_idx, beat_dir):
     name = phrase.get("name")
     concept = phrase.get("concept")
     caption = phrase.get("caption_text") or phrase.get("query") or ""
+
+    # FINAL FIX 1: word-level entity pin overrides Director's choice.
+    # If the planner pinned a specific entity to this phrase, the visual
+    # MUST be that entity. Director may have ignored the PINNED hint.
+    pinned_kind = phrase.get("pinned_entity_kind")
+    pinned_name = phrase.get("pinned_entity_name")
+    if pinned_kind == "company" or pinned_kind == "product":
+        company = pinned_name  # override
+        if shot_type not in ("company_logo", "logo_photo"):
+            shot_type = "company_logo"
+        if layout == "solo":
+            layout = "logo_hero"
+    elif pinned_kind == "person":
+        name = pinned_name  # override
+        if shot_type not in ("person_photo", "logo_photo", "news_anchor"):
+            shot_type = "person_photo"
+        if layout == "solo":
+            layout = "news_anchor"
 
     logo_path = _build_logo_path(company) if company else None
     secondary_logo = _build_logo_path(secondary) if secondary else None
@@ -177,6 +214,33 @@ def _build_layout_png(phrase, beat_idx, beat_dir):
     if shot_type == "chart":
         return stat_card(caption[:12] or "?", label=caption[:60],
                          company_logo_path=logo_path)
+    # FINAL FIX 2/3: Unsplash photo (atmospheric/setting) + stock video
+    if shot_type == "unsplash":
+        u = _build_unsplash_path(phrase.get("query") or caption or company or "")
+        if u and u.exists():
+            return Image.open(u).convert("RGB")
+    if shot_type == "footage":
+        # Footage is a video clip — we can't easily concat that into our
+        # PNG-based beat assembler. Pull the FIRST FRAME as a still so
+        # the beat at least matches the action's setting; adding true
+        # video-in-beat support is a larger pipeline change.
+        clip = _build_stock_video_path(phrase.get("query") or caption or "")
+        if clip and clip.exists():
+            still = TEMP_DIR / f"still_{beat_idx:03d}.png"
+            try:
+                subprocess.run(
+                    [_ffmpeg(), "-y", "-i", str(clip),
+                     "-vf", f"scale={W}:{H}:force_original_aspect_ratio=increase,"
+                     f"crop={W}:{H}",
+                     "-frames:v", "1", str(still)],
+                    capture_output=True, check=True,
+                )
+                return Image.open(still).convert("RGB")
+            except Exception:
+                pass
+    # Last resort: if we have ANY logo, show it
+    if logo_path:
+        return logo_hero(logo_path, label=(company or "").upper())
     return None
 
 

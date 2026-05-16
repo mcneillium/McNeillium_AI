@@ -63,32 +63,54 @@ DEFAULT_BEATS_PER_SECTION = 4
 
 
 SYSTEM_PROMPT = """You are the Visual Director / asset librarian for an AI
-news commentary YouTube channel. The aesthetic is "news-anchor static":
-clean cuts, real photos held still, conceptual illustrations for abstract
-ideas. You're picking from a real asset library, not searching the web.
+news commentary YouTube channel. The aesthetic is news-anchor static:
+clean cuts, REAL imagery whenever possible, illustrations only for truly
+abstract concepts. You're picking from a real library, not search-engine
+guessing.
 
 ASSET LIBRARY (all local, all free):
-  - person_photo:         Wikipedia photos for ~50 named tech execs.
-                          Just give the canonical name.
-  - company_logo:         ~4,200 brand logos (Simple Icons + Lobe AI).
-                          Covers Microsoft, OpenAI, Anthropic, Google,
-                          Apple, Meta, Nvidia, AWS, Azure, Copilot, IBM,
-                          Mistral, Cohere, Claude, Gemini, X, Grok and
-                          most other named AI brands. Just give the
-                          company name as `company`.
-  - concept_illustration: Polished Lucide line-art icons. Use one of the
-                          REGISTERED CONCEPT SLUGS below — these map
-                          directly to drawings. If the perfect concept
-                          isn't listed, pick the closest registered slug
-                          rather than inventing a new one.
-  - stock_footage:        Pexels + Pixabay + Wikimedia + Internet Archive
-                          parallel search. Use for physical scenes only
-                          (data center, city skyline, hands typing) —
-                          not for abstract concepts.
-  - chart:                Numeric statistics (must include the value).
+  - person_photo:         Wikipedia photos for named tech execs +
+                          on-demand fetch for anyone with a Wikipedia page.
+  - company_logo:         ~4,200 brand logos (Simple Icons + Lobe AI) +
+                          Brandfetch fallback (Microsoft, OpenAI, AWS,
+                          Azure, Copilot, IBM, Amazon — all covered).
+  - concept_illustration: Polished Lucide line-art icons mapped to
+                          registered concept slugs (see list below).
+  - stock_footage:        Pexels / Pixabay / Pixabay-AI / Wikimedia /
+                          Internet Archive parallel search. REAL VIDEO
+                          CLIPS — use for action / movement / environment.
+  - unsplash_photo:       Real atmospheric photos (offices, skylines,
+                          courthouses, conferences). Use for grounded
+                          settings — better than stock video for "feeling".
+  - chart:                Numeric statistics.
   - article_screenshot:   Pre-fetched news articles.
 
-REGISTERED CONCEPT SLUGS (pick exactly one as `concept`):
+PRIORITY ORDER — pick the HIGHEST applicable tier:
+
+  1. PERSON mentioned by name             → person_photo (Wikipedia)
+  2. COMPANY ANNOUNCEMENT (subject of      → company_logo (clean SVG)
+     the sentence: "Microsoft announced")
+  3. COMPANY IN CONTEXT ("Microsoft's      → unsplash_photo of the HQ /
+     headquarters", "OpenAI's offices")      campus, NOT just the logo
+  4. SETTING / ATMOSPHERE ("Silicon         → unsplash_photo
+     Valley campus", "courthouse")
+  5. ACTION / MOVEMENT ("the deal is        → stock_footage (REAL VIDEO,
+     shifting", "Microsoft pulled back",      not a static icon)
+     "AI agents working")
+  6. ABSTRACT CONCEPT ("lost leverage",     → concept_illustration with a
+     "monopoly ends", "tectonic shift")       registered concept slug
+  7. STATISTIC ("$950 billion", "30%")      → chart  (with stat_card layout)
+  8. DIRECT QUOTE / NAMED ARTICLE           → article_screenshot
+
+PREFER REAL imagery over icons whenever the narration describes
+something tangible. Target mix per video:
+  ~25% real photos (Wikipedia + Unsplash)
+  ~25% real video clips (Pexels / Pixabay)
+  ~25% logos (Simple Icons / Lobe / Brandfetch)
+  ~20% concept illustrations
+  ~5%  charts / articles / hero shots
+
+REGISTERED CONCEPT SLUGS (use ONE as `concept` for tier 6):
   lost_leverage, scale_tipping, control_shift, narrative_control,
   exclusivity_lost, exclusive_access, monopoly_ends, monopoly_broken,
   gatekeeper, growth, rise, first_mover_advantage, race, decline,
@@ -101,18 +123,11 @@ REGISTERED CONCEPT SLUGS (pick exactly one as `concept`):
   transformation, following_not_leading, commoditization, commoditized,
   apps_as_functions, old_model_apps
 
-DECISION RULES:
-  - Specific PERSON named (CEO, founder, executive)  → person_photo
-  - Specific COMPANY named (any brand)               → company_logo
-  - Abstract concept ("lost leverage", "moat drained", "exodus",
-    "pivot", "scale tipping")                        → concept_illustration
-                                                        with a registered slug
-  - Direct quote / named article                     → article_screenshot
-  - Statistic stated as the focus ("$950 billion")   → chart
-  - Concrete physical scene described                → stock_footage
-
-Prefer SPECIFIC over GENERIC. A logo lands harder than stock footage of
-servers. A concept illustration lands harder than vague tech b-roll.
+WORD-LEVEL ENTITY SYNC: some phrases are pinned to a specific entity
+(marked "PINNED: <kind> <name>"). For those, you MUST pick the
+matching shot_type — pinned company → company_logo, pinned person →
+person_photo, pinned product → company_logo of the maker. The renderer
+has already snapped the beat start to that entity's spoken word.
 
 Output JSON only — no prose, no markdown fences."""
 
@@ -298,11 +313,16 @@ def plan_phrases_batch(phrases, *, client=None, _verbose=True):
                       f"{len(sec_phrases)} phrases")
             continue
 
-        # Build the prompt
-        phrase_lines = "\n".join(
-            f"  P{p['phrase_idx']}: \"{p['text']}\"  ({p['duration_s']}s)"
-            for p in sec_phrases
-        )
+        # Build the prompt — mark pinned-entity phrases inline so the
+        # Director respects the snap.
+        def _line(p):
+            tag = ""
+            if p.get("pinned_entity_name"):
+                tag = (f"  PINNED: {p['pinned_entity_kind']} "
+                       f"{p['pinned_entity_name']}")
+            return (f"  P{p['phrase_idx']}: \"{p['text']}\"  "
+                    f"({p['duration_s']}s){tag}")
+        phrase_lines = "\n".join(_line(p) for p in sec_phrases)
         user_prompt = (
             f"Section: {section_id}\n"
             f"You're planning one visual per phrase below. Each phrase "
@@ -357,7 +377,13 @@ def plan_phrases_batch(phrases, *, client=None, _verbose=True):
             if not got:
                 continue
             shot_type = got.get("shot_type") or "stock_footage"
-            renderer_type = "footage" if shot_type == "stock_footage" else shot_type
+            # Map Director vocab → renderer vocab.
+            type_map = {
+                "stock_footage":  "footage",
+                "unsplash_photo": "unsplash",
+                "stock_video":    "footage",
+            }
+            renderer_type = type_map.get(shot_type, shot_type)
             entry = {
                 "shot_type": renderer_type,
                 "query": got.get("query") or "",
