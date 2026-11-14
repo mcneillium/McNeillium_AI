@@ -1,0 +1,80 @@
+title: "Can river floods be forecast without tomorrow's weather?"
+kicker: "Explainer · Reproducible research"
+subtitle: "A test across 671 British catchments, and where the skill really comes from"
+end_title: "Read the full study"
+end_text: "Results, charts, limits and every logged decision: paulmartinmcneill.com/research"
+youtube:
+  title: "Can river floods be forecast without tomorrow's weather? 671 UK catchments tested"
+  tags: [hydrology, flood forecasting, machine learning, CAMELS-GB, LSTM, gradient boosting, reproducible research]
+  summary: 'How far ahead can river flow and flood warnings be forecast without knowing future weather? A reproducible test across 671 British catchments (CAMELS-GB, 1970 to 2022): the score at seven days, what an unseen region and a drier climate cost, whether an LSTM beats gradient boosting, and how many warnings are false alarms.'
+  links:
+  - - Full study, charts and limits
+    - https://paulmartinmcneill.com/research/#river-early-warning
+  - - Code, protocol and decision log
+    - https://github.com/mcneillium/river-early-warning
+  note: This study has not been peer reviewed. Treat the results as provisional.
+  thumbnail:
+    kicker: Research
+    text: Flood warnings *without* the forecast?
+    image: explainers/assets/river-warnings.jpg
+    position: center
+    size: 88
+segments:
+  - text: >-
+      Can river floods be forecast without knowing tomorrow's weather? Paul McNeill
+      tested that across 671 British catchments, using CAMELS-GB, a public dataset of
+      daily river flow and weather from 1970 to 2022.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#river-early-warning h2"
+        zoom: 1.6
+  - text: >-
+      The task: on any given day, forecast river flow one, three and seven days
+      ahead, using only what is known that day. The models were trained on 1970 to
+      2004, tuned on 2004 to 2012, and tested on 2012 to 2022.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#river-early-warning .research__chips"
+        zoom: 1.4
+  - text: >-
+      Skill is measured with a score where 1 is a perfect forecast and 0 is no better
+      than the long-term average. Most of the skill beyond a day depends on knowing the
+      weather. At seven days, the median score is 0.24 without future weather, and 0.72 when
+      the model is given the weather that actually happened. That second number is an
+      upper bound, not a forecast.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#river-early-warning .research__table"
+        zoom: 1.5
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#river-early-warning .spread"
+        zoom: 1.3
+  - text: >-
+      Forecasting a whole region the model never saw costs little: a median loss of
+      0.019 at one day. A different climate costs much more. Trained on wet catchments
+      and tested on dry ones, the score falls from 0.85 to 0.75.
+    shots:
+      - card:
+          kicker: "Transfer"
+          title: "Unseen region: loses 0.019. Drier climate: 0.85 → 0.75"
+          sub: "Median loss per catchment at one day for an unseen region. Wet-to-dry figures are the mean of three seeds."
+          size: 84
+  - text: >-
+      A neural network, an LSTM reading a year of daily data, did no better than
+      gradient boosting. That points to the missing weather forecast as the limit,
+      not the choice of model.
+    shots:
+      - card:
+          kicker: "Model choice"
+          title: "LSTM 0.73 · 0.38 · 0.24"
+          sub: "Gradient boosting 0.76 · 0.38 · 0.24, at one, three and seven days. Within the margin set in advance: no better."
+          size: 96
+  - text: >-
+      Warnings are harder still. At seven days, most high-flow warnings are false
+      alarms. The study has not been peer reviewed, and every decision, including the
+      mistakes, is logged in public.
+    shots:
+      - image: explainers/assets/river-warnings.jpg
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#corrections"
+        zoom: 1.4

@@ -1,0 +1,110 @@
+title: "Voice: an AAC app that explains its own predictions"
+kicker: "Explainer · Assistive technology"
+subtitle: "How a communication app suggests the next word, offline, and says why"
+end_title: "Try Voice in your browser"
+end_text: "The board, the full app and the caregiver dashboard, with made-up data: paulmartinmcneill.com/projects/ai-aac-app"
+theme: dark
+youtube:
+  title: "Voice: an AAC app that explains its own word predictions"
+  tags: [AAC, assistive technology, accessibility, next word prediction, n-gram, React Native, Paul McNeill]
+  summary: Voice is an AAC (augmentative and alternative communication) app built by Paul McNeill. This explainer shows how it suggests the next word offline, why every word keeps the same place on the board, and how each suggestion says why it was offered.
+  links:
+  - - Case study and live demos
+    - https://paulmartinmcneill.com/projects/ai-aac-app/
+  - - Try the word board
+    - https://paulmartinmcneill.com/lab/#voice
+  thumbnail:
+    kicker: Assistive tech
+    text: An AAC app that *explains* its predictions
+    image: explainers/work/01-voice/shots/02-00.jpg
+    size: 80
+segments:
+  - text: >-
+      This is Voice, an AAC app built by Paul McNeill. AAC stands for augmentative
+      and alternative communication: a way to talk for people who cannot rely on
+      speech.
+    shots:
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".post__hero h1, h1"
+        zoom: 1.5
+  - text: >-
+      The user builds a message by tapping words on a board of colour-coded tiles.
+      Every word keeps the same place, in Child and Adult modes alike, so the board
+      can be learned by position instead of searched.
+    shots:
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".voice-play__app"
+        zoom: 1.3
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-grid"
+        zoom: 1.6
+        actions:
+          - click: ".vp-tile:has-text('I want')"
+  - text: >-
+      As the message grows, Voice suggests the next word. Each suggestion says why
+      it was offered, for example a common next word, or a word you often say next.
+    shots:
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-sugs"
+        zoom: 2
+        actions:
+          - click: ".vp-tile:has-text('I want')"
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-sugs"
+        zoom: 2
+        actions:
+          - click: ".vp-tile:has-text('I want')"
+          - click: ".vp-sug__take:has-text('to')"
+  - text: >-
+      The prediction runs entirely on the device, with no network calls. It is a
+      trigram model built from 666 sentences written for Voice, with an optional
+      personal layer and a small ranker on top. Each set of suggestions takes well
+      under a millisecond on a desktop computer.
+    shots:
+      - card:
+          kicker: "How the prediction works"
+          title: "Trigram model · 666 authored sentences"
+          sub: "Plus an optional personal layer and a small ranker. Runs on the device, no network calls, well under a millisecond per set of suggestions."
+          size: 92
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".voice-play__source"
+        zoom: 2.4
+  - text: >-
+      Learning is off by default. When it is switched on, Voice learns only from
+      messages that are actually spoken, never from taps that are deleted. Here, after
+      I want Grandma has been spoken three times, Grandma appears as a suggestion,
+      marked as a word you often say next. Everything learned can be seen, and
+      forgotten, one word at a time.
+    shots:
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-learn"
+        zoom: 1.6
+        actions:
+          - check: "#vp-learn-toggle"
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-sugs"
+        zoom: 2
+        weight: 1.3
+        actions: &learn
+          - check: "#vp-learn-toggle"
+          - click: ".vp-tile:has-text('I want')"
+          - fill: ["#vp-type-input", "Grandma"]
+          - click: ".vp-type button[type=submit]"
+          - click: ".vp-btn--speak"
+          - click: ".vp-btn--speak"
+          - click: ".vp-btn--speak"
+          - click: "button.vp-btn:has-text('Clear')"
+          - click: ".vp-tile:has-text('I want')"
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".vp-learn"
+        zoom: 1.6
+        actions: *learn
+  - text: >-
+      A caregiver dashboard sits alongside the app. You can try the board, the full
+      app and the dashboard, all with made-up data, on Paul's portfolio at
+      paulmartinmcneill.com.
+    shots:
+      - image: explainers/assets/dashboard-admin-demo.jpg
+      - url: https://paulmartinmcneill.com/projects/ai-aac-app/
+        focus: ".demo-phone__frame"
+        zoom: 1.6

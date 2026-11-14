@@ -1,0 +1,68 @@
+title: "Why most of cancer drug response stays unexplained"
+kicker: "Explainer · Reproducible research"
+subtitle: "924 cell lines, one known marker, and a common mistake measured"
+end_title: "Read the full study"
+end_text: "Results, charts, limits and every logged decision: paulmartinmcneill.com/research"
+youtube:
+  title: "Drug response beyond a single marker: what 924 cancer cell lines show"
+  tags: [bioinformatics, machine learning, GDSC, PTEN, feature selection, data leakage, reproducible research]
+  summary: One gene, PTEN, is a known but incomplete guide to how cancer cell lines respond to AKT inhibitors. Using 924 cell lines from the public GDSC screen, this study measures how much more wider molecular data explains, how a common feature-selection mistake invents skill, and how stable the explanations are.
+  links:
+  - - Full study, charts and limits
+    - https://paulmartinmcneill.com/research/#drug-response
+  - - Code, protocol and decision log
+    - https://github.com/mcneillium/drug-response-beyond-marker
+  note: 'Cell lines only: nothing here is about patients or treatment. This study has not been peer reviewed.'
+  thumbnail:
+    kicker: Research
+    text: Why *four fifths* stays unexplained
+    image: explainers/assets/drug-ladder.jpg
+    position: center
+    size: 88
+segments:
+  - text: >-
+      One gene, PTEN, is a known but incomplete guide to how cancer cells respond to
+      drugs that block a protein called AKT. This study asks how much more wider
+      molecular data can explain, using 924 cancer cell lines from the public GDSC
+      screen.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#drug-response h2"
+        zoom: 1.6
+  - text: >-
+      PTEN alone explains about 5 per cent of the variation in response. Adding cancer
+      type and sequencing centre takes that to 11 per cent. Adding two thousand genes
+      reaches 14 per cent with an elastic net, and 19 per cent with gradient boosting.
+    shots:
+      - image: explainers/assets/drug-ladder.jpg
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#drug-response .research__table"
+        zoom: 1.5
+  - text: >-
+      So more than four fifths of the response stays unexplained. And that gap is not
+      mainly measurement noise. A related drug was measured twice: about 80 per cent of
+      its variation repeats, yet the best model for it explains only 18 per cent.
+    shots:
+      - card:
+          kicker: "The gap"
+          title: "Repeats agree on about 80%. The best model explains 18%."
+          sub: "Exploratory. Both figures are for a related drug, Uprosertib, measured twice at the same doses."
+          size: 84
+  - text: >-
+      The study also measures a common mistake. Choosing genes by their link to the
+      response before cross-validating produces a score of 0.14 even on shuffled data,
+      where there is nothing to find. Choosing inside each fold removes the leak.
+    shots:
+      - image: explainers/assets/drug-leak.jpg
+  - text: >-
+      The explanations were not stable either. The top twenty genes of refitted models
+      overlap by only 0.2, and no stable subgroups were found beyond tissue of origin.
+    shots:
+      - image: explainers/assets/drug-clusters.jpg
+  - text: >-
+      Cell lines are a stand-in: nothing here is about patients or treatment. The
+      study has not been peer reviewed. The code, protocol and decision log are public.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#drug-response .research__links"
+        zoom: 1.6

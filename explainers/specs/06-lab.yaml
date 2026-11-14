@@ -1,0 +1,91 @@
+title: "Four AI demos that run in a web page"
+kicker: "Explainer · The Lab"
+subtitle: "A sentiment model, a word predictor, a voice assistant and an agent animation"
+end_title: "Open the Lab"
+end_text: "Every demo, live in your browser: paulmartinmcneill.com/lab"
+youtube:
+  title: "Four AI demos in one web page: TensorFlow.js, word prediction, voice AI and agents"
+  tags: [TensorFlow.js, machine learning in the browser, AAC, ElevenLabs, AI agents, web demo]
+  summary: 'Four AI demos on one web page: a TensorFlow.js sentiment model and an AAC word predictor that run in the browser, a live ElevenLabs voice assistant, and an animation of how a research agent works through a task.'
+  links:
+  - - Open the Lab
+    - https://paulmartinmcneill.com/lab/
+  note: The sentiment model is TensorFlow.js's public example model, not one Paul trained. The agent animation is an illustration, not a live agent.
+  thumbnail:
+    kicker: The Lab
+    text: 4 AI demos in *one* web page
+    image: explainers/work/06-lab/shots/02-00.jpg
+    size: 92
+segments:
+  - text: >-
+      The Lab on Paul McNeill's portfolio holds four working demos. Three of them
+      run entirely on the visitor's device.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/
+        focus: ".post__hero"
+        zoom: 1.3
+  - text: >-
+      First, a sentiment model. It is a small public example model from
+      TensorFlow.js, trained on movie reviews. Type a sentence and it scores how
+      positive it is, inside the visitor's browser, with nothing they type sent to
+      a server.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/
+        focus: ".ml-card"
+        zoom: 1.2
+        actions:
+          - wait: 4000
+          - click: ".ml-chip >> nth=0"
+          - click: "#mlRun"
+          - wait: 2500
+  - text: >-
+      Second, the word board from Voice, Paul's AAC app. It runs the app's real
+      prediction engine, so the suggestions and their reasons match the app.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/#voice
+        focus: ".voice-play__app"
+        zoom: 1.3
+        actions:
+          - click: ".vp-tile:has-text('I want')"
+  - text: >-
+      Third, a live voice assistant built with ElevenLabs. This is the one demo that
+      uses a server: what the visitor says is sent to ElevenLabs, and the page
+      explains that before anything loads.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/#voice-agent
+        focus: ".voice-agent"
+        zoom: 1.3
+  - text: >-
+      Fourth, an animation of how a research agent works through a task: input,
+      planning, tool use, memory, synthesis and output. It is an illustration of
+      the pattern, not a live agent.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/#agent
+        focus: ".agent-viz"
+        zoom: 1.1
+        actions:
+          - click: "#agentReset"
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+      - url: https://paulmartinmcneill.com/lab/#agent
+        focus: ".agent-viz"
+        zoom: 1.1
+        actions:
+          - click: "#agentReset"
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - click: "#agentStep"
+          - wait: 300
+          - wait: 800

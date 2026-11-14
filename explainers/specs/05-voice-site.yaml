@@ -1,0 +1,75 @@
+title: "A portfolio you can listen to and talk to"
+kicker: "Explainer · Accessible web"
+subtitle: "Narration, a voice assistant and a voice picker on paulmartinmcneill.com"
+end_title: "Try it yourself"
+end_text: "Listen, speak or type: paulmartinmcneill.com"
+youtube:
+  title: "A portfolio you can listen to and talk to: voice features on a static website"
+  tags: [web accessibility, speech synthesis, speech recognition, ElevenLabs, Jekyll, voice user interface]
+  summary: 'Paul McNeill''s portfolio can be listened to and talked to: recorded narration with transcripts, a text assistant you can speak to, a voice picker like the colour and font pickers, and a live ElevenLabs voice assistant on the Lab page. All on a static Jekyll site.'
+  links:
+  - - The site
+    - https://paulmartinmcneill.com/
+  - - The live voice assistant
+    - https://paulmartinmcneill.com/lab/#voice-agent
+  thumbnail:
+    kicker: Accessible web
+    text: A portfolio you can *talk to*
+    image: explainers/work/05-voice-site/shots/02-00.jpg
+    size: 92
+    position: right top
+segments:
+  - text: >-
+      Paul McNeill's portfolio is built to be heard as well as read. The main pages
+      have a short recorded narration, with the full transcript one tap away.
+    shots:
+      - url: https://paulmartinmcneill.com/
+        focus: ".listen"
+        zoom: 1.8
+        actions:
+          - eval: "document.querySelector('.listen__transcript')?.setAttribute('open','')"
+  - text: >-
+      The narration uses an AI voice made with ElevenLabs, and every player says so.
+      It is not Paul's voice.
+    shots:
+      - url: https://paulmartinmcneill.com/
+        focus: ".listen__note"
+        zoom: 2.2
+  - text: >-
+      The site's text assistant can be used by voice too. Press the microphone and
+      speak; the question appears as you talk, and the reply can be read aloud.
+    shots:
+      - url: https://paulmartinmcneill.com/
+        focus: "#chatbot"
+        zoom: 1.4
+        actions:
+          - eval: "document.getElementById('chatFab').click()"
+          - wait: 800
+  - text: >-
+      Visitors can choose that voice, the same way they choose the colour and the
+      font. The picker lists the voices on their own device, with a speed control
+      and a preview, and the choice is remembered in their browser.
+    shots:
+      - url: https://paulmartinmcneill.com/
+        focus: "#voicePanel"
+        zoom: 1.7
+        actions:
+          - click: "#voiceToggle"
+          - wait: 400
+  - text: >-
+      On the Lab page there is also a live voice assistant. It answers questions
+      about Paul's work from a fact sheet taken from the site, and says it is not
+      Paul. Nothing from ElevenLabs loads until the visitor presses the button.
+    shots:
+      - url: https://paulmartinmcneill.com/lab/#voice-agent
+        focus: ".voice-agent"
+        zoom: 1.3
+  - text: >-
+      All of it is plain HTML, CSS and JavaScript on a static site. Speech
+      recognition and the voice picker use speech features built into the visitor's
+      browser, and the site still works with no sound at all.
+    shots:
+      - card:
+          kicker: "Under the hood"
+          title: "Static site. Browser speech. Text always available."
+          sub: "Jekyll on GitHub Pages, vanilla JavaScript, recorded clips from ElevenLabs, transcripts for every clip."
