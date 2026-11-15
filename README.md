@@ -1,7 +1,22 @@
-# 🎬 McNeillium_AI — Autonomous YouTube Content Pipeline
+# McNeillium_AI: a checked video pipeline
 
-An AI-powered pipeline that autonomously generates YouTube videos:
-**Script → Voice → Video → Git Push** — all from a single command.
+A Python pipeline (about 24,000 lines, 43 defined roles in `agents.yaml`) that
+turns a topic into a narrated, captioned video: Claude writes the script,
+ElevenLabs or Edge TTS narrates it, visuals are captured or assembled, FFmpeg
+renders and syncs captions to the speech, and the result is packaged for a
+private upload. Audio quality checks, speech-to-text comparison against the
+script and a cost governor run along the way.
+
+Its main use so far is an explainer series of my own work, filmed from
+[paulmartinmcneill.com](https://paulmartinmcneill.com): every fact traced to
+the site or a public repository, every clip transcribed and checked, uploads
+private until reviewed. That work is on the branch `explainers/own-work-series`
+(see `explainers/README.md` there).
+
+Case study: [paulmartinmcneill.com/projects/mcneillium-ai-video-pipeline](https://paulmartinmcneill.com/projects/mcneillium-ai-video-pipeline/)
+
+The sections below describe the first version (script, voice, video, push),
+which still runs from `pipeline.py`.
 
 ## Architecture
 
