@@ -68,7 +68,7 @@ def take_shots(spec, work):
         browser = p.chromium.launch(executable_path=chrome, args=["--no-sandbox"]) if chrome else p.chromium.launch()
         for si, seg in enumerate(spec["segments"]):
             for hi, shot in enumerate(seg.get("shots", [])):
-                if shot.get("image") or shot.get("card"):
+                if shot.get("image") or shot.get("card") or shot.get("clip"):
                     continue
                 zoom = float(shot.get("zoom", 1))
                 ctx = browser.new_context(viewport={"width": W, "height": H}, device_scale_factor=zoom,
@@ -164,57 +164,208 @@ def still_clip(img, seconds, out, fade_in=False, fade_out=False):
     atomic_render(["ffmpeg", "-y", "-v", "error", "-framerate", str(FPS), "-i", str(img), "-vf", vf] + ENC, out)
 
 
-def scene_from_shots(images, weights, total, out):
+PHONE_HTML = """<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{{margin:0;width:{w}px;height:{h}px;overflow:hidden;background:transparent;font-family:'Inter',sans-serif}}
+.bg{{position:absolute;inset:0;background:radial-gradient(1200px 800px at 75% 40%,#1d2f4a 0,#101b2c 60%)}}
+.bar{{position:absolute;left:0;top:0;height:10px;width:100%;background:linear-gradient(90deg,#a78bfa,#6fd3c4)}}
+.txt{{position:absolute;left:140px;top:0;bottom:0;width:{tw}px;display:flex;flex-direction:column;justify-content:center;color:#e6edf6}}
+.k{{font-size:28px;letter-spacing:.12em;text-transform:uppercase;color:#a78bfa;margin-bottom:22px}}
+.t{{font-size:66px;line-height:1.08;font-weight:700;margin:0 0 22px}}
+.s{{font-size:32px;line-height:1.4;color:#acbcd0;margin:0}}
+.bezel{{position:absolute;left:{bx}px;top:{by}px;width:{bw}px;height:{bh}px;border-radius:{br}px;
+  box-shadow:0 0 0 {bz}px #05080e,0 0 0 {bz2}px #3a4a63,0 40px 90px rgba(0,0,0,.6)}}
+</style></head><body>{body}</body></html>"""
+
+LT_HTML = """<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{{margin:0;width:{w}px;height:{h}px;background:transparent;font-family:'Inter',sans-serif;overflow:hidden}}
+.lt{{position:absolute;left:96px;bottom:200px;padding:18px 30px 20px 26px;background:rgba(16,27,44,.92);
+  border-left:8px solid #a78bfa;border-radius:6px}}
+.n{{font-size:46px;font-weight:700;color:#fff;line-height:1.1}}.r{{font-size:28px;color:#acbcd0;margin-top:6px}}
+</style></head><body><div class="lt"><div class="n">{name}</div><div class="r">{role}</div></div></body></html>"""
+
+
+def render_html(path, page_html, transparent=False):
+    from playwright.sync_api import sync_playwright
+    path.parent.mkdir(parents=True, exist_ok=True)
+    chrome = shutil.which("google-chrome")
+    with sync_playwright() as p:
+        b = p.chromium.launch(executable_path=chrome, args=["--no-sandbox"]) if chrome else p.chromium.launch()
+        pg = b.new_page(viewport={"width": W, "height": H})
+        pg.set_content(page_html)
+        pg.wait_for_timeout(250)
+        pg.screenshot(path=str(path), type="png", omit_background=transparent)
+        b.close()
+    return path
+
+
+def phone_layout(clip_w, clip_h):
+    """Screen rectangle for a phone recording on the right of the frame."""
+    sh = 860
+    sw = round(sh * clip_w / clip_h / 2) * 2
+    return {"x": 1290 + (430 - sw) // 2, "y": 70, "w": sw, "h": sh}
+
+
+def render_phone_frames(work, name, label, clip_w, clip_h):
+    r = phone_layout(clip_w, clip_h)
+    rad, bz = 44, 16
+    common = dict(w=W, h=H, tw=1000, bx=r["x"], by=r["y"], bw=r["w"], bh=r["h"], br=rad, bz=bz, bz2=bz + 3)
+    txt = ""
+    if label:
+        txt = (f'<div class="txt"><div class="k">{html.escape(label.get("kicker", ""))}</div>'
+               f'<div class="t">{html.escape(label.get("title", ""))}</div>'
+               f'<p class="s">{html.escape(label.get("sub", ""))}</p></div>')
+    bg = render_html(work / "frames" / f"{name}-bg.png",
+                     PHONE_HTML.format(body='<div class="bg"></div><div class="bar"></div>' + txt, **common))
+    # bezel: transparent everywhere except the ring, with rounded corners masking the screen
+    mask_css = (f'<div style="position:absolute;inset:0;background:#000;'
+                f'-webkit-mask:radial-gradient(0 0,#000 0,#000 0);"></div>')
+    bezel_body = (f'<svg width="{W}" height="{H}" style="position:absolute;inset:0"><defs><mask id="m">'
+                  f'<rect width="{W}" height="{H}" fill="white"/><rect x="{r["x"]}" y="{r["y"]}" width="{r["w"]}" '
+                  f'height="{r["h"]}" rx="{rad}" fill="black"/></mask></defs>'
+                  f'<rect x="{r["x"] - 40}" y="{r["y"] - 40}" width="{r["w"] + 80}" height="{r["h"] + 80}" '
+                  f'fill="#0c111b" mask="url(#m)"/></svg><div class="bezel"></div>')
+    bezel = render_html(work / "frames" / f"{name}-bezel.png", PHONE_HTML.format(body=bezel_body, **common),
+                        transparent=True)
+    return bg, bezel, r
+
+
+def clip_window(shot):
+    """Resolve start/end (seconds or mark names like 'board+0.5') against <clip>.marks.json."""
+    clip = ROOT / shot["clip"]
+    marks_path = clip.with_suffix(".marks.json")
+    marks = json.loads(marks_path.read_text()) if marks_path.exists() else {}
+
+    def t(v, default):
+        if v is None:
+            return default
+        if isinstance(v, (int, float)):
+            return float(v)
+        m = re.match(r"^([\w-]+)([+-][\d.]+)?$", str(v))
+        return marks[m.group(1)] + float(m.group(2) or 0)
+    return clip, t(shot.get("start"), 0.0), t(shot.get("end"), duration(clip))
+
+
+def shot_chain(shot, ln, idx, label, work, name):
+    """Inputs and a filter chain giving exactly ln seconds of 1920x1080 video as [label]."""
+    inputs, chain = [], []
+    z = shot.get("move")
+    if shot.get("clip"):
+        clip, a, b = clip_window(shot)
+        speed = float(shot.get("speed", 1))
+        avail = (b - a) / speed
+        if avail > ln and shot.get("align") == "end":
+            a = b - ln * speed
+        inputs += ["-i", str(clip)]
+        src = f"[{idx}:v]trim=start={a:.3f}:end={b:.3f},setpts=(PTS-STARTPTS)/{speed},fps={FPS}"
+        if shot.get("frame") == "phone":
+            cw, ch = (int(x) for x in subprocess.check_output(
+                ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                 "-of", "csv=p=0", str(clip)], text=True).strip().split(","))
+            bg, bezel, r = render_phone_frames(work, name, shot.get("label"), cw, ch)
+            inputs += ["-loop", "1", "-framerate", str(FPS), "-i", str(bg),
+                       "-loop", "1", "-framerate", str(FPS), "-i", str(bezel)]
+            sm = shot.get("screen_move")
+            if sm:  # zoom inside the phone screen, leaving the label and frame still
+                sn = max(int(ln * FPS), 1)
+                sfx, sfy = shot.get("screen_focus", [0.5, 0.3])
+                src += f",tpad=stop_mode=clone:stop_duration={ln + 1:.3f}"
+                src += (f",zoompan=z='{sm[0]}+({sm[1]}-{sm[0]})*min(on/{sn}\\,1)':x='(iw-iw/zoom)*{sfx}':"
+                        f"y='(ih-ih/zoom)*{sfy}':d=1:s={cw}x{ch}:fps={FPS}")
+            chain.append(f"{src},scale={r['w']}:{r['h']}:flags=lanczos[{label}s]")
+            chain.append(f"[{idx + 1}:v][{label}s]overlay={r['x']}:{r['y']}:shortest=1[{label}o]")
+            chain.append(f"[{label}o][{idx + 2}:v]overlay=0:0:shortest=1[{label}f]")
+            cur, used = f"[{label}f]", 3
+        else:
+            chain.append(f"{src},scale={W}:{H}:force_original_aspect_ratio=increase:flags=lanczos,crop={W}:{H}[{label}f]")
+            cur, used = f"[{label}f]", 1
+        chain.append(f"{cur}tpad=stop_mode=clone:stop_duration={ln + 1:.3f},trim=duration={ln:.3f},setpts=PTS-STARTPTS[{label}t]")
+        cur = f"[{label}t]"
+    else:
+        img = shot["_img"]
+        inputs += ["-loop", "1", "-framerate", str(FPS), "-t", f"{ln + 0.1:.3f}", "-i", str(img)]
+        chain.append(f"[{idx}:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},trim=duration={ln:.3f},setpts=PTS-STARTPTS[{label}t]")
+        cur, used = f"[{label}t]", 1
+        if z is None and shot.get("kenburns", True) and not shot.get("card"):
+            z = [1.0, 1.05]
+    if z:
+        n = max(int(ln * FPS), 1)
+        f = shot.get("focus")
+        fx, fy = f if isinstance(f, (list, tuple)) else (0.5, 0.5)
+        chain.append(f"{cur}scale={W * 2}:{H * 2}:flags=lanczos,zoompan=z='{z[0]}+({z[1]}-{z[0]})*on/{n}':"
+                     f"x='(iw-iw/zoom)*{fx}':y='(ih-ih/zoom)*{fy}':d=1:s={W}x{H}:fps={FPS}[{label}z]")
+        cur = f"[{label}z]"
+    chain.append(f"{cur}format=yuv420p,setsar=1[{label}]")
+    return inputs, chain, used
+
+
+def scene_from_shots(shots, total, out, work, si, lower_third=None):
     """One file for a segment: its shots back to back with crossfades inside."""
-    n = len(images)
+    n = len(shots)
     usable = total + XFADE * (n - 1)
-    wsum = sum(weights)
-    lens = [usable * w / wsum for w in weights]
-    if n == 1:
-        return still_clip(images[0], total, out)
-    inputs, chains = [], []
-    for i, (img, ln) in enumerate(zip(images, lens)):
-        inputs += ["-framerate", str(FPS), "-i", str(img)]
-        chains.append(f"[{i}:v]format=yuv420p,loop=-1:1,trim=duration={ln:.3f},setpts=PTS-STARTPTS,fps={FPS}[v{i}]")
+    wsum = sum(float(s.get("weight", 1)) for s in shots)
+    lens = [usable * float(s.get("weight", 1)) / wsum for s in shots]
+    inputs, chains, idx = [], [], 0
+    for i, (shot, ln) in enumerate(zip(shots, lens)):
+        ins, ch, used = shot_chain(shot, ln, idx, f"v{i}", work, f"{si:02d}-{i:02d}")
+        inputs += ins
+        chains += ch
+        idx += used
     prev, offset = "v0", 0.0
     for i in range(1, n):
         offset += lens[i - 1] - XFADE
         tag = f"x{i}"
         chains.append(f"[{prev}][v{i}]xfade=transition=fade:duration={XFADE}:offset={offset:.3f}[{tag}]")
         prev = tag
+    if lower_third:
+        lt = render_html(work / "frames" / f"{si:02d}-lt.png",
+                         LT_HTML.format(w=W, h=H, name=html.escape(lower_third["name"]),
+                                        role=html.escape(lower_third.get("role", ""))), transparent=True)
+        at, dur = float(lower_third.get("at", 0.6)), float(lower_third.get("for", 4))
+        inputs += ["-loop", "1", "-framerate", str(FPS), "-t", f"{total:.3f}", "-i", str(lt)]
+        chains.append(f"[{idx}:v]format=rgba,fade=t=in:st={at}:d=0.4:alpha=1,"
+                      f"fade=t=out:st={at + dur}:d=0.4:alpha=1[lt]")
+        chains.append(f"[{prev}][lt]overlay=0:0:shortest=1,format=yuv420p[lto]")
+        prev = "lto"
     atomic_render(["ffmpeg", "-y", "-v", "error"] + inputs +
-                  ["-filter_complex", ";".join(chains), "-map", f"[{prev}]"] + ENC, out)
+                  ["-filter_complex", ";".join(chains), "-map", f"[{prev}]", "-t", f"{total:.3f}"] + ENC, out)
 
 
-def build_scenes(spec, work):
+def build_scenes(spec, work, only=None):
     scenes = work / "scenes"
     scenes.mkdir(exist_ok=True)
     title = render_card(work, "title", spec.get("kicker", "Explainer"), spec["title"], spec.get("subtitle", ""),
                         "paulmartinmcneill.com")
     end = render_card(work, "end", "Try it yourself", spec.get("end_title", "paulmartinmcneill.com"),
-                      spec.get("end_text", ""), "Narrated with an AI voice", size=88)
-    still_clip(title, CARD_SECONDS, scenes / "00-title.mp4", fade_in=True)
+                      spec.get("end_text", ""), spec.get("voice_note", "Narrated with an AI voice"), size=88)
     files = [scenes / "00-title.mp4"]
+    if only is None:
+        still_clip(title, CARD_SECONDS, scenes / "00-title.mp4", fade_in=True)
     for si, seg in enumerate(spec["segments"]):
+        out = scenes / f"{si + 1:02d}.mp4"
+        files.append(out)
+        if only is not None and si not in only:
+            continue
         audio = work / "audio" / f"{si:02d}.mp3"
         total = duration(audio) + float(seg.get("pad", 0.35))
-        imgs, weights = [], []
+        shots = []
         for hi, shot in enumerate(seg.get("shots", [])):
-            if shot.get("image"):
-                img = Path(shot["image"])
+            shot = dict(shot)
+            if shot.get("clip"):
+                pass
+            elif shot.get("image"):
+                shot["_img"] = Path(shot["image"])
             elif shot.get("card"):
                 c = shot["card"]
-                img = render_card(work, f"{si:02d}-{hi:02d}-card", c.get("kicker", ""), c.get("title", ""),
-                                  c.get("sub", ""), c.get("foot", "paulmartinmcneill.com"), size=c.get("size", 96))
+                shot["_img"] = render_card(work, f"{si:02d}-{hi:02d}-card", c.get("kicker", ""), c.get("title", ""),
+                                           c.get("sub", ""), c.get("foot", "paulmartinmcneill.com"),
+                                           size=c.get("size", 96))
             else:
-                img = work / "shots" / f"{si:02d}-{hi:02d}.jpg"
-            imgs.append(img)
-            weights.append(float(shot.get("weight", 1)))
-        out = scenes / f"{si + 1:02d}.mp4"
-        scene_from_shots(imgs, weights, total, out)
-        files.append(out)
+                shot["_img"] = work / "shots" / f"{si:02d}-{hi:02d}.jpg"
+            shots.append(shot)
+        scene_from_shots(shots, total, out, work, si, seg.get("lower_third"))
         print("scene", out.name, f"{total:.1f}s")
-    still_clip(end, END_SECONDS, scenes / "99-end.mp4", fade_out=True)
+    if only is None:
+        still_clip(end, END_SECONDS, scenes / "99-end.mp4", fade_out=True)
     files.append(scenes / "99-end.mp4")
     (work / "concat.txt").write_text("".join(f"file '{f.resolve()}'\n" for f in files))
     return files
@@ -242,6 +393,20 @@ def build_audio(spec, work):
     graph = [f"{f}[a{i}]" for i, f in enumerate(filt)]
     labels = "".join(f"[a{i}]" for i in range(len(filt)))
     fc = ";".join(graph) + ";" + labels + f"concat=n={len(filt)}:v=0:a=1[out]"
+    music = spec.get("music")
+    if music:
+        # quiet bed under the narration, ducked further while the voice speaks, faded at both ends
+        total = CARD_SECONDS + END_SECONDS + sum(
+            duration(work / "audio" / f"{i:02d}.mp3") + float(sg.get("pad", 0.35))
+            for i, sg in enumerate(spec["segments"]))
+        parts.extend(["-stream_loop", "-1", "-i", str(ROOT / music["file"])])
+        vol = float(music.get("volume", 0.14))
+        fc = fc.replace("[out]", "[nar]")
+        fc += (f";[nar]aformat=channel_layouts=stereo,asplit=2[narA][narSC]"
+               f";[{idx}:a]aresample=44100,aformat=channel_layouts=stereo,atrim=duration={total:.3f},"
+               f"volume={vol},afade=t=in:d=1.5,afade=t=out:st={total - 3.5:.3f}:d=3.5[bed]"
+               f";[bed][narSC]sidechaincompress=threshold=0.02:ratio=5:attack=30:release=600[duck]"
+               f";[narA][duck]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-16:TP=-1.5:LRA=11[out]")
     out = work / "narration.m4a"
     run(["ffmpeg", "-y", "-v", "error"] + parts + ["-filter_complex", fc, "-map", "[out]",
                                                    "-c:a", "aac", "-b:a", "160k", str(out)])
@@ -353,6 +518,7 @@ def main():
     ap.add_argument("spec")
     ap.add_argument("--step", choices=["audio", "shots", "scenes", "join", "all"], default="all")
     ap.add_argument("--work", default=str(ROOT / "work"))
+    ap.add_argument("--only", help="comma-separated segment numbers to re-render (scenes step)")
     a = ap.parse_args()
     spec = yaml.safe_load(Path(a.spec).read_text(encoding="utf-8"))
     slug = Path(a.spec).stem
@@ -363,7 +529,7 @@ def main():
     if a.step in ("shots", "all"):
         take_shots(spec, work)
     if a.step in ("scenes", "all"):
-        build_scenes(spec, work)
+        build_scenes(spec, work, only={int(x) for x in a.only.split(",")} if a.only else None)
     if a.step in ("join", "all"):
         joined = join(spec, work, slug)
         srt = build_captions(spec, work, slug)

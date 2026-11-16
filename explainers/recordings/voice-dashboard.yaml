@@ -1,0 +1,25 @@
+url: http://localhost:8765/demos/aac-dashboard/#/admin
+out: explainers/footage/voice-dashboard.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+mobile: false
+color_scheme: light
+steps:
+  - wait: 1500
+  - mark: overview
+  - move: [760, 180, 900]
+  - move: [1110, 170, 700]
+  - wait: 500
+  - scroll: {y: 520, ms: 1600}
+  - move: [900, 520, 800]
+  - mark: heatmap
+  - wait: 1200
+  - scroll: {y: -520, ms: 900}
+  - tap: {selector: 'text=Alerts >> nth=0', after: 1600}
+  - mark: alerts
+  - move: [800, 300, 800]
+  - wait: 900
+  - tap: {selector: 'text=Logs >> nth=0', after: 1800}
+  - mark: logs
+  - move: [820, 420, 900]
+  - wait: 800
