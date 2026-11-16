@@ -1,0 +1,95 @@
+title: "AI Assistant: going back to check my own work"
+kicker: "Explainer · Language models"
+subtitle: "A GPT-2 chat model from 2024: a sampling bug, a proper held-out test, and retraining on three dialogue datasets"
+end_title: "Read the full write-up"
+end_text: "Results, code and charts: paulmartinmcneill.com"
+voice_note: "Narrated with an AI copy of my voice"
+music: {file: music/bed-calm-tech.mp3, volume: 0.12}
+youtube:
+  title: "I went back to my 2024 GPT-2 chatbot: one bug, a real test, and 6× the training data"
+  tags: [GPT-2, fine-tuning, Hugging Face, Transformers, perplexity, evaluation, chatbot, DailyDialog, ConvAI2, CPU training]
+  summary: "In 2024 I fine-tuned GPT-2 to hold a conversation and judged it by reading its replies. Going back in 2026, I found a sampling bug, held out whole conversations to measure perplexity against untuned GPT-2, and retrained on three public dialogue datasets on a 2-core CPU. Held-out perplexity fell 48 to 66 per cent against untuned GPT-2, and the chat still shows what a 124M-parameter model can't do."
+  links:
+    - ["Case study", "https://paulmartinmcneill.com/projects/ai-assistant/"]
+    - ["Code on GitHub", "https://github.com/mcneillium/AI_Assistant"]
+  note: "All footage is the real code and the real model, recorded as it runs. The trained weights are not published because DailyDialog is licensed for non-commercial use."
+  thumbnail:
+    kicker: "Fine-tuning"
+    text: "I went back to check *my own work*"
+    image: "explainers/assets/ai-perplexity.jpg"
+    size: 84
+segments:
+  - text: >-
+      In 2024 I fine-tuned GPT-2 to hold a conversation. This year I went back to
+      check my own work.
+    shots:
+      - image: explainers/assets/ai-2024-run.jpg
+  - text: >-
+      I'm Paul Martin McNeill. The first version trained for three and a half hours
+      on a CPU, on one dataset of chit-chat and some dialogues I wrote, which I've
+      since lost.
+    lower_third: {name: "Paul Martin McNeill", role: "Built it · paulmartinmcneill.com", at: 0.3, for: 5}
+    shots:
+      - clip: footage/ai-site.mp4
+        start: 0.3
+        end: post+2.6
+  - text: >-
+      Running it again, I found a bug. The settings meant to vary each reply were
+      ignored, because sampling was never switched on. Every reply was the single
+      most likely one.
+    shots:
+      - clip: footage/ai-sampling.mp4
+        start: 0.3
+  - text: >-
+      I'd also judged it by reading the replies. So I held out whole conversations
+      it never saw, and measured perplexity: how surprised the model is by real
+      replies. Lower is better.
+    shots:
+      - card:
+          kicker: "How I measure it now"
+          title: "Perplexity on conversations it never saw"
+          sub: "Whole conversations kept out of training, scored against untuned GPT-2. Lower is better."
+          size: 88
+  - text: >-
+      Then I gave it more to learn from: three public datasets of conversation,
+      eighteen thousand dialogues, more than six times as much text as before. One pass took
+      two and a half hours on a two-core CPU.
+    shots:
+      - image: explainers/assets/ai-training-loss.jpg
+  - text: >-
+      On its own dataset, the new model is almost level with the old one. On the
+      other two, perplexity is forty-seven and thirty per cent lower.
+    shots:
+      - image: explainers/assets/ai-perplexity.jpg
+        move: [1.0, 1.12]
+        focus: [0.62, 0.55]
+  - text: >-
+      Here it is in the chat page. It takes turns, and it can be kind. But watch: it
+      says it has a dog called Mike, then tells me it loves cats.
+    shots:
+      - clip: footage/ai-chat.mp4
+        start: page-0.3
+        end: names+1.2
+        move: [1.45, 1.5]
+        focus: [0.5, 0.42]
+  - text: >-
+      Lower perplexity isn't the same as helpful answers. This is a small model from
+      2019. It shows how fine-tuning and evaluation work; it isn't a product.
+    shots:
+      - clip: footage/ai-chat.mp4
+        start: names+1.2
+        end: dinner+1.4
+        move: [1.5, 1.45]
+        focus: [0.5, 0.6]
+  - text: >-
+      Fourteen automated tests check it, and the code is now public on GitHub.
+    shots:
+      - clip: footage/ai-tests.mp4
+        start: 0.3
+        speed: 1.4
+        align: end
+  - text: >-
+      The full write-up, with every number, is on my site, paulmartinmcneill.com.
+    shots:
+      - clip: footage/ai-site.mp4
+        start: chart-2.0

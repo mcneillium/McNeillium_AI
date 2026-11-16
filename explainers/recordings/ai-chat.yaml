@@ -1,0 +1,31 @@
+# The chat page with the 2026 model; ?seed=11 makes the conversation repeatable.
+url: http://localhost:5055/?seed=11
+out: explainers/footage/ai-chat.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: light
+steps:
+  - wait: 1500
+  - mark: page
+  - type: {selector: '#input_text', text: 'hi, how are you today?', delay: 55}
+  - press: Enter
+  - wait: 2600
+  - mark: hi
+  - type: {selector: '#input_text', text: 'do you have any pets?', delay: 55}
+  - press: Enter
+  - wait: 2600
+  - mark: pets
+  - type: {selector: '#input_text', text: 'what are their names?', delay: 55}
+  - press: Enter
+  - wait: 2600
+  - mark: names
+  - type: {selector: '#input_text', text: 'i failed my driving test today.', delay: 55}
+  - press: Enter
+  - wait: 2800
+  - mark: test
+  - type: {selector: '#input_text', text: 'can you recommend somewhere to eat tonight?', delay: 50}
+  - press: Enter
+  - wait: 3000
+  - mark: dinner
+  - wait: 1500
+cursor: false

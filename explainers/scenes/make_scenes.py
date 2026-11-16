@@ -125,4 +125,8 @@ if __name__ == "__main__":
          [{"at": 0.8, "lines": [30, 31]}, {"at": 3.4, "lines": [36, 44]}])
     code("crm-pool", "/home/claude/custom-crm/apps/server/src/db.ts", "custom-crm / apps / server / src", 1, 27,
          [{"at": 0.8, "lines": [11, 13]}, {"at": 3.6, "lines": [15, 17]}, {"at": 6.2, "lines": [22, 24]}])
+    terminal("ai-tests", "AI_Assistant: python -m pytest -v", "paul@assistant:~/AI_Assistant$", "python -m pytest -v",
+             "ai-tests.json", keep=("tests/", "====="), seconds=6.0)
+    code("ai-sampling", "/home/claude/ai_assistant/assistant/model.py", "AI_Assistant / assistant", 1, 90,
+         [{"at": 0.8, "lines": [3, 6]}, {"at": 4.2, "clear": True, "scroll": 66}, {"at": 5.4, "lines": [76, 80]}])
     print("scenes:", ", ".join(p.name for p in sorted(OUT.glob("*.html"))))

@@ -1,0 +1,7 @@
+url: file:///home/claude/repos/McNeillium_AI/explainers/scenes/out/ai-sampling.html
+out: explainers/footage/ai-sampling.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+steps:
+  - wait: 9000
+cursor: false

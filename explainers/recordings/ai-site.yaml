@@ -1,0 +1,15 @@
+url: http://localhost:8765/projects/ai-assistant/
+out: explainers/footage/ai-site.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: dark
+cursor: false
+steps:
+  - wait: 2000
+  - mark: post
+  - scroll: {y: 500, ms: 2000}
+  - wait: 800
+  - eval: "document.querySelector('img[src*=perplexity], picture:has(img[alt*=perplexity]), img[alt*=perplexity]')?.scrollIntoView({behavior:'smooth', block:'center'})"
+  - wait: 2200
+  - mark: chart
+  - wait: 1500
