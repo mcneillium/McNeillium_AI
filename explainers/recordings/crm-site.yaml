@@ -1,0 +1,12 @@
+url: http://localhost:8765/projects/custom-crm/
+out: explainers/footage/crm-site.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: dark
+steps:
+  - wait: 2000
+  - mark: post
+  - hover: 'a:has-text("Live demo") >> nth=0'
+  - wait: 900
+  - scroll: {y: 640, ms: 2200}
+  - wait: 1000

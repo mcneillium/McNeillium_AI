@@ -1,0 +1,75 @@
+title: "Six rules for machine learning research you can check"
+kicker: "Explainer · Research method"
+subtitle: "How two reproducible studies were run, and the mistakes they caught"
+end_title: "See the rules in practice"
+end_text: "Both studies, their corrections and their logs: paulmartinmcneill.com/research"
+youtube:
+  title: "Six rules for reproducible machine learning research (with real corrections)"
+  tags: [reproducible research, machine learning, data leakage, baselines, research methods]
+  summary: 'The rules behind two reproducible machine learning studies: protocol first, baselines first, fingerprinted splits, nothing learned from held-out data, negative results reported, and a public log of every decision, including two mistakes that were caught and corrected.'
+  links:
+  - - Both studies and their corrections
+    - https://paulmartinmcneill.com/research/
+  - - River study code
+    - https://github.com/mcneillium/river-early-warning
+  - - Drug study code
+    - https://github.com/mcneillium/drug-response-beyond-marker
+  note: Neither study has been peer reviewed.
+  thumbnail:
+    kicker: Method
+    text: 6 rules for ML you can *check*
+    image: explainers/work/04-method/shots/04-00.jpg
+    size: 92
+segments:
+  - text: >-
+      Two studies, one set of rules. This is how Paul McNeill runs machine learning
+      research that someone else can check.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#research-method"
+        zoom: 1.5
+  - text: >-
+      Protocol first: the design is written and dated before any model is fitted, and
+      any later change is a dated amendment.
+    shots:
+      - card:
+          kicker: "Rule 1"
+          title: "Protocol first"
+          sub: "The design is written and dated before any model is fitted. Later changes are dated amendments."
+  - text: >-
+      Baselines first: every model is compared with the simplest thing that could
+      work, on exactly the same held-out data. The data splits are saved once with a
+      fingerprint, and the code refuses to overwrite them.
+    shots:
+      - card:
+          kicker: "Rules 2 and 3"
+          title: "Baselines first. Fixed splits."
+          sub: "Compare with the simplest thing that could work, on the same held-out data. Splits are fingerprinted and cannot be overwritten."
+  - text: >-
+      Nothing is learned from held-out data: feature choice, scaling, gap filling and
+      tuning all happen inside the training data. What counts as this did not work is
+      set in advance, and negative results are reported.
+    shots:
+      - card:
+          kicker: "Rules 4 and 5"
+          title: "No peeking. Report what failed."
+          sub: "Feature choice, scaling, gap filling and tuning stay inside the training data. Failure criteria are fixed in advance."
+  - text: >-
+      And every decision is logged, including the mistakes. In the river study, the
+      first diagnosis of a weak baseline was wrong; a controlled comparison showed the
+      cause was the target scale. In the drug study, gains were first computed on
+      averaged predictions, which flattered the less stable model. Both were corrected
+      in public.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#corrections"
+        zoom: 1.4
+  - text: >-
+      Both studies were built making use of AI tools, under research rules Paul set,
+      and each study's log records how. Re-run on a second machine, the main results
+      matched almost exactly; one river experiment is still to be repeated. Neither
+      study has been peer reviewed.
+    shots:
+      - url: https://paulmartinmcneill.com/research/
+        focus: "#how-produced"
+        zoom: 1.6

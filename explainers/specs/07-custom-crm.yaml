@@ -1,0 +1,120 @@
+title: "Custom CRM: built from scratch, running in your browser"
+kicker: "Explainer · Web engineering"
+subtitle: "A CRM for a small sales team: one TypeScript core, PostgreSQL on the server, and a demo with no server at all"
+end_title: "Try the CRM in your browser"
+end_text: "Live demo with invented sample data: paulmartinmcneill.com"
+voice_note: "Narrated with an AI copy of my voice"
+music: {file: music/bed-calm-tech.mp3, volume: 0.12}
+youtube:
+  title: "I built a CRM from scratch, and the demo runs PostgreSQL in your browser"
+  tags: [CRM, TypeScript, Node.js, PostgreSQL, PGlite, WebAssembly, React, Fastify, full stack, sales pipeline]
+  summary: "A customer relationship manager for a small sales team, built from scratch: companies and contacts, a deal pipeline, an activity log, email templates, tasks and a dashboard. One TypeScript core holds every query; the server runs it on PostgreSQL, and the live demo runs the same code on PGlite, PostgreSQL compiled to WebAssembly, so it needs no server."
+  links:
+    - ["Case study and live demo", "https://paulmartinmcneill.com/projects/custom-crm/"]
+  note: "All footage is the real app, recorded in a browser. Every company, person and figure in the demo is invented."
+  thumbnail:
+    kicker: "Full stack"
+    text: "A CRM that runs *in your browser*"
+    image: "explainers/work/07-custom-crm/shots/00-00.jpg"
+    size: 84
+segments:
+  - text: >-
+      A CRM is where a sales team keeps track of who it's talking to, and what every
+      deal is worth. I built one from scratch.
+    shots:
+      - clip: footage/crm-start.mp4
+        start: dashboard-0.2
+        end: charts
+        move: [1.0, 1.06]
+        focus: [0.5, 0.3]
+  - text: >-
+      I'm Paul Martin McNeill. My portfolio listed a custom CRM for a long time, with
+      nothing behind it. So I built the real thing.
+    lower_third: {name: "Paul Martin McNeill", role: "Built it · paulmartinmcneill.com", at: 0.3, for: 5}
+    shots:
+      - clip: footage/crm-site.mp4
+        start: 0.3
+  - text: >-
+      The demo runs entirely in your browser. You choose a sample person to sign in
+      as, and every company and person in it is invented.
+    shots:
+      - clip: footage/crm-start.mp4
+        start: 0.4
+        end: dashboard+0.8
+  - text: >-
+      Deals sit on a board, one column per stage, with the total and weighted value of
+      each. I can drag a deal to the next stage, or move it with the keyboard.
+    shots:
+      - clip: footage/crm-pipeline.mp4
+        start: board-0.3
+        end: keyboard2+0.6
+  - text: >-
+      When a deal is lost, it asks why, so the reasons can be reviewed later.
+    shots:
+      - clip: footage/crm-pipeline.mp4
+        start: closed-0.3
+        end: lost-1.0
+  - text: >-
+      Every deal keeps a timeline: calls, emails, meetings and notes, and every stage
+      change, with who made it and when.
+    shots:
+      - clip: footage/crm-deal.mp4
+        start: deal-0.3
+        end: log
+      - clip: footage/crm-deal.mp4
+        start: log
+        end: logged+0.4
+        speed: 2
+  - text: >-
+      Email templates fill in the contact, the company and the deal. I can open it in
+      my own mail program, then log it as sent.
+    shots:
+      - clip: footage/crm-deal.mp4
+        start: email-0.3
+        end: emailed+0.3
+  - text: >-
+      Tasks have due dates and owners, and marking a deal as won records when it
+      closed.
+    shots:
+      - clip: footage/crm-deal.mp4
+        start: task-1.3
+        end: history+1.2
+  - text: >-
+      The dashboard shows the open and weighted pipeline, the win rate, a forecast by
+      expected close month, and activity each week. Every chart can also be read as
+      a table.
+    shots:
+      - clip: footage/crm-start.mp4
+        start: charts-0.3
+        end: owners+1.2
+  - text: >-
+      Underneath, one TypeScript core holds every query. The server runs it on
+      PostgreSQL. The demo runs the same code on PGlite, which is PostgreSQL compiled
+      to WebAssembly.
+    shots:
+      - clip: footage/crm-core.mp4
+        start: 0.3
+  - text: >-
+      Testing against a real database found a bug. With a connection pool, one
+      transaction's statements could run on different connections. Now each
+      transaction keeps one connection from start to finish.
+    shots:
+      - clip: footage/crm-pool.mp4
+        start: 0.3
+  - text: >-
+      Thirty-one automated tests cover it, and it works on a phone, in dark mode too.
+    shots:
+      - clip: footage/crm-tests.mp4
+        start: 0.3
+        speed: 1.6
+        align: end
+      - clip: footage/crm-mobile.mp4
+        start: dashboard-0.5
+        end: pipeline+1.5
+        frame: phone
+        label: {kicker: "On a phone", title: "Same app, dark mode", sub: "Installable as a web app."}
+  - text: >-
+      You can try it in your browser on my site, paulmartinmcneill.com.
+    shots:
+      - clip: footage/crm-site.mp4
+        start: 0.2

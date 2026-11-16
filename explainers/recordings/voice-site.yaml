@@ -1,0 +1,16 @@
+url: http://localhost:8765/projects/ai-aac-app/
+out: explainers/footage/voice-site.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: dark
+reduced_motion: reduce
+local_storage: {theme: dark}
+hide: [".chat-fab", ".back-to-top", ".navigator", "#chatFab", ".scroll-progress"]
+steps:
+  - eval: "const r=document.querySelector('.demo-phone__frame').getBoundingClientRect(); window.scrollBy(0, r.top - 92)"
+  - wait: 700
+  - move: [520, 300, 700]
+  - tap: {selector: '.demo-phone [data-demo-load]', after: 3200}
+  - mark: loaded
+  - eval: "0"
+  - wait: 1200

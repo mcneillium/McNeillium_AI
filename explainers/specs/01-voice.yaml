@@ -1,0 +1,142 @@
+title: "Voice: an AAC app that explains its own predictions"
+kicker: "Explainer · Assistive technology"
+subtitle: "How I built a communication app that suggests the next word, offline, and says why"
+end_title: "Try Voice in your browser"
+end_text: "The board, the full app and the caregiver dashboard, with made-up data: paulmartinmcneill.com"
+voice_note: "Narrated with an AI copy of my voice"
+music: {file: music/bed-calm-tech.mp3, volume: 0.14}
+youtube:
+  title: "I built an AAC app that explains its own word predictions"
+  tags: [AAC, augmentative and alternative communication, assistive technology, accessibility, next-word prediction, React Native, n-gram, on-device AI]
+  summary: "Voice is an AAC (augmentative and alternative communication) app I built for people who can't rely on speech. This video shows the real app: a board where every word keeps its place, Child and Adult modes, next-word suggestions that each carry a reason, learning that is off until you turn it on, and the caregiver dashboard."
+  links:
+    - ["Case study, live app and dashboard", "https://paulmartinmcneill.com/projects/ai-aac-app/"]
+    - ["Try the word board", "https://paulmartinmcneill.com/lab/#voice"]
+  note: "The app and dashboard footage is the real web build, recorded in a browser. The dashboard demo uses made-up people and data. Context footage of people and tablets is from Pexels."
+  thumbnail:
+    kicker: "Assistive tech"
+    text: "An AAC app that *explains* its predictions"
+    image: "explainers/work/01-voice/frames/02-00-bg.png"
+    size: 80
+segments:
+  - text: >-
+      Imagine every word you say has to be found and tapped. I built Voice to make
+      that quicker, and to tell you why it suggests each word.
+    shots:
+      - clip: footage/voice-tablet-hands.mp4
+        move: [1.0, 1.08]
+        focus: [0.4, 0.4]
+  - text: >-
+      I'm Paul Martin McNeill. Voice is an AAC app, short for augmentative and
+      alternative communication, for people who can't rely on speech.
+    lower_third: {name: "Paul Martin McNeill", role: "Built Voice · paulmartinmcneill.com", at: 0.4, for: 5}
+    shots:
+      - clip: broll/pexels-7924418.mp4
+        start: 2
+        move: [1.0, 1.1]
+        focus: [0.75, 0.55]
+      - clip: broll/pexels-8539791.mp4
+        start: 4
+        move: [1.05, 1.0]
+  - text: >-
+      You build a message by tapping words, and Voice speaks it. Every word keeps the
+      same place, so the board can be learned by position rather than searched.
+    shots:
+      - clip: footage/voice-start.mp4
+        start: board-0.4
+        end: spoken+0.7
+        frame: phone
+        label: {kicker: "The board", title: "Tap words, then Speak", sub: "Every word keeps its place, so it can be found by position."}
+  - text: >-
+      There's a Child mode and an Adult mode. A mode changes the look, never the
+      layout: the same words sit in the same places in both.
+    shots:
+      - clip: footage/voice-modes.mp4
+        start: adult-0.2
+        end: end
+        frame: phone
+        label: {kicker: "Two modes", title: "Child and Adult", sub: "Different look, same layout."}
+  - text: >-
+      As the message grows, Voice suggests the next word. Each suggestion carries a
+      reason, like a common next word, or a word you often say next.
+    shots:
+      - clip: footage/voice-start.mp4
+        start: board+0.6
+        end: suggestions-0.1
+        frame: phone
+        label: {kicker: "Suggestions", title: "Every suggestion has a reason", sub: "After \"I want\": to, a, my, an, that, more. Each one a common next word."}
+        screen_move: [1.0, 1.7]
+        screen_focus: [0.0, 0.05]
+  - text: >-
+      Under the hood it's a trigram model with a personal layer and an optional
+      ranker, in plain JavaScript. It runs on the device with no network calls, and a typical
+      call takes well under a millisecond.
+    shots:
+      - clip: footage/voice-predictor.mp4
+        start: 0.6
+        end: 10.6
+  - text: >-
+      Learning is off until you turn it on. Then Voice learns only from messages you
+      actually speak. Here I've said "I want dad" three times.
+    shots:
+      - clip: footage/voice-learning.mp4
+        start: personalise+0.3
+        end: switched+0.5
+        frame: phone
+        label: {kicker: "Learning", title: "Off until you turn it on", sub: "\"Learn from my messages\" in Personalise."}
+      - clip: footage/voice-learning.mp4
+        start: teach
+        end: taught
+        speed: 3
+        frame: phone
+        label: {kicker: "Learning", title: "\"I want dad\", spoken three times", sub: "Shown at three times speed."}
+  - text: >-
+      So now "dad" comes first, marked "you often say this next". Everything it has
+      learned can be seen, and forgotten, one word at a time.
+    shots:
+      - clip: footage/voice-learning.mp4
+        start: taught+0.2
+        end: suggested+0.3
+        frame: phone
+        label: {kicker: "Learning", title: "\"dad\": you often say this next", sub: "The app's own reason for the suggestion."}
+      - clip: footage/voice-learning.mp4
+        start: suggested+0.3
+        end: learned+0.4
+        frame: phone
+        label: {kicker: "Your data", title: "What Voice has learned", sub: "Kept on the phone. Forget any word."}
+  - text: >-
+      All of this is covered by eight hundred and thirty-three automated tests.
+    shots:
+      - clip: footage/voice-tests.mp4
+        start: 0.3
+        speed: 1.6
+        align: end
+  - text: >-
+      Alongside the app, a caregiver dashboard shows activity, the words people use,
+      and alerts. This demo runs on made-up people and data.
+    shots:
+      - clip: broll/pexels-7413714.mp4
+        start: 1
+        move: [1.0, 1.08]
+        weight: 0.6
+      - clip: footage/voice-dashboard.mp4
+        start: overview-0.5
+        end: heatmap+1.2
+      - clip: footage/voice-dashboard.mp4
+        start: alerts-0.3
+        end: logs+1.5
+  - text: >-
+      In a small pilot with seven people, common phrases were thirty-five to fifty
+      per cent faster to say.
+    shots:
+      - card:
+          kicker: "Small pilot, seven people"
+          title: "Common phrases 35 to 50% faster"
+          sub: "Average time to say a common phrase, from a pilot with seven users."
+          size: 96
+  - text: >-
+      You can try the board, the full app and the dashboard in your browser, on my
+      site, paulmartinmcneill.com.
+    shots:
+      - clip: footage/voice-site.mp4
+        start: 0.2

@@ -1,0 +1,31 @@
+# Sign in to the hosted demo as the admin and look round the dashboard.
+url: http://localhost:8765/demos/custom-crm/
+out: explainers/footage/crm-start.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: light
+steps:
+  - wait: 2500
+  - mark: signin
+  - hover: 'text=Aoife Kerrigan'
+  - wait: 500
+  - tap: {selector: 'text=Sam Reid', after: 2200}
+  - mark: dashboard
+  - move: [700, 180, 900]
+  - move: [1200, 190, 900]
+  - wait: 700
+  - scroll: {y: 300, ms: 1400}
+  - mark: charts
+  - hover: '.chart svg .bar-group >> nth=5'
+  - wait: 1200
+  - hover: '.chart svg .bar-group >> nth=7'
+  - wait: 1000
+  - scroll: {y: 300, ms: 1400}
+  - mark: forecast
+  - hover: '.card:has-text("Activity per week") .bar-group >> nth=2'
+  - wait: 1400
+  - tap: {selector: '.card:has-text("Forecast") summary', after: 1600}
+  - mark: table
+  - scroll: {y: 420, ms: 1500}
+  - mark: owners
+  - wait: 1500

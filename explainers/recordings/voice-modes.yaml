@@ -1,0 +1,20 @@
+url: http://localhost:8765/demos/aac-app/
+out: explainers/footage/voice-modes.mp4
+viewport: [430, 932]
+scale: 2
+mobile: true
+color_scheme: light
+steps:
+  - tap: '[aria-label^="Adult. Calm"]'
+  - tap: {selector: '[aria-label="Start talking"]', after: 400}
+  - mark: adult
+  - wait: 1600
+  - tap: {selector: '[aria-label="Adult mode. Change mode"]', after: 1500}
+  - mark: sheet
+  - tap: {selector: '[role=radio] >> nth=0', after: 900}
+  - tap: {selector: '[aria-label="Switch to Child"]', after: 900}
+  - mark: child
+  - wait: 1400
+  - tap: {selector: '[aria-label="Say I want. starter"]', after: 500}
+  - tap: {selector: '[aria-label="Say more. adjective"]', after: 1200}
+  - mark: end

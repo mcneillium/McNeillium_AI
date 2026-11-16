@@ -1,0 +1,35 @@
+# One deal: log a meeting, email from a template, tick a task, mark it won.
+url: http://localhost:8765/demos/custom-crm/#/pipeline
+out: explainers/footage/crm-deal.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: light
+local_storage: {custom-crm-demo-user: "3"}
+steps:
+  - wait: 2500
+  - tap: {selector: '.col >> nth=3 >> .deal >> nth=0 >> a', after: 1800}
+  - mark: deal
+  - move: [1200, 400, 900]
+  - wait: 800
+  - tap: {selector: 'button:has-text("Log activity")', after: 700}
+  - mark: log
+  - tap: {selector: 'dialog button:has-text("Meeting")', after: 400}
+  - type: {selector: 'dialog input[name=subject]', text: 'Scoping meeting', delay: 55}
+  - type: {selector: 'dialog textarea[name=body]', text: 'Walked through their reporting needs. They want a phased rollout.', delay: 28}
+  - wait: 300
+  - tap: {selector: 'dialog button:has-text("Log it")', after: 1300}
+  - mark: logged
+  - tap: {selector: 'button:has-text("Email")', after: 1500}
+  - mark: email
+  - move: [720, 520, 900]
+  - wait: 1600
+  - tap: {selector: 'dialog button:has-text("Log as sent")', after: 900}
+  - tap: {selector: 'dialog button:has-text("Log it")', after: 1300}
+  - mark: emailed
+  - tap: {selector: '.tasks-list input[type=checkbox] >> nth=0', after: 1300}
+  - mark: task
+  - tap: {selector: '.stage-path button:has-text("Won")', after: 1800}
+  - mark: won
+  - scroll: {y: 250, ms: 1200}
+  - mark: history
+  - wait: 1500
