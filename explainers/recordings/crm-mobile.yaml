@@ -1,0 +1,19 @@
+url: http://localhost:8765/demos/custom-crm/
+out: explainers/footage/crm-mobile.mp4
+viewport: [430, 932]
+scale: 2
+mobile: true
+color_scheme: dark
+local_storage: {custom-crm-demo-user: "4"}
+steps:
+  - wait: 3500
+  - mark: dashboard
+  - scroll: {y: 700, ms: 2200}
+  - wait: 600
+  - scroll: {y: -700, ms: 1200}
+  - tap: {selector: '.topbar button', after: 900}
+  - mark: menu
+  - tap: {selector: '.side a:has-text("Pipeline")', after: 1500}
+  - mark: pipeline
+  - scroll: {y: 500, ms: 1800}
+  - wait: 800

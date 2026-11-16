@@ -119,4 +119,10 @@ if __name__ == "__main__":
          [{"at": 1.2, "lines": [2, 3]}, {"at": 3.6, "lines": [5, 8]}, {"at": 6.0, "lines": [10, 13]},
           {"at": 8.6, "lines": [17, 18]}, {"at": 11.0, "clear": True, "scroll": 30},
           {"at": 12.4, "lines": [51, 59]}])
+    terminal("crm-tests", "custom-crm: npm test", "paul@crm:~/custom-crm$", "npm test", "crm-tests.json",
+             keep=("✓ ", "Tests "), seconds=6.5)
+    code("crm-core", "/home/claude/custom-crm/packages/core/src/index.ts", "custom-crm / packages / core / src", 30, 48,
+         [{"at": 0.8, "lines": [30, 31]}, {"at": 3.4, "lines": [36, 44]}])
+    code("crm-pool", "/home/claude/custom-crm/apps/server/src/db.ts", "custom-crm / apps / server / src", 1, 27,
+         [{"at": 0.8, "lines": [11, 13]}, {"at": 3.6, "lines": [15, 17]}, {"at": 6.2, "lines": [22, 24]}])
     print("scenes:", ", ".join(p.name for p in sorted(OUT.glob("*.html"))))

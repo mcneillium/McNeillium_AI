@@ -1,0 +1,32 @@
+# The board: drag a deal, move one with the keyboard, lose one with a reason.
+url: http://localhost:8765/demos/custom-crm/#/pipeline
+out: explainers/footage/crm-pipeline.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+color_scheme: light
+local_storage: {custom-crm-demo-user: "2"}
+steps:
+  - wait: 3000
+  - mark: board
+  - move: [500, 300, 900]
+  - wait: 500
+  - drag: {from: '.col >> nth=0 >> .deal >> nth=0', to: '.col >> nth=1 >> header', dy: 120, ms: 1100, after: 1400}
+  - mark: dragged
+  - wait: 600
+  - focus: '.col >> nth=1 >> .deal >> nth=0'
+  - wait: 900
+  - press: Alt+ArrowRight
+  - wait: 1200
+  - mark: keyboard
+  - press: Alt+ArrowRight
+  - wait: 1400
+  - mark: keyboard2
+  - tap: {selector: 'text=Show Won and Lost', after: 1200}
+  - mark: closed
+  - drag: {from: '.col >> nth=3 >> .deal >> nth=2', to: '.col >> nth=5 >> header', dy: 120, ms: 1300, after: 900}
+  - mark: lost-dialog
+  - type: {selector: 'dialog input[name=reason]', text: 'Went with a cheaper supplier', delay: 45}
+  - wait: 400
+  - tap: {selector: 'dialog button:has-text("Mark as lost")', after: 1600}
+  - mark: lost
+  - wait: 600

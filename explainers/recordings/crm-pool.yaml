@@ -1,0 +1,7 @@
+url: file:///home/claude/repos/McNeillium_AI/explainers/scenes/out/crm-pool.html
+out: explainers/footage/crm-pool.mp4
+viewport: [1440, 810]
+scale: 1.3333334
+steps:
+  - wait: 9500
+cursor: false

@@ -17,6 +17,8 @@ A recording spec:
       - scroll: {y: 600, ms: 1200}
       - hover: '#thing'
       - eval: "document.body.classList.add('x')"
+      - drag: {from: '.card >> nth=0', to: '.column >> nth=1', ms: 900}
+      - focus: '#deal-12'          # then press: Alt+ArrowRight
       - mark: board-ready          # writes a timestamp to <out>.marks.json
 
 Frames are DevTools screenshots taken in a loop at full device resolution
@@ -200,6 +202,18 @@ async def record(spec_path):
                        const f = now => { const k = Math.min(1, (now - t0) / ms), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2) / 2;
                        el ? (el.scrollTop = s + dy * e) : window.scrollTo(0, s + dy * e); k < 1 ? requestAnimationFrame(f) : res(); }; requestAnimationFrame(f); })""",
                     [y, ms, sel])
+            elif kind == "drag":
+                # press on one element, glide to another, release: real mouse events, so HTML5 drag and drop fires
+                _, x0, y0 = await centre(arg["from"])
+                await glide(x0, y0)
+                await page.mouse.down()
+                _, x1, y1 = await centre(arg["to"])
+                await glide(x1 + arg.get("dx", 0), y1 + arg.get("dy", 0), arg.get("ms", 900))
+                await page.wait_for_timeout(150)
+                await page.mouse.up()
+                await page.wait_for_timeout(arg.get("after", 900))
+            elif kind == "focus":
+                await page.locator(arg).first.focus()
             elif kind == "eval":
                 await page.evaluate(arg)
             elif kind == "press":
